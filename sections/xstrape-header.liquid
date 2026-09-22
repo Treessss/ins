@@ -1017,6 +1017,24 @@
       height: var(--xstrape-mobile-card-image-size);
     }
   }
+
+  /* The announcement line is long and was forced onto one line, which pushed the
+     whole page sideways on narrow screens. Let it wrap inside the same bar height
+     instead, and clip as a safety net. */
+  @media screen and (max-width: 599px) {
+    #shopify-section-{{ section.id }} .xstrape-header__announcement {
+      font-size: 12px;
+      line-height: 1.25;
+      white-space: normal;
+      overflow: hidden;
+      padding-block: 2px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__announcement-link {
+      flex-wrap: wrap;
+      max-width: 100%;
+    }
+  }
 </style>
 
 <div class="xstrape-header" data-xstrape-header>
