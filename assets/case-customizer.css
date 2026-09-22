@@ -13,7 +13,7 @@
   width: 100%;
   min-width: 0;
   color: var(--case-customizer-ink);
-  font-family: "Gotham-Book", var(--text-font-family), sans-serif;
+  font-family: "Xstrapetm Text", var(--text-font-family), sans-serif;
 }
 
 .case-customizer * {
@@ -45,7 +45,7 @@
 .case-customizer__title {
   margin: 0;
   color: var(--case-customizer-ink);
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 20px;
   font-weight: 400;
   line-height: 1.08;
@@ -70,7 +70,7 @@
   border-radius: 999px;
   background: #111;
   color: #fff;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 11px;
   font-weight: 400;
   line-height: 1;
@@ -259,7 +259,7 @@
   background: transparent;
   color: #111;
   cursor: pointer;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 15px;
   font-weight: 400;
   line-height: 1.1;
@@ -305,7 +305,7 @@
 
 .case-customizer__step-summary {
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-weight: 400;
 }
 
@@ -345,7 +345,7 @@
 
 .case-customizer__wizard-progress {
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1;
@@ -380,7 +380,7 @@
   background: #111;
   color: #fff;
   cursor: pointer;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1;
@@ -418,7 +418,7 @@
 
 .case-customizer__file-copy p:first-child {
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-weight: 400;
 }
 
@@ -431,7 +431,7 @@
   display: grid;
   gap: 7px;
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 1;
@@ -457,7 +457,7 @@
   background: #fff;
   color: #111;
   cursor: pointer;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 1;
@@ -478,7 +478,7 @@
 
 .case-customizer__input-label {
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 12px;
   font-weight: 400;
   line-height: 1;
@@ -748,7 +748,7 @@
   display: block;
   margin-bottom: 2px;
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 14px;
   line-height: 1.1;
 }
@@ -757,7 +757,7 @@
   content: "02. Adjust";
   display: block;
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 14px;
   line-height: 1.1;
 }
@@ -767,7 +767,7 @@
   grid-column: 1 / -1;
   display: block;
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 14px;
   line-height: 1.1;
 }
@@ -924,7 +924,7 @@
   align-items: center;
   gap: 8px;
   color: #111;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 14px;
   line-height: 1.1;
 }
@@ -958,7 +958,7 @@
   background: #fafafa;
   color: #111;
   cursor: pointer;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 12px;
   line-height: 1.1;
   text-align: left;

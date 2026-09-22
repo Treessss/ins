@@ -1,25 +1,75 @@
+/* ------------------------------------------------------------------------------
+   BRAND TYPOGRAPHY (self-hosted webfonts)
+
+   PRIMARY ........ "Xstrapetm Display"  rounded grotesk (Fredoka)
+   SUPPORTING ..... "Xstrapetm Text"     geometric sans  (Poppins)
+   LABELS ......... "Xstrapetm Label"    monospace       (Space Mono)
+
+   The display face only ships SemiBold/Bold, so headings, buttons and anything
+   else using the display family always renders in the brand's chunky weight.
+   ------------------------------------------------------------------------------ */
 @font-face {
   font-display: swap;
-  font-family: "Gotham-Bold";
+  font-family: "Xstrapetm Display";
   font-style: normal;
-  font-weight: 400;
-  src: url("Gotham-Bold.otf") format("opentype");
+  font-weight: 600;
+  src: url("Fredoka-SemiBold.woff2") format("woff2");
 }
 
 @font-face {
   font-display: swap;
-  font-family: "Gotham-Bold";
+  font-family: "Xstrapetm Display";
   font-style: normal;
   font-weight: 700;
-  src: url("Gotham-Bold.otf") format("opentype");
+  src: url("Fredoka-Bold.woff2") format("woff2");
 }
 
 @font-face {
   font-display: swap;
-  font-family: "Gotham-Book";
+  font-family: "Xstrapetm Text";
   font-style: normal;
   font-weight: 400;
-  src: url("Gotham-Book.otf") format("opentype");
+  src: url("Poppins-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Xstrapetm Text";
+  font-style: normal;
+  font-weight: 500;
+  src: url("Poppins-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Xstrapetm Text";
+  font-style: normal;
+  font-weight: 600;
+  src: url("Poppins-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Xstrapetm Text";
+  font-style: normal;
+  font-weight: 700;
+  src: url("Poppins-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Xstrapetm Label";
+  font-style: normal;
+  font-weight: 400;
+  src: url("SpaceMono-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Xstrapetm Label";
+  font-style: normal;
+  font-weight: 700;
+  src: url("SpaceMono-Bold.woff2") format("woff2");
 }
 
 /* =========================
@@ -520,7 +570,7 @@ body {
 .shopify-payment-button__button--unbranded {
   border: 2px solid var(--xstrapetm-aubergine);
   box-shadow: 0 4px 0 var(--xstrapetm-aubergine);
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   letter-spacing: -0.01em;
 }
 
@@ -571,7 +621,7 @@ body {
 .badge {
   border: 1px solid var(--xstrapetm-aubergine);
   color: var(--xstrapetm-aubergine);
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   letter-spacing: 0.03em;
 }
 
@@ -707,6 +757,16 @@ body {
   background: var(--xstrapetm-lime);
   color: var(--xstrapetm-aubergine);
   box-shadow: 0 4px 0 var(--xstrapetm-pink);
+}
+
+/* ------------------------------------------------------------------------------
+   BRAND TYPOGRAPHY — labels / eyebrows / badges use the monospace label face
+   ------------------------------------------------------------------------------ */
+[class*="kicker"],
+[class*="eyebrow"],
+[class*="label"],
+.badge {
+  font-family: var(--label-font-family, "Xstrapetm Label", monospace);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1134,7 +1194,7 @@ height-observer, visibility-progress, scroll-area, video-media, model-media, med
   background: linear-gradient(135deg, #dfff32 0%, #28d7ff 100%) !important;
   color: #17132f !important;
   box-shadow: 0 5px 0 #17132f, 0 12px 24px rgb(23 19 47 / 0.16);
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 18px;
   font-weight: 400;
   line-height: 20px;
@@ -3154,7 +3214,7 @@ model-media model-viewer, model-media .shopify-model-viewer-ui {
   border-radius: 999px;
   background: #fff;
   color: #555;
-  font-family: "Gotham-Book", sans-serif;
+  font-family: "Xstrapetm Text", sans-serif;
   font-size: 13px;
   line-height: 16px;
   gap: 8px;
@@ -5222,7 +5282,7 @@ tfoot td {
   min-width: 0;
   width: 100%;
   color: #000;
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: 13px;
   line-height: 1.12;
   font-weight: 400;
@@ -6731,7 +6791,7 @@ product-rerender {
   background: #fff;
   box-shadow: 0 1px 0 rgb(0 0 0 / 4%);
   color: #000;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 13px;
   font-weight: 700;
   line-height: 16px;
@@ -6764,7 +6824,7 @@ product-rerender {
 
 .collection--xstrape-nomad-cards .sort-by-facet > .bold {
   color: #555;
-  font-family: "Gotham-Book", sans-serif;
+  font-family: "Xstrapetm Text", sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 16px;
@@ -6793,7 +6853,7 @@ product-rerender {
   border: 1px solid rgb(0 0 0 / 8%);
   background: #fff;
   color: #000;
-  font-family: "Gotham-Book", sans-serif;
+  font-family: "Xstrapetm Text", sans-serif;
   font-size: 12px;
   line-height: 14px;
 }
@@ -6864,7 +6924,7 @@ product-rerender {
   min-height: 78px;
   padding: 8px 5px 2px !important;
   display: flex !important;
-  font-family: "Gotham-Book", sans-serif;
+  font-family: "Xstrapetm Text", sans-serif;
   color: #000;
 }
 
@@ -6883,7 +6943,7 @@ product-rerender {
   width: 100%;
   max-width: 100%;
   color: #000 !important;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 16px;
   font-weight: 700;
   line-height: 18px;
@@ -6919,12 +6979,12 @@ product-rerender {
   gap: 6px !important;
   flex-wrap: wrap;
   align-items: baseline;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
 }
 
 .collection--xstrape-nomad-cards .product-card__price-pill sale-price {
   color: #000 !important;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 13px !important;
   font-weight: 700 !important;
   line-height: 17px;
@@ -6934,7 +6994,7 @@ product-rerender {
 .collection--xstrape-nomad-cards .product-card__price-pill unit-price {
   color: #6c6c6c !important;
   display: inline !important;
-  font-family: "Gotham-Book", sans-serif;
+  font-family: "Xstrapetm Text", sans-serif;
   font-size: 12px !important;
   font-weight: 400;
   line-height: 17px;

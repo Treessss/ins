@@ -119,15 +119,16 @@ note that this may have impact on different places.
      */
 
     /* Font properties */
-    --heading-font-family: "Gotham-Bold", {{ settings.heading_font.family }}, {{ settings.heading_font.fallback_families }};
+    --heading-font-family: "Xstrapetm Display", {{ settings.heading_font.family }}, {{ settings.heading_font.fallback_families }};
     --heading-font-weight: {{ settings.heading_font.weight }};
     --heading-font-style: {{ settings.heading_font.style }};
     --heading-text-transform: {{ settings.heading_text_transform }};
     --heading-letter-spacing: {% if direction == 'rtl' %}0{% else %}{{ settings.heading_letter_spacing | divided_by: 100.0 }}em{% endif %};
-    --text-font-family: "Gotham-Book", {{ settings.text_font.family }}, {{ settings.text_font.fallback_families }};
+    --text-font-family: "Xstrapetm Text", {{ settings.text_font.family }}, {{ settings.text_font.fallback_families }};
     --text-font-weight: {{ settings.text_font.weight }};
     --text-font-style: {{ settings.text_font.style }};
     --text-letter-spacing: {% if direction == 'rtl' %}0{% else %}{{ settings.text_font_letter_spacing | divided_by: 100.0 }}em{% endif %};
+    --label-font-family: "Xstrapetm Label", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
     /* Font sizes */
     --text-h0: {% if settings.heading_font_size == 'small' %}2.5rem{% elsif settings.heading_font_size == 'medium' %}2.75rem{% else %}3rem{% endif %};

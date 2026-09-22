@@ -1,27 +1,3 @@
-@font-face {
-  font-display: swap;
-  font-family: "Gotham-Bold";
-  font-style: normal;
-  font-weight: 400;
-  src: url("Gotham-Bold.otf") format("opentype");
-}
-
-@font-face {
-  font-display: swap;
-  font-family: "Gotham-Bold";
-  font-style: normal;
-  font-weight: 700;
-  src: url("Gotham-Bold.otf") format("opentype");
-}
-
-@font-face {
-  font-display: swap;
-  font-family: "Gotham-Book";
-  font-style: normal;
-  font-weight: 400;
-  src: url("Gotham-Book.otf") format("opentype");
-}
-
 .xstrape-home-scope {
   --xh-page-bg: #f2f9ed;
   --xh-text: #17132f;
@@ -509,7 +485,7 @@ main:has(.xstrape-home-scope) {
 .xstrape-home-scope .xh-series-carousel__header .xh-eyebrow {
   margin: 0 0 7px;
   color: var(--xh-muted);
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 1.4px;
@@ -519,7 +495,7 @@ main:has(.xstrape-home-scope) {
 .xstrape-home-scope .xh-series-carousel__header .xh-heading {
   margin: 0;
   color: var(--xh-text);
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 55px;
   font-weight: 400;
   letter-spacing: 0;
@@ -540,7 +516,7 @@ main:has(.xstrape-home-scope) {
   background: linear-gradient(180deg, #2f2f2f, #1a1a1a);
   box-shadow: inset 0 -10px 15px 1px #0e0e0e, inset 0 0 0 1px #292929;
   color: #ffffff;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.28px;
@@ -649,7 +625,7 @@ main:has(.xstrape-home-scope) {
   padding: 10px 8px 3px !important;
   background: transparent;
   color: var(--xh-text);
-  font-family: "Gotham-Book", sans-serif;
+  font-family: "Xstrapetm Text", sans-serif;
 }
 
 .xstrape-home-scope.xh-series-carousel .product-card__info > .v-stack {
@@ -669,7 +645,7 @@ main:has(.xstrape-home-scope) {
   width: 100%;
   max-width: 100%;
   color: #000000;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 24px;
   font-weight: 700;
   letter-spacing: 0;
@@ -695,7 +671,7 @@ main:has(.xstrape-home-scope) {
 .xstrape-home-scope.xh-series-carousel .price-list {
   min-width: 0;
   color: #000000;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0;
@@ -717,7 +693,7 @@ main:has(.xstrape-home-scope) {
 
 .xstrape-home-scope.xh-series-carousel .product-card__price-pill sale-price {
   color: #000000 !important;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 16px !important;
   font-weight: 700 !important;
   line-height: 20px;
@@ -727,7 +703,7 @@ main:has(.xstrape-home-scope) {
 .xstrape-home-scope.xh-series-carousel .product-card__price-pill unit-price {
   display: inline !important;
   color: #6c6c6c !important;
-  font-family: "Gotham-Book", sans-serif;
+  font-family: "Xstrapetm Text", sans-serif;
   font-size: 14px !important;
   font-weight: 400;
   line-height: 20px;
@@ -1092,7 +1068,7 @@ main:has(.xstrape-home-scope) {
   display: block;
   max-width: 500px;
   color: #17132f;
-  font-family: "Gotham-Book", sans-serif;
+  font-family: var(--label-font-family, "Xstrapetm Label", monospace);
   font-size: var(--xh-feature-kicker-size, 28px);
   font-weight: 400;
   letter-spacing: 0;
@@ -1104,7 +1080,7 @@ main:has(.xstrape-home-scope) {
   width: 480px;
   max-width: 100%;
   color: #17132f;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: var(--xh-feature-heading-size, 52px);
   font-weight: 400;
   letter-spacing: 0;
@@ -1123,7 +1099,7 @@ main:has(.xstrape-home-scope) {
   background: #dfff32;
   box-shadow: none;
   color: #17132f;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: var(--xh-feature-button-size, 16px);
   font-weight: 400;
   letter-spacing: -0.32px;
@@ -1176,7 +1152,7 @@ main:has(.xstrape-home-scope) {
   display: block;
   margin: 0;
   color: var(--xh-review-text, #ffffff);
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 56px;
   font-weight: 400;
   letter-spacing: -2.24px;
@@ -1185,7 +1161,7 @@ main:has(.xstrape-home-scope) {
 
 .xstrape-home-scope .xh-review-banner .xh-media-card__title {
   color: var(--xh-review-text, #ffffff);
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 56px;
   font-weight: 400;
   letter-spacing: -2.24px;
@@ -1197,7 +1173,7 @@ main:has(.xstrape-home-scope) {
   margin: 8px 0 0;
   padding: 0 0 10px;
   color: var(--xh-review-muted, #ffffff);
-  font-family: "Gotham-Book", sans-serif;
+  font-family: "Xstrapetm Text", sans-serif;
   font-size: 23px;
   font-weight: 400;
   letter-spacing: -0.92px;
@@ -1211,7 +1187,7 @@ main:has(.xstrape-home-scope) {
   padding: 14px 24px;
   background: #fff;
   color: #000;
-  font-family: "Gotham-Bold", sans-serif;
+  font-family: "Xstrapetm Display", sans-serif;
   font-size: 16px;
   font-weight: 400;
   letter-spacing: -0.32px;
@@ -1246,7 +1222,7 @@ main:has(.xstrape-home-scope) {
 .xstrape-home-scope .xh-quote__author {
   margin: clamp(28px, 2.4vw, 42px) 0 0;
   color: var(--xh-text);
-  font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+  font-family: "Xstrapetm Display", var(--heading-font-family), sans-serif;
   font-size: clamp(22px, 1.6vw, 34px);
   font-weight: 700;
   letter-spacing: 0;
