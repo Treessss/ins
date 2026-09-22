@@ -2182,6 +2182,12 @@ main:has(.xstrape-home-scope) {
   line-height: 1.4;
 }
 
+/* Even out two-line display titles instead of leaving a single orphan word. */
+.xstrape-home-scope .xh-media-card__title,
+.xstrape-home-scope .xh-nomad-tile__heading {
+  text-wrap: balance;
+}
+
 /* Hero label sits above the headline — a small gap keeps them from touching when
    the label wraps on narrow screens. */
 .xstrape-home-scope .xh-hero__content .xh-eyebrow {
