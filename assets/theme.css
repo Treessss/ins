@@ -765,7 +765,7 @@ body {
 [class*="kicker"],
 [class*="eyebrow"],
 [class*="label"],
-.badge {
+[class*="badge"] {
   font-family: var(--label-font-family, "Xstrapetm Label", monospace);
 }
 

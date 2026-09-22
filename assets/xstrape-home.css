@@ -519,7 +519,7 @@ main:has(.xstrape-home-scope) {
   font-family: "Xstrapetm Display", sans-serif;
   font-size: 14px;
   font-weight: 400;
-  letter-spacing: -0.28px;
+  letter-spacing: -0.02em;
   line-height: 16px;
 }
 
@@ -922,7 +922,7 @@ main:has(.xstrape-home-scope) {
   color: var(--xh-text);
   font-size: 55px;
   font-weight: 900;
-  letter-spacing: -2.2px;
+  letter-spacing: -0.02em;
   line-height: 0.95;
   text-align: center;
 }
@@ -989,7 +989,7 @@ main:has(.xstrape-home-scope) {
   color: inherit;
   font-size: clamp(24px, 2.3vw, 33px);
   font-weight: 700;
-  letter-spacing: -1.32px;
+  letter-spacing: -0.02em;
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;
@@ -1102,7 +1102,7 @@ main:has(.xstrape-home-scope) {
   font-family: "Xstrapetm Display", sans-serif;
   font-size: var(--xh-feature-button-size, 16px);
   font-weight: 400;
-  letter-spacing: -0.32px;
+  letter-spacing: -0.02em;
   line-height: 1.11;
 }
 
@@ -1155,7 +1155,7 @@ main:has(.xstrape-home-scope) {
   font-family: "Xstrapetm Display", sans-serif;
   font-size: 56px;
   font-weight: 400;
-  letter-spacing: -2.24px;
+  letter-spacing: -0.02em;
   line-height: 53.2px;
 }
 
@@ -1164,7 +1164,7 @@ main:has(.xstrape-home-scope) {
   font-family: "Xstrapetm Display", sans-serif;
   font-size: 56px;
   font-weight: 400;
-  letter-spacing: -2.24px;
+  letter-spacing: -0.02em;
   line-height: 53.2px;
 }
 
@@ -1176,7 +1176,7 @@ main:has(.xstrape-home-scope) {
   font-family: "Xstrapetm Text", sans-serif;
   font-size: 23px;
   font-weight: 400;
-  letter-spacing: -0.92px;
+  letter-spacing: -0.02em;
   line-height: 21.85px;
 }
 
@@ -1190,7 +1190,7 @@ main:has(.xstrape-home-scope) {
   font-family: "Xstrapetm Display", sans-serif;
   font-size: 16px;
   font-weight: 400;
-  letter-spacing: -0.32px;
+  letter-spacing: -0.02em;
   line-height: 17.76px;
 }
 
@@ -1314,7 +1314,7 @@ main:has(.xstrape-home-scope) {
   color: #000;
   font-size: 55px;
   font-weight: 900;
-  letter-spacing: -2.2px;
+  letter-spacing: -0.02em;
   line-height: 1.11;
   text-align: center;
 }
@@ -1438,14 +1438,14 @@ main:has(.xstrape-home-scope) {
 .xstrape-home-scope.xh-nomad-heading h3 {
   padding-bottom: 10px;
   font-size: 33px;
-  letter-spacing: -1.32px;
+  letter-spacing: -0.02em;
   line-height: 0.95;
 }
 
 .xstrape-home-scope.xh-nomad-heading h2 {
   padding-bottom: 10px;
   font-size: 55px;
-  letter-spacing: -2.2px;
+  letter-spacing: -0.02em;
   line-height: 0.95;
 }
 
@@ -1594,7 +1594,7 @@ main:has(.xstrape-home-scope) {
   color: #000;
   font-size: 26px;
   font-weight: 900;
-  letter-spacing: -1.04px;
+  letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
@@ -1716,7 +1716,7 @@ main:has(.xstrape-home-scope) {
 
   .xstrape-home-scope .xh-series-carousel__header .xh-heading {
     font-size: 44px;
-    letter-spacing: -1.76px;
+    letter-spacing: -0.02em;
     line-height: 41.8px;
   }
 
@@ -1831,7 +1831,7 @@ main:has(.xstrape-home-scope) {
   .xstrape-home-scope .xh-review-banner .xh-media-card__title {
     padding-bottom: 10px;
     font-size: 47px;
-    letter-spacing: -1.88px;
+    letter-spacing: -0.02em;
     line-height: 44.65px;
   }
 
@@ -1877,7 +1877,7 @@ main:has(.xstrape-home-scope) {
     width: 100%;
     padding-bottom: 10px;
     font-size: 44px;
-    letter-spacing: -1.76px;
+    letter-spacing: -0.02em;
     line-height: 0.95;
   }
 
@@ -1904,7 +1904,7 @@ main:has(.xstrape-home-scope) {
 
   .xstrape-home-scope.xh-categories .xh-category-card .xh-media-card__title {
     font-size: 22px;
-    letter-spacing: -0.88px;
+    letter-spacing: -0.02em;
     line-height: 1.1;
   }
 
@@ -2017,7 +2017,7 @@ main:has(.xstrape-home-scope) {
     width: calc(100% - 30px);
     margin-inline: auto;
     font-size: 44px;
-    letter-spacing: -1.76px;
+    letter-spacing: -0.02em;
     line-height: 1.11;
   }
 
@@ -2042,13 +2042,13 @@ main:has(.xstrape-home-scope) {
 
   .xstrape-home-scope.xh-nomad-heading h3 {
     font-size: 22px;
-    letter-spacing: -0.88px;
+    letter-spacing: -0.02em;
     line-height: 0.95;
   }
 
   .xstrape-home-scope.xh-nomad-heading h2 {
     font-size: clamp(38px, 11.75vw, 47px);
-    letter-spacing: -1.88px;
+    letter-spacing: -0.02em;
     line-height: 0.95;
   }
 
@@ -2068,13 +2068,13 @@ main:has(.xstrape-home-scope) {
   .xstrape-home-scope.xh-nomad-split .xh-nomad-tile__kicker {
     font-size: 22px;
     line-height: 1.1;
-    letter-spacing: -0.88px;
+    letter-spacing: -0.02em;
   }
 
   .xstrape-home-scope.xh-nomad-split .xh-nomad-tile__heading {
     font-size: 47px;
     line-height: 0.95;
-    letter-spacing: -1.88px;
+    letter-spacing: -0.02em;
   }
 
   .xstrape-home-scope.xh-nomad-split .xh-nomad-tile__button {
@@ -2094,7 +2094,90 @@ main:has(.xstrape-home-scope) {
   .xstrape-home-scope.xh-nomad-link-tiles .xh-nomad-link-tile__title {
     padding: 22px 16px 10px 35px;
     font-size: 22px;
-    letter-spacing: -0.88px;
+    letter-spacing: -0.02em;
     line-height: 1.1;
   }
+}
+
+/* ==============================================================================
+   BRAND TYPOGRAPHY PASS
+
+   The homepage was originally typeset with Gotham. The rules below re-seat it on
+   the brand faces and re-tune leading / tracking / weight for their metrics:
+
+     display  → primary rounded grotesk (Fredoka)
+     copy     → supporting geometric sans (Poppins)
+     labels   → monospace (Space Mono)
+
+   Placed last on purpose: the selectors match the specificity of the rules above
+   so they win by source order, and they also normalise the values inside the
+   mobile media queries above.
+   ============================================================================== */
+
+/* --- Display: headings, titles, buttons ------------------------------------- */
+.xstrape-home-scope .xh-heading,
+.xstrape-home-scope .xh-media-card__title,
+.xstrape-home-scope .xh-favorite-card__title,
+.xstrape-home-scope .xh-nomad-tile__heading,
+.xstrape-home-scope .xh-nomad-link-tile__title,
+.xstrape-home-scope .xh-nomad-heading h2,
+.xstrape-home-scope .xh-nomad-heading h3,
+.xstrape-home-scope .xh-category-feature__heading,
+.xstrape-home-scope .xh-quote__author,
+.xstrape-home-scope .xh-quote__text,
+.xstrape-home-scope .xh-pill-button,
+.xstrape-home-scope .xh-nomad-tile__button,
+.xstrape-home-scope .xh-category-feature__button {
+  font-family: var(--heading-font-family, "Xstrapetm Display", sans-serif);
+}
+
+/* Fredoka sits taller and heavier than the Gotham cut, so headlines get a touch
+   more leading and less negative tracking than the original values. */
+.xstrape-home-scope .xh-heading,
+.xstrape-home-scope .xh-media-card__title,
+.xstrape-home-scope .xh-favorite-card__title,
+.xstrape-home-scope .xh-nomad-tile__heading,
+.xstrape-home-scope .xh-nomad-link-tile__title,
+.xstrape-home-scope .xh-nomad-heading h2,
+.xstrape-home-scope .xh-nomad-heading h3,
+.xstrape-home-scope .xh-category-feature__heading {
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+}
+
+/* Hero heading is the biggest display line on the page. */
+.xstrape-home-scope .xh-hero__content .xh-heading {
+  line-height: 1.06;
+}
+
+/* Long pull-quote reads better with looser leading than a short headline. */
+.xstrape-home-scope .xh-quote__text {
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+/* --- Labels: mono, with a little tracking so they read as labels ------------ */
+.xstrape-home-scope .xh-eyebrow,
+.xstrape-home-scope .xh-series-carousel__header .xh-eyebrow,
+.xstrape-home-scope.xh-nomad-split .xh-nomad-tile__kicker,
+.xstrape-home-scope .xh-category-feature__kicker,
+.xstrape-home-scope .xh-badge {
+  font-family: var(--label-font-family, "Xstrapetm Label", monospace);
+  letter-spacing: 0.04em;
+}
+
+/* Mono label above a heading should not carry negative tracking. */
+.xstrape-home-scope.xh-nomad-split .xh-nomad-tile__kicker {
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+/* --- Copy: geometric sans, no negative tracking ----------------------------- */
+.xstrape-home-scope .xh-review-banner .xh-media-card__text {
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+.xstrape-home-scope .xh-hero__content .xh-subheading {
+  line-height: 1.4;
 }
