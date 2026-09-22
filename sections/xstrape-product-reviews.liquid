@@ -167,7 +167,7 @@
     --xpr-star: {{ section.settings.star_color | default: '#000000' }};
     --xpr-star-empty: #c2c1c0;
     --xpr-rule: #f3f3f3;
-    --xpr-serif: Aleo, HelveticaNeue, "Helvetica Neue", sans-serif;
+    --xpr-body: var(--text-font-family), sans-serif;
     --xpr-gotham-book: "Xstrapetm Text", sans-serif;
     --xpr-gotham-bold: "Xstrapetm Display", sans-serif;
   }
@@ -177,7 +177,7 @@
     color: var(--xpr-text);
     padding-block: 44px 64px;
     padding-inline: 0;
-    font-family: var(--xpr-serif);
+    font-family: var(--xpr-body);
     font-size: 16px;
     line-height: 24px;
   }
@@ -278,7 +278,7 @@
   #shopify-section-{{ section.id }} .xpr-recommendation {
     margin: 0;
     color: var(--xpr-muted);
-    font-family: var(--xpr-serif);
+    font-family: var(--xpr-body);
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
@@ -367,7 +367,7 @@
   #shopify-section-{{ section.id }} .xpr-summary__body {
     max-width: 600px;
     color: var(--xpr-muted);
-    font-family: var(--xpr-serif);
+    font-family: var(--xpr-body);
     font-size: 16px;
     line-height: 24px;
   }
@@ -478,7 +478,7 @@
 
   #shopify-section-{{ section.id }} .xpr-review-body {
     color: var(--xpr-text);
-    font-family: var(--xpr-serif);
+    font-family: var(--xpr-body);
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;

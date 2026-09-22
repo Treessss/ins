@@ -2145,6 +2145,19 @@ main:has(.xstrape-home-scope) {
   line-height: 1.08;
 }
 
+/* Section-level rules carry more specificity than the group above, so they are
+   listed again to inherit the same brand leading and tracking. */
+.xstrape-home-scope.xh-categories .xh-heading,
+.xstrape-home-scope.xh-community .xh-heading,
+.xstrape-home-scope .xh-series-carousel__header .xh-heading,
+.xstrape-home-scope .xh-review-banner .xh-media-card__title,
+.xstrape-home-scope.xh-categories .xh-category-card .xh-media-card__title,
+.xstrape-home-scope.xh-nomad-split .xh-nomad-tile__heading,
+.xstrape-home-scope.xh-categories .xh-category-feature__heading {
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+}
+
 /* Hero heading is the biggest display line on the page. */
 .xstrape-home-scope .xh-hero__content .xh-heading {
   line-height: 1.06;
@@ -2209,5 +2222,34 @@ main:has(.xstrape-home-scope) {
 @media screen and (max-width: 699px) {
   .xstrape-home-scope .xh-stars {
     font-size: 15px;
+  }
+}
+
+/* Mobile heading scale. Fredoka carries noticeably more visual weight than the
+   Gotham cut these sizes were chosen for, so section headlines step down one
+   notch on phones while staying bold and brand-forward. */
+@media screen and (max-width: 699px) {
+  .xstrape-home-scope.xh-favorites .xh-section-header .xh-heading {
+    font-size: 40px;
+  }
+
+  .xstrape-home-scope.xh-categories .xh-heading,
+  .xstrape-home-scope.xh-community .xh-heading,
+  .xstrape-home-scope .xh-series-carousel__header .xh-heading,
+  .xstrape-home-scope .xh-nomad-heading h2 {
+    font-size: 38px;
+  }
+
+  .xstrape-home-scope .xh-review-banner .xh-media-card__title {
+    font-size: 40px;
+  }
+
+  .xstrape-home-scope.xh-nomad-split .xh-nomad-tile__heading,
+  .xstrape-home-scope .xh-nomad-tile__heading {
+    font-size: 36px;
+  }
+
+  .xstrape-home-scope .xh-nomad-tile__kicker {
+    font-size: 16px;
   }
 }
