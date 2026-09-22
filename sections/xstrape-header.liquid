@@ -166,22 +166,13 @@
     display: block;
     width: auto;
     max-width: min({{ section.settings.logo_width }}px, 38vw);
-    max-height: calc(var(--xstrape-header-height) - 24px);
+    max-height: calc(var(--xstrape-header-height) - 16px);
     height: auto;
     flex: 0 0 auto;
     object-fit: contain;
     object-position: center;
     transform: translateY(var(--xstrape-logo-y-offset));
   }
-
-  {%- assign header_bar_brightness = section.settings.bar_background | color_brightness -%}
-  {%- if header_bar_brightness < 140 -%}
-  /* The logo artwork is a dark monochrome PNG, so it is flipped to the light
-     brand tint whenever the bar background is dark. */
-  #shopify-section-{{ section.id }} .xstrape-header__logo-image {
-    filter: brightness(0) invert(1);
-  }
-  {%- endif -%}
 
   #shopify-section-{{ section.id }} .xstrape-header__logo-text {
     display: inline-flex;
@@ -1895,7 +1886,7 @@
       "step": 5,
       "unit": "px",
       "label": "桌面标志宽度",
-      "default": 190
+      "default": 240
     },
     {
       "type": "range",
@@ -2154,7 +2145,7 @@
       "step": 1,
       "unit": "px",
       "label": "移动端标志高度留白",
-      "default": 27
+      "default": 14
     },
     {
       "type": "range",
