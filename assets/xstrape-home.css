@@ -369,7 +369,7 @@ main:has(.xstrape-home-scope) {
 
 .xstrape-home-scope.xh-favorites .xh-section-header {
   display: block;
-  margin-bottom: 7px;
+  margin-bottom: clamp(22px, 2.6vw, 36px);
   text-align: center;
 }
 
@@ -384,7 +384,7 @@ main:has(.xstrape-home-scope) {
   font-size: clamp(3rem, 3.82vw, 3.45rem);
   font-weight: 900;
   letter-spacing: 0;
-  line-height: 0.95;
+  line-height: 1.05;
   text-align: center;
 }
 
