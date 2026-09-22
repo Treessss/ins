@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "顶部导航组",
@@ -344,7 +353,7 @@
       "settings": {
         "overlay_on_homepage": true,
         "enable_sticky": true,
-        "logo": "shopify://shop_images/Image_1.png",
+        "logo": "shopify://shop_images/Codex_2026_9_22_16_57_54.png",
         "logo_text": "XSTRAPETM",
         "logo_width": 190,
         "logo_mobile_width": 110,
@@ -358,8 +367,8 @@
         "announcement_link_text": "Shop pet favorites",
         "announcement_link": "/collections/all",
         "show_announcement_info_icon": true,
-        "announcement_background": "#FF4F88",
-        "announcement_text_color": "#17132F",
+        "announcement_background": "#ff4f88",
+        "announcement_text_color": "#17132f",
         "show_search": true,
         "show_cart": true,
         "show_account": false,
@@ -395,11 +404,11 @@
         "mobile_subtitle_font_size": 11,
         "mobile_badge_font_size": 11,
         "mobile_arrow_size": 23,
-        "bar_background": "#17132F",
-        "panel_background": "#F2F9ED",
-        "card_background": "#FFFFFF",
-        "text_color": "#F2F9ED",
-        "accent_color": "#FF4F88",
+        "bar_background": "#17132f",
+        "panel_background": "#f2f9ed",
+        "card_background": "#ffffff",
+        "text_color": "#f2f9ed",
+        "accent_color": "#ff4f88",
         "shadow_opacity": 18
       }
     },
