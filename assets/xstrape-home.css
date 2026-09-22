@@ -1912,15 +1912,17 @@ main:has(.xstrape-home-scope) {
   }
 
   .xstrape-home-scope.xh-categories .xh-category-card .xh-media-card__body {
-    max-width: calc(100% - 15px);
+    max-width: calc(100% - 12px);
     min-height: 44px;
-    padding: 10px 10px 10px 30px;
+    padding: 8px 10px 8px 18px;
   }
 
   .xstrape-home-scope.xh-categories .xh-category-card .xh-media-card__title {
-    font-size: 22px;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+    /* Narrow two-column tiles: smaller type, and wrap instead of clipping. */
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    white-space: normal;
   }
 
   .xstrape-home-scope.xh-categories .xh-category-features {
