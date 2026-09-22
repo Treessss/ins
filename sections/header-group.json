@@ -367,7 +367,7 @@
         "announcement_link_text": "Shop pet favorites",
         "announcement_link": "/collections/all",
         "show_announcement_info_icon": true,
-        "announcement_background": "#ff4f88",
+        "announcement_background": "#dfff32",
         "announcement_text_color": "#17132f",
         "show_search": true,
         "show_cart": true,
