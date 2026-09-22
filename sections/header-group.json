@@ -395,10 +395,10 @@
         "mobile_subtitle_font_size": 11,
         "mobile_badge_font_size": 11,
         "mobile_arrow_size": 23,
-        "bar_background": "#DFFF32",
+        "bar_background": "#17132F",
         "panel_background": "#F2F9ED",
         "card_background": "#FFFFFF",
-        "text_color": "#17132F",
+        "text_color": "#F2F9ED",
         "accent_color": "#FF4F88",
         "shadow_opacity": 18
       }
