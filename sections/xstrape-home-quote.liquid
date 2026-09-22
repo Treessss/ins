@@ -1,7 +1,7 @@
 {% if section.settings.quote_text != blank %}
   <section
     class="xstrape-home-scope xh-quote"
-    style="--xh-page-bg: {{ section.settings.page_background | default: '#f3f3f3' }}; --xh-text: {{ section.settings.text_color | default: '#111111' }}; --xh-muted: {{ section.settings.muted_text_color | default: '#6c6c6c' }};"
+    style="--xh-page-bg: {{ section.settings.page_background | default: '#F2F9ED' }}; --xh-text: {{ section.settings.text_color | default: '#17132F' }}; --xh-muted: {{ section.settings.muted_text_color | default: '#5C566E' }};"
   >
     <p class="xh-quote__text">“{{ section.settings.quote_text | escape }}”</p>
     {% if section.settings.quote_author != blank %}
@@ -36,19 +36,19 @@
       "type": "color",
       "id": "page_background",
       "label": "背景",
-      "default": "#f3f3f3"
+      "default": "#F2F9ED"
     },
     {
       "type": "color",
       "id": "text_color",
       "label": "文字",
-      "default": "#111111"
+      "default": "#17132F"
     },
     {
       "type": "color",
       "id": "muted_text_color",
       "label": "次要文字",
-      "default": "#6c6c6c"
+      "default": "#5C566E"
     }
   ],
   "presets": [

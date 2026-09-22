@@ -160,13 +160,13 @@
 
 <style>
   #shopify-section-{{ section.id }} {
-    --xpr-bg: {{ section.settings.background | default: '#f3f3f3' }};
+    --xpr-bg: {{ section.settings.background | default: '#F2F9ED' }};
     --xpr-surface: {{ section.settings.card_background | default: '#ffffff' }};
-    --xpr-text: {{ section.settings.text_color | default: '#000000' }};
-    --xpr-muted: {{ section.settings.muted_text_color | default: '#000000' }};
-    --xpr-star: {{ section.settings.star_color | default: '#000000' }};
+    --xpr-text: {{ section.settings.text_color | default: '#17132F' }};
+    --xpr-muted: {{ section.settings.muted_text_color | default: '#17132F' }};
+    --xpr-star: {{ section.settings.star_color | default: '#17132F' }};
     --xpr-star-empty: #c2c1c0;
-    --xpr-rule: #f3f3f3;
+    --xpr-rule: #F2F9ED;
     --xpr-body: var(--text-font-family), sans-serif;
     --xpr-gotham-book: "Xstrapetm Text", sans-serif;
     --xpr-gotham-bold: "Xstrapetm Display", sans-serif;
@@ -326,8 +326,8 @@
     align-items: center;
     justify-content: center;
     padding: 0;
-    border: 2px solid #d9d9d9;
-    background: linear-gradient(181deg, #f3f3f3, #eeeeee);
+    border: 2px solid rgba(23, 19, 47, 0.14);
+    background: linear-gradient(181deg, #F2F9ED, #F2F9ED);
     color: var(--xpr-text);
     font-family: var(--xpr-gotham-book);
     font-size: 14px;
@@ -553,7 +553,7 @@
     height: auto;
     display: block;
     border-radius: 8px;
-    background: #111111;
+    background: #17132F;
     object-fit: contain;
   }
 
@@ -583,7 +583,7 @@
     border: 0;
     border-radius: 999px;
     background: rgb(255 255 255 / 0.92);
-    color: #111111;
+    color: #17132F;
     cursor: pointer;
   }
 
@@ -683,7 +683,7 @@
     border: 0 solid #e0e0e0;
     border-radius: 100px;
     background: #ffffff;
-    color: #000000;
+    color: #17132F;
     font-family: var(--xpr-gotham-bold);
     font-size: 16px;
     line-height: 17.76px;
@@ -1920,7 +1920,7 @@
       "type": "color",
       "id": "background",
       "label": "背景颜色",
-      "default": "#f3f3f3"
+      "default": "#F2F9ED"
     },
     {
       "type": "color",
@@ -1932,7 +1932,7 @@
       "type": "color",
       "id": "text_color",
       "label": "文字颜色",
-      "default": "#111111"
+      "default": "#17132F"
     },
     {
       "type": "color",
@@ -1944,7 +1944,7 @@
       "type": "color",
       "id": "star_color",
       "label": "星星颜色",
-      "default": "#111111"
+      "default": "#17132F"
     }
   ],
   "blocks": [

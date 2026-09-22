@@ -1,6 +1,6 @@
 <section
   class="xstrape-home-scope xh-section xh-review-section"
-  style="--xh-page-bg: {{ section.settings.page_background | default: '#f3f3f3' }}; --xh-review-text: {{ section.settings.text_color | default: '#ffffff' }}; --xh-review-muted: {{ section.settings.muted_text_color | default: '#ffffff' }}; --xh-review-overlay-opacity: {{ section.settings.image_overlay_opacity | default: 0 | divided_by: 100.0 }};"
+  style="--xh-page-bg: {{ section.settings.page_background | default: '#F2F9ED' }}; --xh-review-text: {{ section.settings.text_color | default: '#ffffff' }}; --xh-review-muted: {{ section.settings.muted_text_color | default: '#ffffff' }}; --xh-review-overlay-opacity: {{ section.settings.image_overlay_opacity | default: 0 | divided_by: 100.0 }};"
 >
   <div class="xh-container">
     <a class="xh-media-card xh-review-banner" {% if section.settings.review_link != blank %}href="{{ section.settings.review_link }}"{% endif %}>
@@ -105,7 +105,7 @@
       "type": "color",
       "id": "page_background",
       "label": "背景",
-      "default": "#f3f3f3"
+      "default": "#F2F9ED"
     },
     {
       "type": "color",
