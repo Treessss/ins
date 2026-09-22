@@ -949,7 +949,21 @@ main:has(.xstrape-home-scope) {
 }
 
 .xstrape-home-scope.xh-categories .xh-category-card::after {
-  display: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Category tiles have bright, cut-out product shots behind the label, so a
+     left-to-right brand scrim keeps the title readable on every image while
+     leaving the right-hand side of the photo clean. */
+  background: linear-gradient(
+    90deg,
+    rgb(23 19 47 / 0.74) 0%,
+    rgb(23 19 47 / 0.52) 42%,
+    rgb(23 19 47 / 0.16) 68%,
+    rgb(23 19 47 / 0) 86%
+  );
+  pointer-events: none;
 }
 
 .xstrape-home-scope.xh-categories .xh-category-card .xh-media-card__image,
@@ -992,6 +1006,7 @@ main:has(.xstrape-home-scope) {
   letter-spacing: -0.02em;
   line-height: 1.1;
   text-align: center;
+  text-shadow: 0 1px 10px rgb(23 19 47 / 0.45);
   white-space: nowrap;
 }
 
