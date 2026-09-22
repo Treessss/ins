@@ -2181,3 +2181,27 @@ main:has(.xstrape-home-scope) {
 .xstrape-home-scope .xh-hero__content .xh-subheading {
   line-height: 1.4;
 }
+
+/* Hero label sits above the headline — a small gap keeps them from touching when
+   the label wraps on narrow screens. */
+.xstrape-home-scope .xh-hero__content .xh-eyebrow {
+  line-height: 1.15;
+  margin-bottom: 0.55rem;
+}
+
+/* "PLAY • EXPLORE • REST" is a bullet-separated label, not a second headline:
+   on the brand sheet that kind of line is monospace and small, which also gives
+   the banner back its hierarchy (label → headline). */
+.xstrape-home-scope .xh-stars {
+  font-family: var(--label-font-family, "Xstrapetm Label", monospace);
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+}
+
+@media screen and (max-width: 699px) {
+  .xstrape-home-scope .xh-stars {
+    font-size: 15px;
+  }
+}

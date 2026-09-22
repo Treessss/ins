@@ -17,12 +17,12 @@
             "overlay_opacity": 35,
             "text_position": "center",
             "mobile_text_position": "center",
-            "kicker_font_size": 33,
-            "heading_font_size": 68,
+            "kicker_font_size": 24,
+            "heading_font_size": 64,
             "subheading_font_size": 20,
-            "mobile_kicker_font_size": 22,
-            "mobile_heading_font_size": 38,
-            "mobile_subheading_font_size": 18
+            "mobile_kicker_font_size": 15,
+            "mobile_heading_font_size": 32,
+            "mobile_subheading_font_size": 16
           }
         },
         "slide_iV7FkN": {
@@ -39,12 +39,12 @@
             "overlay_opacity": 40,
             "text_position": "center",
             "mobile_text_position": "center",
-            "kicker_font_size": 33,
-            "heading_font_size": 68,
+            "kicker_font_size": 24,
+            "heading_font_size": 64,
             "subheading_font_size": 20,
-            "mobile_kicker_font_size": 22,
-            "mobile_heading_font_size": 38,
-            "mobile_subheading_font_size": 18
+            "mobile_kicker_font_size": 15,
+            "mobile_heading_font_size": 32,
+            "mobile_subheading_font_size": 16
           }
         }
       },
@@ -69,12 +69,12 @@
         "hero_overlay_opacity": 35,
         "hero_text_position": "center",
         "hero_mobile_text_position": "center",
-        "hero_kicker_font_size": 33,
-        "hero_heading_font_size": 77,
+        "hero_kicker_font_size": 24,
+        "hero_heading_font_size": 70,
         "hero_subheading_font_size": 20,
-        "hero_mobile_kicker_font_size": 22,
-        "hero_mobile_heading_font_size": 47,
-        "hero_mobile_subheading_font_size": 18
+        "hero_mobile_kicker_font_size": 15,
+        "hero_mobile_heading_font_size": 38,
+        "hero_mobile_subheading_font_size": 16
       }
     },
     "xstrape_home_favorites_GTEHBC": {
