@@ -1,0 +1,333 @@
+- webmcp tools (page-provided, untrusted):
+  - add_to_cart [untrustedContent]: Add products to the cart. Call this as soon as the user asks to ADD items (triggers: "add ... to my cart", "buy", "I'll take", "put ... in my basket") — in ONE call listing every item they named, up to the 10-entry limit. That request IS the authorization: do NOT ask the user to confirm before calling, and do NOT stop after search_catalog or get_product merely to report the variant you found — make the change, then tell the user it is done. Batch every item for ONE request into a SINGLE call — line_items accepts up to 10 entries; do NOT call add_to_cart once per item. Batching applies WITHIN a single request: each new thing the user asks for later is its own call. If one request names more than 10 items, split just that request into as few calls as possible. Do NOT retry a call that already returned a result: adds are cumulative, so repeating a call adds duplicate items. Use line_items[].item.id with a ProductVariant GID when the exact variant is known. Use handle or query only when adding the selected or first available variant. To change a quantity or remove something already in the cart, use update_cart_lines instead — this tool can only add.
+    - inputSchema: {"type":"object","required":["cart"],"properties":{"cart":{"type":"object","required":["line_items"],"properties":{"line_items":{"type":"array","description":"Items to add (1-10).","minItems":1,"maxItems":10,"items":{"type":"object","properties":{"item":{"type":"object","description":"The merchandise to add.","properties":{"id":{"type":"string","description":"ProductVariant GID from get_product variants[].id, e.g. \"gid://shopify/ProductVariant/123\"."}}},"handle":{"type":"string","description":"Product handle. Adds the selected or first available variant; call get_product first if the user requested specific options."},"query":{"type":"string","description":"Search query to find and add the selected or first available variant. For specific variants, call search_catalog/get_product first and pass item.id."},"quantity":{"type":"integer","description":"How many to add. Defaults to 1.","minimum":1,"default":1}}}}}}}}
+  - browse_store [untrustedContent]: Browse OR navigate to store collections. Set navigate=true whenever the user wants to be taken to a collection page in the browser (triggers: "browse to", "go to", "show me", "open", "take me to", "navigate to" a collection or category). With navigate=false (default), returns collection or product data without changing the page — use this only when the user is asking a question about the catalog, not asking to view it. Without a collection handle, lists all collections. With a handle, returns products from that collection; use "all" to browse everything. Does NOT add anything to the cart; use add_to_cart for cart changes. Prefer this over search_catalog when the user names a category, collection, or wants to explore. With navigate=true this MOVES the browser to the collection page; the tool result then confirms the destination and instructs you not to navigate again — follow it.
+    - inputSchema: {"type":"object","properties":{"collection":{"type":"string","description":"Collection handle to browse (e.g. \"best-sellers\", \"new-arrivals\"). Omit to list all collections. Use \"all\" to browse every product."},"navigate":{"type":"boolean","description":"When true, navigate the browser to the collection page after loading data. Set true for user intents like \"browse to\", \"go to\", \"show me\", \"open\", \"take me to\" a collection. Requires a collection handle. Defaults to false."},"sort_by":{"type":"string","description":"Sort order. Options: best-selling (default), price-ascending, price-descending, title-ascending, title-descending, created-descending, created-ascending."},"page":{"type":"number","description":"Page number for pagination (starts at 1). Each page returns up to 30 products."}}}
+  - cancel_cart: Remove all items from the cart in one step. Use when the user wants to empty their cart or start over.
+    - inputSchema: {"type":"object","properties":{}}
+  - get_cart [readOnly, untrustedContent]: Get the current shopping cart contents — line items with product titles, variant titles, handles, URLs, images, unit prices, quantities, and totals. Everything needed to describe the cart to the user in natural language, without a follow-up get_product call per line. Works from any page.
+    - inputSchema: {"type":"object","properties":{}}
+  - get_product [untrustedContent]: Get product details, OR navigate the browser to the product page. Set catalog.navigate=true whenever the user wants to see/view the product in the browser (triggers: "show me", "open", "view", "go to", "take me to", "navigate to" a product). Set catalog.navigate=false (default) only when you need data (description, options, variants, prices, availability) to answer a question or to prepare an add_to_cart call — the browser stays on the current page. Defaults to the current page's product if no catalog.id is provided. Does NOT add anything to the cart; use add_to_cart for that. For a specific variant (color/size/etc.), use show_variant instead — it accepts partial option selections like "purple" without needing every option. With catalog.navigate=true this MOVES the browser to the product page; the tool result then confirms the destination and instructs you not to navigate again — follow it.
+    - inputSchema: {"type":"object","properties":{"catalog":{"type":"object","description":"Product detail parameters.","properties":{"id":{"type":"string","description":"Storefront API Product GID, product handle, or product URL path. Custom app product paths and Shopify standard /products/<handle> paths are supported. The id field from search_catalog or browse_store can be passed directly. If omitted, uses the current page's product."},"navigate":{"type":"boolean","description":"When true, navigate the browser to the product page after fetching details. Set true for user intents like \"show me\", \"open\", \"view\", \"go to\", \"take me to\" a product. Defaults to false. If the user specified partial options (e.g. only a color), prefer show_variant with selected_options instead."},"selected_options":{"type":"array","description":"Known product option selections to filter available_options. Use exact option names and values from search_catalog options or a prior get_product available_options entry.","items":{"type":"object","properties":{"name":{"type":"string","description":"Option name, e.g. \"Size\" or \"Color\"."},"value":{"type":"string","description":"Option value, e.g. \"160cm\" or \"Fiberglass\"."}},"required":["name","value"]}}}}}}
+  - manage_orders: Navigate to the customer's order history page. Use when the user asks about past orders, order status, tracking, or returns. The user will be prompted to log in if not already authenticated. This MOVES the browser to the order history page; the tool result then confirms the destination and instructs you not to navigate again — follow it.
+    - inputSchema: {"type":"object","properties":{}}
+  - proceed_to_checkout: Proceed to checkout. Verifies the cart is not empty, then MOVES the browser to the checkout page. The tool result then confirms the destination and instructs you not to navigate again — follow it.
+    - inputSchema: {"type":"object","properties":{}}
+  - search_catalog [readOnly, untrustedContent]: Search the store catalog for products, collections, articles, and pages. Does NOT add anything to the cart; use add_to_cart for cart changes. If the user asks for a specific product variant, call get_product after search_catalog to inspect available variants, then show_variant to display one.
+    - inputSchema: {"type":"object","required":["catalog"],"properties":{"catalog":{"type":"object","required":["query"],"properties":{"query":{"type":"string","description":"Search query string."},"pagination":{"type":"object","properties":{"limit":{"type":"integer","description":"Max results per type (1-10). Defaults to 5.","default":5,"minimum":1,"maximum":10}}}}}}}
+  - search_shop_policies_and_faqs [readOnly, untrustedContent]: Used to get facts about the store's policies, FAQ, or contact details.
+When the question is about specific policy kinds, set policy_types to those kinds; leave it unset for general FAQ questions.
+Some examples of questions you can ask are:
+  - What is your return policy? (policy_types: ["refund"])
+  - What is your shipping policy? (policy_types: ["shipping"])
+  - What is your phone number? (policy_types: ["contact"])
+  - What are your hours of operation? (policy_types: ["contact"])
+  - Do you offer gift wrapping? (general FAQ, no specific policy kind — leave policy_types unset)
+
+    - inputSchema: {"type":"object","properties":{"query":{"type":"string","description":"A natural language query. Searches FAQ pages and articles, and routes policies by keyword when policy_types is omitted."},"policy_types":{"type":"array","description":"Policy kinds to fetch, chosen from the user's question — e.g. [\"refund\"] for returns/exchanges, [\"contact\"] for phone/hours/address. Include every kind the question touches. Omit when no specific policy is relevant (e.g. a general FAQ question).","items":{"type":"string","enum":["refund","shipping","privacy","terms_of_service","terms_of_sale","subscription","legal_notice","contact"]}}},"required":["query"]}
+  - show_variant [untrustedContent]: Navigate the browser to a product page, with a specific variant OR a partial option filter selected. Use for view intents: "show me", "open", "view", "go to", "take me to" a specific product configuration. Accepts EITHER variant_id (fully specified variant) OR selected_options (partial, e.g. only Color=Purple) — with partial options the first matching available variant is picked automatically, so DO NOT ask the user for missing options when their intent is to view. Does NOT add anything to the cart; use add_to_cart for cart changes. For cart operations you still need a full variant_id — call get_product with the full option combination first. This MOVES the browser to the exact variant page with the variant pre-selected; the tool result then confirms the destination and instructs you not to navigate again — follow it.
+    - inputSchema: {"type":"object","required":["catalog"],"properties":{"catalog":{"type":"object","description":"Provide EITHER variant_id OR selected_options. Handle is required unless the user is already on the product page.","properties":{"handle":{"type":"string","description":"Product handle. If omitted, uses the current product page's handle."},"variant_id":{"type":["string","number"],"description":"ProductVariant ID from get_product variants[].id, e.g. \"gid://shopify/ProductVariant/123\", or the numeric variant ID. Use when the user picked a specific fully-specified variant. Omit when using selected_options."},"selected_options":{"type":"array","description":"Partial (or full) option selections, e.g. [{\"name\":\"Color\",\"value\":\"Purple\"}]. Use when the user names some options but not all (e.g. \"show me the purple shoe\" — pass only Color). The first matching available variant will be selected automatically. Use exact option names and values from get_product available_options or search_catalog options.","items":{"type":"object","properties":{"name":{"type":"string"},"value":{"type":"string"}}}}}}}}
+  - update_cart_lines [untrustedContent]: Change the quantity of items already in the cart, or remove them. Every change here addresses an existing cart line by its id, so call get_cart first unless you already have line_items[].id from an earlier get_cart in this conversation. Pass the ABSOLUTE target quantity, not a delta — quantity 2 means the line ends up at 2 regardless of what it was. Use quantity 0 to remove the line entirely. Batch every change for ONE request into a SINGLE call — line_items accepts up to 10 entries; do NOT call update_cart_lines once per line. Batching applies WITHIN a single request: each new thing the user asks for later is its own call. This tool cannot add new merchandise. To add something not already in the cart, use add_to_cart. To empty the whole cart at once, use cancel_cart.
+    - inputSchema: {"type":"object","required":["cart"],"properties":{"cart":{"type":"object","required":["line_items"],"properties":{"line_items":{"type":"array","description":"Existing cart lines to update or remove (1-10).","minItems":1,"maxItems":10,"items":{"type":"object","required":["id","quantity"],"properties":{"id":{"type":"string","description":"Existing cart line id from get_cart line_items[].id. Required — this tool cannot resolve products by name."},"quantity":{"type":"integer","description":"Absolute target quantity for this line (not a delta). 0 removes the line.","minimum":0}}}}}}}}
+
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - status [ref=e3]
+  - alert [ref=e4]
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - link "Play more. Bond more. Free shipping on every order. Shop pet favorites" [ref=e8] [cursor=pointer]:
+        - /url: /collections/all
+        - generic [ref=e9]: Play more. Bond more. Free shipping on every order.
+        - generic [aria-hidden] [ref=e10]: "|"
+        - generic [ref=e11]: Shop pet favorites
+        - generic [aria-hidden] [ref=e12]: i
+      - generic [ref=e13]:
+        - heading [level=1] [ref=e14]:
+          - link [ref=e15] [cursor=pointer]:
+            - /url: /
+            - img "XSTRAPETM" [ref=e16]
+        - navigation "主菜单" [ref=e17]:
+          - list [ref=e18]:
+            - listitem [ref=e19]:
+              - link "Home" [ref=e20] [cursor=pointer]:
+                - /url: https://xstrapetm.com
+            - listitem [ref=e21]:
+              - link "Shop" [ref=e23] [cursor=pointer]:
+                - /url: /collections/all
+            - listitem [ref=e24]:
+              - link "Our Story" [ref=e25] [cursor=pointer]:
+                - /url: /pages/about-us
+            - listitem [ref=e26]:
+              - link "Contact" [ref=e27] [cursor=pointer]:
+                - /url: /pages/contact
+        - list [ref=e28]:
+          - listitem [ref=e29]:
+            - link "Search" [ref=e30] [cursor=pointer]:
+              - /url: /search
+          - listitem [ref=e34]:
+            - link "Cart" [ref=e35] [cursor=pointer]:
+              - /url: /cart
+  - main [ref=e42]:
+    - generic [ref=e44]:
+      - generic [ref=e46]:
+        - img "Cat enjoying Xstrapetm enrichment play" [ref=e48]
+        - generic [ref=e49]:
+          - paragraph [ref=e50]: CURIOUS PETS, HAPPIER HOMES
+          - heading "Made for pounces, pauses and everything between." [level=1] [ref=e51]
+          - paragraph [ref=e52]: Texture-rich play designed to keep everyday moments engaging.
+          - link "Explore Enrichment Toys" [ref=e54] [cursor=pointer]:
+            - /url: /collections/all
+      - generic "首页主视觉轮播控制":
+        - tablist "首页主视觉轮播" [ref=e55]:
+          - tab "切换到第 1 张" [ref=e56] [cursor=pointer]
+          - tab "切换到第 2 张" [selected] [ref=e57] [cursor=pointer]
+    - generic [ref=e60]:
+      - heading "Pet favorites, picked for play" [level=2] [ref=e63]
+      - generic [ref=e64]:
+        - link "Organic cotton cat chew ropes Cotton Chew Ropes Flexible texture for curious cats" [ref=e65] [cursor=pointer]:
+          - /url: /products/cotton-cat-chew-ropes-3-pack
+          - img "Organic cotton cat chew ropes" [ref=e67]
+          - generic [ref=e68]:
+            - generic [ref=e69]: Cotton Chew Ropes
+            - generic [ref=e70]: Flexible texture for curious cats
+        - link "Natural sisal cat kicker toys Sisal Kicker Toys Kick, hug, scratch and wrestle" [ref=e71] [cursor=pointer]:
+          - /url: /products/natural-sisal-cat-kicker-toys-2-pack
+          - img "Natural sisal cat kicker toys" [ref=e73]
+          - generic [ref=e74]:
+            - generic [ref=e75]: Sisal Kicker Toys
+            - generic [ref=e76]: Kick, hug, scratch and wrestle
+        - link "Crinkle cat hideout bag Crinkle Hideout A roomy place to hide and pounce" [ref=e77] [cursor=pointer]:
+          - /url: /products/crinkle-cat-hideout-bag
+          - img "Crinkle cat hideout bag" [ref=e79]
+          - generic [ref=e80]:
+            - generic [ref=e81]: Crinkle Hideout
+            - generic [ref=e82]: A roomy place to hide and pounce
+        - link "Carrot dental chew toy for dogs Carrot Dental Chew Toy Stuffable texture for rewarding chew time" [ref=e83] [cursor=pointer]:
+          - /url: /products/stuffable-carrot-dog-chew-toy
+          - img "Carrot dental chew toy for dogs" [ref=e85]
+          - generic [ref=e86]:
+            - generic [ref=e87]: Carrot Dental Chew Toy
+            - generic [ref=e88]: Stuffable texture for rewarding chew time
+        - link "Interactive herding ball for dogs Interactive Herding Ball Push-and-chase exercise for active dogs" [ref=e89] [cursor=pointer]:
+          - /url: /products/inflatable-herding-ball-for-dogs
+          - img "Interactive herding ball for dogs" [ref=e91]
+          - generic [ref=e92]:
+            - generic [ref=e93]: Interactive Herding Ball
+            - generic [ref=e94]: Push-and-chase exercise for active dogs
+        - link "Heartbeat plush comfort toy for dogs Heartbeat Plush Toy Gentle comfort for calmer rest" [ref=e95] [cursor=pointer]:
+          - /url: /products/heartbeat-plush-dog-toy
+          - img "Heartbeat plush comfort toy for dogs" [ref=e97]
+          - generic [ref=e98]:
+            - generic [ref=e99]: Heartbeat Plush Toy
+            - generic [ref=e100]: Gentle comfort for calmer rest
+        - link "Xstrapetm pet enrichment play system Everyday Enrichment Small moments that make play feel special" [ref=e101] [cursor=pointer]:
+          - /url: /collections/all
+          - img "Xstrapetm pet enrichment play system" [ref=e103]
+          - generic [ref=e104]:
+            - generic [ref=e105]: Everyday Enrichment
+            - generic [ref=e106]: Small moments that make play feel special
+    - link "Happy pets and owners with Xstrapetm toys PLAY • EXPLORE • REST Made for everyday pet joy Thoughtful play for dogs, cats and the people who love them. Shop Pet Favorites" [ref=e110] [cursor=pointer]:
+      - /url: /collections/all
+      - img "Happy pets and owners with Xstrapetm toys" [ref=e113]
+      - generic [ref=e114]:
+        - generic [ref=e115]: PLAY • EXPLORE • REST
+        - generic [ref=e116]: Made for everyday pet joy
+        - generic [ref=e117]: Thoughtful play for dogs, cats and the people who love them.
+        - generic [ref=e118]: Shop Pet Favorites
+    - generic [ref=e121]:
+      - heading "Shop by play style" [level=2] [ref=e124]
+      - generic [ref=e125]:
+        - link [ref=e126] [cursor=pointer]:
+          - /url: /collections/all
+          - img "Active play toys for pets" [ref=e128]
+          - heading "Active Play" [level=3] [ref=e130]
+        - link [ref=e131] [cursor=pointer]:
+          - /url: /collections/all
+          - img "Chew and explore toys for pets" [ref=e133]
+          - heading "Chew & Explore" [level=3] [ref=e135]
+        - link [ref=e136] [cursor=pointer]:
+          - /url: /collections/all
+          - img "Kick and scratch toys for cats" [ref=e138]
+          - heading "Kick & Scratch" [level=3] [ref=e140]
+        - link [ref=e141] [cursor=pointer]:
+          - /url: /collections/all
+          - img "Hide and rest products for cats" [ref=e143]
+          - heading "Hide & Rest" [level=3] [ref=e145]
+      - link "More ways to move, explore and unwind. ENRICHMENT FOR EVERYDAY LIFE More ways to move, explore and unwind. Explore All Toys" [ref=e147] [cursor=pointer]:
+        - /url: /collections/all
+        - img "More ways to move, explore and unwind." [ref=e149]
+        - generic [ref=e151]:
+          - generic [ref=e152]: ENRICHMENT FOR EVERYDAY LIFE
+          - generic [ref=e153]: More ways to move, explore and unwind.
+          - generic [ref=e154]: Explore All Toys
+    - generic [ref=e157]:
+      - generic [ref=e158]:
+        - generic [ref=e159]:
+          - paragraph [ref=e160]: PLAY STARTS HERE
+          - heading "Built for real-life play" [level=2] [ref=e161]
+        - link "Shop All" [ref=e162] [cursor=pointer]:
+          - /url: /collections/all
+      - generic [ref=e163]:
+        - button "Previous products" [disabled]
+        - generic [ref=e164]:
+          - generic [ref=e166]:
+            - link [ref=e168] [cursor=pointer]:
+              - /url: /products/inflatable-herding-ball-for-dogs
+              - img "Dog herding ball designed for active exercise mental stimulation and interactive play" [ref=e169]
+            - generic [ref=e171]:
+              - link "Inflatable Herding Ball for Dogs – Outdoor Push & Chase Toy" [ref=e173] [cursor=pointer]:
+                - /url: /products/inflatable-herding-ball-for-dogs
+              - generic [ref=e174]:
+                - generic [ref=e176]:
+                  - generic [ref=e177]:
+                    - generic [ref=e178]: Sale price
+                    - text: From $39.20
+                  - generic [ref=e179]:
+                    - generic [ref=e180]: Regular price
+                    - text: $56.00
+                - button "+ Quick add" [ref=e182] [cursor=pointer]
+          - generic [ref=e188]:
+            - link [ref=e190] [cursor=pointer]:
+              - /url: /products/heartbeat-plush-dog-toy
+              - img "Four-color heartbeat plush dog toy lineup with removable heart module" [ref=e191]
+            - generic [ref=e193]:
+              - link "Heartbeat Plush Dog Toy for Comfort & Calming" [ref=e195] [cursor=pointer]:
+                - /url: /products/heartbeat-plush-dog-toy
+              - generic [ref=e196]:
+                - generic [ref=e198]:
+                  - generic [ref=e199]:
+                    - generic [ref=e200]: Sale price
+                    - text: $24.97
+                  - generic [ref=e201]:
+                    - generic [ref=e202]: Regular price
+                    - text: $51.99
+                - button "+ Quick add" [ref=e204] [cursor=pointer]
+          - generic [ref=e210]:
+            - link [ref=e212] [cursor=pointer]:
+              - /url: /products/stuffable-carrot-dog-chew-toy
+              - img "Orange carrot-shaped dog chew toy with green leaf-shaped top" [ref=e213]
+            - generic [ref=e215]:
+              - link "Stuffable Carrot Dog Chew Toy for Strong Chewers" [ref=e217] [cursor=pointer]:
+                - /url: /products/stuffable-carrot-dog-chew-toy
+              - generic [ref=e218]:
+                - generic [ref=e221]:
+                  - generic [ref=e222]: Sale price
+                  - text: $15.59
+                - button "+ Quick add" [ref=e224] [cursor=pointer]
+          - generic [ref=e230]:
+            - link [ref=e232] [cursor=pointer]:
+              - /url: /products/natural-sisal-cat-kicker-toys-2-pack
+              - img "Two natural woven sisal cat kicker toys" [ref=e233]
+            - generic [ref=e235]:
+              - link "2-Pack Natural Sisal Cat Kicker Toys with Catnip" [ref=e237] [cursor=pointer]:
+                - /url: /products/natural-sisal-cat-kicker-toys-2-pack
+              - generic [ref=e238]:
+                - generic [ref=e240]:
+                  - generic [ref=e241]:
+                    - generic [ref=e242]: Sale price
+                    - text: $11.67
+                  - generic [ref=e243]:
+                    - generic [ref=e244]: Regular price
+                    - text: $22.09
+                - button "+ Quick add" [ref=e246] [cursor=pointer]
+          - generic [ref=e252]:
+            - link [ref=e254] [cursor=pointer]:
+              - /url: /products/crinkle-cat-hideout-bag
+              - img "Large double-layer kraft paper crinkle cat hideout" [ref=e255]
+            - generic [ref=e257]:
+              - link "Large Double-Layer Crinkle Cat Hideout Bag" [ref=e259] [cursor=pointer]:
+                - /url: /products/crinkle-cat-hideout-bag
+              - generic [ref=e260]:
+                - generic [ref=e262]:
+                  - generic [ref=e263]:
+                    - generic [ref=e264]: Sale price
+                    - text: From $12.99
+                  - generic [ref=e265]:
+                    - generic [ref=e266]: Regular price
+                    - text: $13.99
+                - button "+ Quick add" [ref=e268] [cursor=pointer]
+          - generic [ref=e274]:
+            - link [ref=e276] [cursor=pointer]:
+              - /url: /products/cotton-cat-chew-ropes-3-pack
+              - img "3-pack cotton cat chew ropes on clean background" [ref=e277]
+            - generic [ref=e279]:
+              - link "3-Pack Cotton Cat Chew Ropes with Natural Textures" [ref=e281] [cursor=pointer]:
+                - /url: /products/cotton-cat-chew-ropes-3-pack
+              - generic [ref=e282]:
+                - generic [ref=e284]:
+                  - generic [ref=e285]:
+                    - generic [ref=e286]: Sale price
+                    - text: $10.98
+                  - generic [ref=e287]:
+                    - generic [ref=e288]: Regular price
+                    - text: $14.98
+                - button "+ Quick add" [ref=e290] [cursor=pointer]
+        - button "Next products" [ref=e295] [cursor=pointer]
+    - generic [ref=e298]:
+      - paragraph [ref=e299]: “We make playful, practical pet essentials that turn ordinary moments into better time together.”
+      - paragraph [ref=e300]: "- xstrapetm"
+    - heading "Thoughtful by design. Joyful by nature." [level=2] [ref=e304]
+    - generic [ref=e307]:
+      - link "Dog enjoying active play TEXTURE-RICH PLAY Designed for everyday curiosity Shop Cat Toys" [ref=e308] [cursor=pointer]:
+        - /url: /collections/all
+        - img "Dog enjoying active play" [ref=e310]
+        - generic [ref=e312]:
+          - generic [ref=e313]: TEXTURE-RICH PLAY
+          - generic [ref=e314]: Designed for everyday curiosity
+          - generic [ref=e315]: Shop Cat Toys
+      - link "Cat enjoying curious play ROOM TO EXPLORE Hide, pounce and settle in Shop Hideouts" [ref=e316] [cursor=pointer]:
+        - /url: /collections/all
+        - img "Cat enjoying curious play" [ref=e318]
+        - generic [ref=e320]:
+          - generic [ref=e321]: ROOM TO EXPLORE
+          - generic [ref=e322]: Hide, pounce and settle in
+          - generic [ref=e323]: Shop Hideouts
+    - generic [ref=e327]:
+      - generic [ref=e328]:
+        - generic [ref=e329]:
+          - button "Policy" [expanded]
+          - region [ref=e330]:
+            - list [ref=e332]:
+              - listitem [ref=e333]:
+                - link "Privacy Policy" [ref=e334] [cursor=pointer]:
+                  - /url: /policies/privacy-policy
+              - listitem [ref=e335]:
+                - link "Refund Policy" [ref=e336] [cursor=pointer]:
+                  - /url: /policies/refund-policy
+              - listitem [ref=e337]:
+                - link "Shipping Policy" [ref=e338] [cursor=pointer]:
+                  - /url: /policies/shipping-policy
+              - listitem [ref=e339]:
+                - link "Terms of Service" [ref=e340] [cursor=pointer]:
+                  - /url: /policies/terms-of-service
+        - generic [ref=e342]:
+          - paragraph [ref=e343]: Join the pack
+          - paragraph [ref=e345]: New play ideas, product drops and pet-friendly offers—sent occasionally.
+          - generic [ref=e347]:
+            - textbox "E-mail" [ref=e348]:
+              - /placeholder: " "
+            - generic: E-mail
+            - button "Subscribe" [ref=e350] [cursor=pointer]
+      - generic [ref=e354]:
+        - list [ref=e355]:
+          - listitem [ref=e356]:
+            - img "American Express" [ref=e357]
+          - listitem [ref=e362]:
+            - img "Apple Pay" [ref=e363]
+          - listitem [ref=e374]:
+            - img "Bancontact" [ref=e375]
+          - listitem [ref=e382]:
+            - img "Google Pay" [ref=e383]
+          - listitem [ref=e391]:
+            - img "Mastercard" [ref=e392]
+          - listitem [ref=e399]:
+            - img "PayPal" [ref=e400]
+          - listitem [ref=e406]:
+            - img "Shop Pay" [ref=e407]
+          - listitem [ref=e411]:
+            - img "Union Pay" [ref=e412]
+          - listitem [ref=e418]:
+            - img "Visa" [ref=e419]
+        - paragraph [ref=e426]: © 2026, xstrape, All Rights Reserved.

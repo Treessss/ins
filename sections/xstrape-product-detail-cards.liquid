@@ -42,6 +42,19 @@
     display: block;
   }
 
+  /* Cards driven by the product's product_description_image metafield: always
+     a square, full-bleed image. */
+  #shopify-section-{{ section.id }} .xpdc-card--product-description-image {
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card--product-description-image .xpdc-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   #shopify-section-{{ section.id }} .xpdc-card__media,
   #shopify-section-{{ section.id }} .xpdc-card__text {
     position: relative;
@@ -158,12 +171,34 @@
 
   @media screen and (max-width: 999px) {
     #shopify-section-{{ section.id }} .xpdc__item {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100vw;
       padding: 8px 10px;
+      overflow: hidden;
     }
 
     #shopify-section-{{ section.id }} .xpdc-card {
       min-height: {{ section.settings.mobile_card_height }}px;
       border-radius: var(--xpdc-radius);
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card--product-description-image {
+      width: min(100%, calc(100vw - 20px));
+      max-width: calc(100vw - 20px);
+      height: auto;
+      min-height: 0;
+      margin-inline: auto;
+      aspect-ratio: 1 / 1;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card--product-description-image .xpdc-card__media,
+    #shopify-section-{{ section.id }} .xpdc-card--product-description-image .xpdc-card__media-inner,
+    #shopify-section-{{ section.id }} .xpdc-card--product-description-image picture,
+    #shopify-section-{{ section.id }} .xpdc-card--product-description-image .xpdc-card__image {
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
     }
 
     #shopify-section-{{ section.id }} .xpdc-card--image-text,
@@ -210,7 +245,47 @@
   }
 </style>
 
+{%- liquid
+  # Per-product override: when a product carries the product_description_image
+  # metafield, show those images instead of the cards configured in the editor.
+  # Anything missing falls back to the editor blocks below.
+  assign product_description_image_namespace = section.settings.metafield_namespace | default: 'custom'
+  assign product_description_image_metafield = product.metafields[product_description_image_namespace].product_description_image
+  assign product_description_images = product_description_image_metafield.value
+-%}
+
 <div class="xpdc" data-xstrape-product-detail-cards>
+  {%- if product_description_images != blank -%}
+    {%- if product_description_image_metafield.type contains 'list.' -%}
+      {%- for description_image in product_description_images -%}
+        {%- assign description_image_source = description_image.preview_image | default: description_image -%}
+        {%- if description_image_source != blank -%}
+          <div class="xpdc__item">
+            <div class="xpdc-card xpdc-card--image-only xpdc-card--product-description-image">
+              <div class="xpdc-card__media">
+                <div class="xpdc-card__media-inner">
+                  {{- description_image_source | image_url: width: 1800 | image_tag: loading: 'lazy', widths: '360,480,600,720,900,1100,1300,1600,1800', sizes: '(max-width: 699px) calc(100vw - 20px), (max-width: 999px) calc(100vw - 40px), calc(100vw - 40px)', class: 'xpdc-card__image', alt: description_image_source.alt | default: product.title -}}
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- else -%}
+      {%- assign description_image_source = product_description_images.preview_image | default: product_description_images -%}
+      {%- if description_image_source != blank -%}
+        <div class="xpdc__item">
+          <div class="xpdc-card xpdc-card--image-only xpdc-card--product-description-image">
+            <div class="xpdc-card__media">
+              <div class="xpdc-card__media-inner">
+                {{- description_image_source | image_url: width: 1800 | image_tag: loading: 'lazy', widths: '360,480,600,720,900,1100,1300,1600,1800', sizes: '(max-width: 699px) calc(100vw - 20px), (max-width: 999px) calc(100vw - 40px), calc(100vw - 40px)', class: 'xpdc-card__image', alt: description_image_source.alt | default: product.title -}}
+              </div>
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  {%- else -%}
   {%- for block in section.blocks -%}
     {%- liquid
       assign card_type = block.settings.card_type
@@ -413,6 +488,7 @@
       </div>
     </div>
   {%- endfor -%}
+  {%- endif -%}
 </div>
 
 {% schema %}
