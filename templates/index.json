@@ -327,66 +327,6 @@
         "muted_text_color": "#17132F"
       }
     },
-    "xstrape_home_community_VdzKXa": {
-      "type": "xstrape-home-community",
-      "blocks": {
-        "community_637c33": {
-          "type": "community",
-          "settings": {
-            "label": "",
-            "video": "shopify://files/videos/下载 (6).mp4",
-            "link": "shopify://collections/all"
-          }
-        },
-        "community_n8fQCA": {
-          "type": "community",
-          "settings": {
-            "label": "",
-            "video": "shopify://files/videos/下载 (7).mp4",
-            "link": "shopify://collections/all"
-          }
-        },
-        "community_6E8RNM": {
-          "type": "community",
-          "settings": {
-            "label": "",
-            "video": "shopify://files/videos/下载 (5).mp4",
-            "link": "shopify://collections/all"
-          }
-        },
-        "community_Lyj8pr": {
-          "type": "community",
-          "settings": {
-            "label": "",
-            "video": "shopify://files/videos/下载 (3).mp4",
-            "link": "shopify://collections/all"
-          }
-        },
-        "community_xPi8qf": {
-          "type": "community",
-          "settings": {
-            "label": "",
-            "video": "shopify://files/videos/下载 (4).mp4",
-            "link": "shopify://collections/all"
-          }
-        }
-      },
-      "block_order": [
-        "community_637c33",
-        "community_n8fQCA",
-        "community_6E8RNM",
-        "community_Lyj8pr",
-        "community_xPi8qf"
-      ],
-      "name": "社区展示",
-      "settings": {
-        "community_kicker": "PLAY IN THE WILD",
-        "community_title": "Pets in their element",
-        "page_background": "#F2F9ED",
-        "text_color": "#17132F",
-        "muted_text_color": "#5C566E"
-      }
-    },
     "xstrape_home_nomad_heading_ycc37y": {
       "type": "xstrape-home-nomad-heading",
       "name": "品牌工艺标题",
