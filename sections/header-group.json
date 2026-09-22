@@ -1,0 +1,438 @@
+{
+  "type": "header",
+  "name": "顶部导航组",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "message": {
+          "type": "message",
+          "settings": {
+            "text": "Add your text here.",
+            "url": ""
+          }
+        }
+      },
+      "block_order": [
+        "message"
+      ],
+      "disabled": true,
+      "settings": {
+        "enable_sticky": false,
+        "show_on_homepage_only": false,
+        "navigation_mode": "scrolling",
+        "autoplay": false,
+        "cycle_speed": 6,
+        "scrolling_speed": 10,
+        "text_size": "text-xs",
+        "background": "#1a1a1a",
+        "background_gradient": "",
+        "text_color": "#ffffff"
+      }
+    },
+    "xstrape_header_dVd6aQ": {
+      "type": "xstrape-header",
+      "blocks": {
+        "desktop_item_nYfiV3": {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Home",
+            "link": "https://xstrapetm.com",
+            "split_title": false,
+            "highlight": false,
+            "enable_dropdown": false,
+            "desktop_card_columns": 1,
+            "link_heading_1": "",
+            "link_list_1": "",
+            "link_heading_2": "",
+            "link_list_2": "",
+            "link_heading_3": "",
+            "link_list_3": "",
+            "feature_image_asset": "",
+            "feature_kicker": "",
+            "feature_title": "",
+            "feature_button_text": "",
+            "feature_link": ""
+          }
+        },
+        "desktop_item_CtUt9a": {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Shop",
+            "link": "/collections/all",
+            "split_title": false,
+            "highlight": true,
+            "enable_dropdown": true,
+            "desktop_card_columns": 1,
+            "link_heading_1": "",
+            "link_list_1": "",
+            "link_heading_2": "",
+            "link_list_2": "",
+            "link_heading_3": "",
+            "link_list_3": "",
+            "feature_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
+            "feature_image_asset": "",
+            "feature_kicker": "PLAY GUIDE",
+            "feature_title": "Find their favorite kind of fun",
+            "feature_button_text": "Explore All",
+            "feature_link": "/collections/all"
+          }
+        },
+        "desktop_menu_card_jRT8ct": {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Shop",
+            "title": "Chew & Explore",
+            "text": "Texture-rich play",
+            "link": "shopify://collections/all",
+            "image": "shopify://shop_images/xstrapetm-cotton-cat-rope-01-main.png",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "desktop_menu_card_3Q3p4t": {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Shop",
+            "title": "Kick & Scratch",
+            "text": "Full-body cat play",
+            "link": "shopify://products/natural-sisal-cat-kicker-toys-2-pack",
+            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-01-main.png",
+            "image_asset": "",
+            "badge": "HOT"
+          }
+        },
+        "desktop_menu_card_PerLGg": {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Shop",
+            "title": "Hide & Rest",
+            "text": "Crinkle, pounce and lounge",
+            "link": "shopify://products/crinkle-cat-hideout-bag",
+            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "desktop_item_8NPqkL": {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Our Story",
+            "link": "/pages/about-us",
+            "split_title": false,
+            "highlight": false,
+            "enable_dropdown": false,
+            "desktop_card_columns": 1,
+            "link_heading_1": "",
+            "link_list_1": "",
+            "link_heading_2": "",
+            "link_list_2": "",
+            "link_heading_3": "",
+            "link_list_3": "",
+            "feature_image_asset": "",
+            "feature_kicker": "",
+            "feature_title": "",
+            "feature_button_text": "",
+            "feature_link": ""
+          }
+        },
+        "desktop_item_dGzi7J": {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Contact",
+            "link": "shopify://pages/contact",
+            "split_title": false,
+            "highlight": false,
+            "enable_dropdown": false,
+            "desktop_card_columns": 1,
+            "link_heading_1": "",
+            "link_list_1": "",
+            "link_heading_2": "",
+            "link_list_2": "",
+            "link_heading_3": "",
+            "link_list_3": "",
+            "feature_image_asset": "",
+            "feature_kicker": "",
+            "feature_title": "",
+            "feature_button_text": "",
+            "feature_link": ""
+          }
+        },
+        "mobile_card_E9LaVB": {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Shop All",
+            "subtitle": "Toys and enrichment for pets",
+            "link": "/collections/all",
+            "auto_submenu_menu": "",
+            "image": "shopify://shop_images/xstrapetm-cotton-cat-rope-01-main.png",
+            "image_asset": "",
+            "badge": "PLAY",
+            "badge_style": "hot"
+          }
+        },
+        "mobile_card_THYgVz": {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Cat Favorites",
+            "subtitle": "Kick, scratch, hide and explore",
+            "link": "/collections/all",
+            "auto_submenu_menu": "",
+            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-01-main.png",
+            "image_asset": "",
+            "badge": "",
+            "badge_style": "new"
+          }
+        },
+        "mobile_card_9MB7wy": {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Help & Contact",
+            "subtitle": "Orders, shipping and product help",
+            "link": "/pages/contact",
+            "auto_submenu_menu": "",
+            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
+            "image_asset": "",
+            "badge": "",
+            "badge_style": "new"
+          }
+        },
+        "mobile_submenu_item_mKAWBB": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Cotton Chew Ropes",
+            "parent_title": "Shop All",
+            "item_style": "card",
+            "link": "shopify://products/cotton-cat-chew-ropes-3-pack",
+            "image": "shopify://shop_images/xstrapetm-cotton-cat-rope-01-main.png",
+            "image_asset": "",
+            "badge": "HOT"
+          }
+        },
+        "mobile_submenu_item_ErXxQq": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Sisal Kicker Toys",
+            "parent_title": "Shop All",
+            "item_style": "card",
+            "link": "shopify://products/natural-sisal-cat-kicker-toys-2-pack",
+            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-01-main.png",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "mobile_submenu_item_FCpNEg": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Crinkle Hideout",
+            "parent_title": "Shop All",
+            "item_style": "card",
+            "link": "shopify://products/crinkle-cat-hideout-bag",
+            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "mobile_submenu_item_eLfqti": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Texture Play",
+            "parent_title": "Shop All",
+            "item_style": "card",
+            "link": "shopify://collections/all",
+            "image": "shopify://shop_images/xstrapetm-cotton-cat-rope-03-materials.png",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "mobile_submenu_item_H4zFkE": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Active Play",
+            "parent_title": "Shop All",
+            "item_style": "card",
+            "link": "shopify://collections/all",
+            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-04-lifestyle.png",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "mobile_submenu_item_VUhbew": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Hide & Rest",
+            "parent_title": "Shop All",
+            "item_style": "card",
+            "link": "shopify://products/crinkle-cat-hideout-bag",
+            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "mobile_submenu_item_9iM89g": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Privacy Policy",
+            "parent_title": "Help & Contact",
+            "item_style": "button",
+            "link": "shopify://policies/privacy-policy",
+            "image": "shopify://shop_images/9709056873_2.webp",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "mobile_submenu_item_FxLUEe": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Refund Policy",
+            "parent_title": "Help & Contact",
+            "item_style": "button",
+            "link": "shopify://policies/refund-policy",
+            "image": "shopify://shop_images/9709056873_2.webp",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "mobile_submenu_item_pbEByK": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Shipping Policy",
+            "parent_title": "Help & Contact",
+            "item_style": "button",
+            "link": "shopify://policies/shipping-policy",
+            "image": "shopify://shop_images/9709056873_2.webp",
+            "image_asset": "",
+            "badge": ""
+          }
+        },
+        "mobile_submenu_item_xdfb4P": {
+          "type": "mobile_submenu_item",
+          "settings": {
+            "title": "Terms of Service",
+            "parent_title": "Help & Contact",
+            "item_style": "button",
+            "link": "shopify://policies/terms-of-service",
+            "image": "shopify://shop_images/9709056873_2.webp",
+            "image_asset": "",
+            "badge": ""
+          }
+        }
+      },
+      "block_order": [
+        "desktop_item_nYfiV3",
+        "desktop_item_CtUt9a",
+        "desktop_menu_card_jRT8ct",
+        "desktop_menu_card_3Q3p4t",
+        "desktop_menu_card_PerLGg",
+        "desktop_item_8NPqkL",
+        "desktop_item_dGzi7J",
+        "mobile_card_E9LaVB",
+        "mobile_card_THYgVz",
+        "mobile_card_9MB7wy",
+        "mobile_submenu_item_mKAWBB",
+        "mobile_submenu_item_ErXxQq",
+        "mobile_submenu_item_FCpNEg",
+        "mobile_submenu_item_eLfqti",
+        "mobile_submenu_item_H4zFkE",
+        "mobile_submenu_item_VUhbew",
+        "mobile_submenu_item_9iM89g",
+        "mobile_submenu_item_FxLUEe",
+        "mobile_submenu_item_pbEByK",
+        "mobile_submenu_item_xdfb4P"
+      ],
+      "name": "自定义顶部导航",
+      "settings": {
+        "overlay_on_homepage": true,
+        "enable_sticky": true,
+        "logo": "shopify://shop_images/Image_1.png",
+        "logo_text": "XSTRAPETM",
+        "logo_width": 190,
+        "logo_mobile_width": 110,
+        "logo_vertical_offset": 0,
+        "logo_mobile_vertical_offset": 0,
+        "desktop_menu_label": "主菜单",
+        "nav_gap": 34,
+        "nav_font_size": 16,
+        "show_announcement": true,
+        "announcement_text": "Play more. Bond more. Free shipping on every order.",
+        "announcement_link_text": "Shop pet favorites",
+        "announcement_link": "/collections/all",
+        "show_announcement_info_icon": true,
+        "announcement_background": "#FF4F88",
+        "announcement_text_color": "#17132F",
+        "show_search": true,
+        "show_cart": true,
+        "show_account": false,
+        "customer_account_menu": "customer-account-main-menu",
+        "show_country_selector": false,
+        "show_country_flag": false,
+        "show_country_name": false,
+        "max_width": 1920,
+        "side_gap": 16,
+        "desktop_top_gap": 21,
+        "mobile_top_gap": 7,
+        "desktop_height": 80,
+        "mobile_height": 52,
+        "mobile_side_gap": 10,
+        "mobile_bar_radius": 24,
+        "mobile_logo_left_padding": 25,
+        "mobile_logo_height_gap": 27,
+        "mobile_icon_width": 45,
+        "mobile_menu_icon_width": 52,
+        "bar_radius": 60,
+        "mobile_panel_radius": 30,
+        "mobile_menu_top_spacing": 5,
+        "mobile_menu_padding_x": 15,
+        "mobile_menu_padding_bottom": 15,
+        "mobile_menu_gap": 10,
+        "mobile_card_height": 82,
+        "mobile_card_padding": 4,
+        "mobile_card_radius": 16,
+        "mobile_card_image_size": 74,
+        "mobile_card_image_radius": 11,
+        "mobile_card_content_gap": 10,
+        "mobile_title_font_size": 16,
+        "mobile_subtitle_font_size": 11,
+        "mobile_badge_font_size": 11,
+        "mobile_arrow_size": 23,
+        "bar_background": "#DFFF32",
+        "panel_background": "#F2F9ED",
+        "card_background": "#FFFFFF",
+        "text_color": "#17132F",
+        "accent_color": "#FF4F88",
+        "shadow_opacity": 18
+      }
+    },
+    "header": {
+      "type": "header",
+      "disabled": true,
+      "settings": {
+        "enable_sticky": true,
+        "hide_on_scroll": false,
+        "logo_max_width": 140,
+        "logo_mobile_max_width": 130,
+        "menu": "",
+        "sidebar_menu": "",
+        "secondary_menu": "",
+        "customer_account_menu": "",
+        "menu_open_trigger": "hover",
+        "opening_from": "bottom",
+        "layout": "logo_left_navigation_center",
+        "show_social_media": false,
+        "show_locale_selector": true,
+        "show_country_selector": true,
+        "show_country_flag": true,
+        "show_country_name": false,
+        "transparent_header_text_color": "#ffffff",
+        "reduce_padding": true,
+        "background_opacity": 100,
+        "background_blur_radius": 0
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "xstrape_header_dVd6aQ",
+    "header"
+  ]
+}

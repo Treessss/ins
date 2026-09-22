@@ -1,0 +1,366 @@
+{% liquid
+  assign section_id = 'model-pill-cards-' | append: section.id
+%}
+
+<style>
+  #{{ section_id }} {
+    --mpc-gap: 16px;
+    --mpc-radius: 999px;
+    --mpc-card-height: 108px;
+    --mpc-card-padding-x: 28px;
+    --mpc-card-padding-y: 16px;
+    --mpc-container-max: 1240px;
+  }
+
+  #{{ section_id }} .model-pill-cards__wrap {
+    max-width: var(--mpc-container-max);
+    margin: 0 auto;
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+  }
+
+  #{{ section_id }} .model-pill-cards__list {
+    display: grid;
+    gap: var(--mpc-gap);
+    align-items: stretch;
+  }
+
+  #{{ section_id }} .model-pill-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: var(--mpc-card-height);
+    padding: var(--mpc-card-padding-y) var(--mpc-card-padding-x);
+    border-radius: var(--mpc-radius);
+    overflow: hidden;
+    text-decoration: none;
+    isolation: isolate;
+    background-color: #111111;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    box-shadow: 0 12px 16px 0 #6b6f7314;
+  }
+
+  #{{ section_id }} .model-pill-card:hover {
+    transform: translateY(-1px);
+  }
+
+  #{{ section_id }} .model-pill-card__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    {% comment %} background: linear-gradient(90deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.06) 45%, rgba(0,0,0,0) 100%); {% endcomment %}
+  }
+
+  #{{ section_id }} .model-pill-card__content {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    max-width: 70%;
+  }
+
+  #{{ section_id }} .model-pill-card__title {
+    margin: 0;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  #{{ section_id }} .model-pill-card--has-border {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  #{{ section_id }} .model-pill-cards__list--count-1 {
+    grid-template-columns: repeat(1, minmax(0, 320px));
+  }
+
+  #{{ section_id }} .model-pill-cards__list--count-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #{{ section_id }} .model-pill-cards__list--count-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #{{ section_id }} .model-pill-cards__list--count-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #{{ section_id }} .model-pill-cards__list--count-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  #{{ section_id }} .model-pill-cards__list--count-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+ @media screen and (max-width: 989px) {
+  #{{ section_id }} {
+    --mpc-gap: 12px;
+    --mpc-card-height: 108px;
+    --mpc-card-padding-x: 18px;
+    --mpc-card-padding-y: 12px;
+  }
+
+  #{{ section_id }} .model-pill-cards__wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #{{ section_id }} .model-pill-cards__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--mpc-gap);
+    overflow: visible;
+  }
+
+  #{{ section_id }} .model-pill-card {
+    min-width: 0;
+  }
+
+  #{{ section_id }} .model-pill-card__content {
+    max-width: 100%;
+  }
+
+  #{{ section_id }} .model-pill-card__title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+ @media screen and (max-width: 689px) {
+#{{ section_id }} {
+    --mpc-gap: 12px;
+    --mpc-card-height: 98px;
+    --mpc-card-padding-x: 18px;
+    --mpc-card-padding-y: 12px;
+  }
+}
+</style>
+
+<section id="{{ section_id }}" class="model-pill-cards-section">
+  <div class="model-pill-cards__wrap">
+    {% if section.settings.heading != blank %}
+      <div class="section-header" style="margin-bottom: 18px;">
+        <h2 style="margin: 0;">{{ section.settings.heading }}</h2>
+      </div>
+    {% endif %}
+
+    <div class="model-pill-cards__list model-pill-cards__list--count-{{ section.blocks.size }}">
+      {% for block in section.blocks %}
+        {% liquid
+          assign has_link = false
+          if block.settings.link != blank
+            assign has_link = true
+          endif
+
+          assign card_tag = 'div'
+          if has_link
+            assign card_tag = 'a'
+          endif
+
+          assign bg_position = block.settings.background_position | default: 'center center'
+        %}
+
+        <{{ card_tag }}
+          {% if has_link %}href="{{ block.settings.link }}"{% endif %}
+          class="model-pill-card {% if block.settings.show_border %}model-pill-card--has-border{% endif %}"
+          style="
+            color: {{ block.settings.text_color }};
+            background-color: {{ block.settings.background }};
+            background-position: {{ bg_position }};
+            {% if block.settings.image != blank %}
+              background-image: url('{{ block.settings.image | image_url: width: 1200 }}');
+            {% endif %}
+          "
+          {{ block.shopify_attributes }}
+        >
+          <div class="model-pill-card__overlay"></div>
+
+          <div class="model-pill-card__content">
+            <p
+              class="model-pill-card__title"
+              style="font-size: {{ block.settings.title_size }}px;"
+            >
+              {{ block.settings.title }}
+            </p>
+          </div>
+        </{{ card_tag }}>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "型号胶囊卡片",
+  "tag": "section",
+  "class": "shopify-section--model-pill-cards",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "Model cards"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "上边距",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "下边距",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Mini"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "背景图"
+        },
+        {
+          "type": "select",
+          "id": "background_position",
+          "label": "背景位置",
+          "default": "center center",
+          "options": [
+            {
+              "value": "left top",
+              "label": "左上"
+            },
+            {
+              "value": "center top",
+              "label": "中上"
+            },
+            {
+              "value": "right top",
+              "label": "右上"
+            },
+            {
+              "value": "left center",
+              "label": "左中"
+            },
+            {
+              "value": "center center",
+              "label": "居中"
+            },
+            {
+              "value": "right center",
+              "label": "右中"
+            },
+            {
+              "value": "left bottom",
+              "label": "左下"
+            },
+            {
+              "value": "center bottom",
+              "label": "中下"
+            },
+            {
+              "value": "right bottom",
+              "label": "右下"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "title_size",
+          "label": "文字大小",
+          "min": 12,
+          "max": 36,
+          "step": 1,
+          "default": 18
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文字颜色",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "背景色（无背景图时显示）",
+          "default": "#111111"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_border",
+          "label": "显示边框",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "型号胶囊卡片",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "title": "Mini",
+            "title_size": 18,
+            "text_color": "#FFFFFF",
+            "background": "#000000"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Gen 3",
+            "title_size": 18,
+            "text_color": "#FFFFFF",
+            "background": "#2E33D9"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Gen 3P",
+            "title_size": 18,
+            "text_color": "#FFFFFF",
+            "background": "#000000"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Gen 2",
+            "title_size": 18,
+            "text_color": "#1A1A1A",
+            "background": "#F3F3F3",
+            "show_border": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

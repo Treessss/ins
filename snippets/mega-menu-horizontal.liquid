@@ -1,0 +1,248 @@
+{%- if link.links.size > 0 -%}
+  <style>
+    @media screen and (min-width: 1150px) {
+      #mega-menu-{{ mega_menu_block.id }} {
+        --mega-menu-nav-column-max-width: {% if mega_menu_block.settings.submenu_style == 'bold_text' %}{% if link.links.size <= 2 %}240px{% else %}200px{% endif %}{% else %}{% if link.links.size <= 2 %}180px{% else %}160px{% endif %}{% endif %};
+        --mega-menu-justify-content: {% if link.links.size == 0 or mega_menu_block.settings.layout == 'horizontal_center' and mega_menu_block.settings.stretch_promo == false %}center{% else %}space-between{% endif %};
+        --mega-menu-nav-gap: {% if mega_menu_block.settings.stretch_promo %}var(--spacing-12){% else %}var(--spacing-8){% endif %};
+
+        {% if link.links.size > 3 %}
+          --column-list-max-width: 100%;
+        {% endif %}
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__nav--cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 36px;
+        align-items: start;
+        width: 100%;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        min-width: 0;
+      }
+ #mega-menu-{{ mega_menu_block.id }} .mega-menu__nav-item .mega-menu__column-title {
+      font-size: 18px;
+    font-weight: 600;
+}
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__nav-image-link {
+        display: block;
+        width: 100%;
+        text-decoration: none;
+      }
+
+    #mega-menu-{{ mega_menu_block.id }} .mega-menu__column-image {
+      box-shadow: 0 9.75px 13px 0 #6b6f7314;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+#mega-menu-{{ mega_menu_block.id }} .mega-menu__column-image img {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  display: block;
+  border-radius: 18px;
+}
+
+#mega-menu-{{ mega_menu_block.id }} .mega-menu__image-title {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+  z-index: 2;
+}
+
+#mega-menu-{{ mega_menu_block.id }} .mega-menu__column-image {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+#mega-menu-{{ mega_menu_block.id }} .mega-menu__image-title--inside {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+  pointer-events: none;
+}
+#mega-menu-{{ mega_menu_block.id }} .mega-menu__nav-item:last-child .mega-menu__image-title--inside {
+  color: #000;
+}
+#mega-menu-{{ mega_menu_block.id }} .mega-menu__image-title--inside
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__column-title {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.2;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__column-links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__column-links a {
+        text-decoration: none;
+      }
+    }
+
+    @media screen and (min-width: 1400px) {
+      #mega-menu-{{ mega_menu_block.id }} {
+        --mega-menu-nav-column-max-width: {% if mega_menu_block.settings.submenu_style == 'bold_text' %}{% if link.links.size == 1 %}260px{% elsif link.links.size == 2 %}240px{% else %}210px{% endif %}{% else %}{% if link.links.size == 1 %}220px{% elsif link.links.size == 2 %}200px{% else %}180px{% endif %}{% endif %};
+        --mega-menu-nav-gap: {% if mega_menu_block.settings.layout == 'horizontal_center' %}var(--spacing-12){% else %}var(--spacing-16){% endif %};
+
+        {% if link.links.size > 4 %}
+          --column-list-max-width: 100%;
+        {% else %}
+          --column-list-max-width: 100%;
+        {% endif %}
+      }
+    }
+
+    @media screen and (min-width: 1600px) {
+      #mega-menu-{{ mega_menu_block.id }} {
+        --mega-menu-nav-gap: var(--spacing-16);
+      }
+    }
+
+    @media screen and (min-width: 1800px) {
+      #mega-menu-{{ mega_menu_block.id }} {
+        --mega-menu-nav-gap: var(--spacing-20);
+      }
+    }
+
+    @media screen and (max-width: 1149px) {
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__nav--cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__nav-image-link {
+        display: block;
+        width: 100%;
+        text-decoration: none;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__column-image img {
+        width: 100%;
+        aspect-ratio: 16 / 7;
+        object-fit: cover;
+        display: block;
+        border-radius: 14px;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__column-title {
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.2;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__column-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__column-links a {
+        text-decoration: none;
+      }
+    }
+
+    @media screen and (max-width: 699px) {
+      #mega-menu-{{ mega_menu_block.id }} .mega-menu__nav--cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{%- endif -%}
+
+<div id="mega-menu-{{ mega_menu_block.id }}" class="mega-menu {% if link.links.size == 0 %}justify-center{% endif %}">
+  {%- if link.links.size > 0 -%}
+    <ul class="mega-menu__nav mega-menu__nav--cards" role="list">
+      {%- for sub_link in link.links -%}
+        {% liquid
+          assign menu_image = blank
+
+          case forloop.index
+            when 1
+              assign menu_image = mega_menu_block.settings.image_1
+            when 2
+              assign menu_image = mega_menu_block.settings.image_2
+            when 3
+              assign menu_image = mega_menu_block.settings.image_3
+            when 4
+              assign menu_image = mega_menu_block.settings.image_4
+          endcase
+        %}
+
+        <li class="mega-menu__nav-item">
+        <a {% if sub_link.url != '#' %}href="{{ sub_link.url }}"{% endif %} class="mega-menu__nav-image-link" {% if sub_link.current %}aria-current="page"{% endif %}>
+  <div class="mega-menu__column-image">
+    {%- if menu_image != blank -%}
+      {{ menu_image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200,300,400,500,600', sizes: '(min-width: 1150px) 25vw, (min-width: 700px) 50vw, 100vw' }}
+    {%- endif -%}
+
+    <span class="mega-menu__image-title mega-menu__image-title--inside">
+      {{- sub_link.title -}}
+    </span>
+  </div>
+</a>
+
+<a {% if sub_link.url != '#' %}href="{{ sub_link.url }}"{% endif %} class="mega-menu__column-title" {% if sub_link.current %}aria-current="page"{% endif %}>
+  {{- sub_link.title -}}
+</a>
+
+          {%- if sub_link.levels > 0 -%}
+            <ul class="mega-menu__column-links" role="list">
+              {%- for sub_sub_link in sub_link.links -%}
+                <li>
+                  <a href="{{ sub_sub_link.url }}" class="link-faded">
+                    <span>{{- sub_sub_link.title -}}</span>
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>

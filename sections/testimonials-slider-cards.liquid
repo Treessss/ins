@@ -1,0 +1,550 @@
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --testimonials-gap: 1.25rem;
+    --testimonials-card-radius: 1.75rem;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards {
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__viewport {
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__track {
+    display: flex;
+    gap: var(--testimonials-gap);
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__slide {
+    flex: 0 0 calc((100% - (var(--testimonials-gap) * 2)) / 3);
+    min-width: 20rem;
+    scroll-snap-align: start;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__surface {
+    height: 100%;
+    border-radius: var(--testimonials-card-radius);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__card {
+    padding: 0.95rem 0.95rem 1.25rem;
+    height: 100%;
+    background:#fff;
+    box-shadow: 0 12px 16px 0 #6b6f7314;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__media-wrap {
+    position: relative;
+    border-radius: 1.35rem;
+    overflow: hidden;
+    aspect-ratio: 1.52 / 1;
+    background: rgb(var(--text-color) / 0.04);
+    margin-bottom: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__media-wrap img,
+  #shopify-section-{{ section.id }} .testimonials-cards__placeholder {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__count {
+    position: absolute;
+    inset-inline-end: 0.85rem;
+    inset-block-end: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.3rem;
+    min-height: 1.7rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background: rgb(17 17 17 / 0.68);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1;
+    backdrop-filter: blur(4px);
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__avatar {
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    background: {{ section.settings.avatar_background }};
+    color: {{ section.settings.avatar_text_color }};
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.12rem;
+    flex-shrink: 0;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__star {
+    width: 0.95rem;
+    height: 0.95rem;
+    display: inline-flex;
+    color: {{ section.settings.star_active_color }};
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__star.is-empty {
+    color: {{ section.settings.star_inactive_color }};
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__content {
+    color: rgb(var(--text-color) / 0.78);
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__content .prose,
+  #shopify-section-{{ section.id }} .testimonials-cards__content .prose p {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__footer {
+    pointer-events: none;
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__nav {
+    pointer-events: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    appearance: none;
+    border: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background:#E5E5E5;
+    color: rgb(var(--text-color) / 0.7);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__nav:hover {
+    {% comment %} background: rgb(var(--text-color) / 0.12); {% endcomment %}
+    color: rgb(var(--text-color));
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__nav[disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__nav--prev {
+    inset-inline-start: -1rem;
+  }
+
+  #shopify-section-{{ section.id }} .testimonials-cards__nav--next {
+    inset-inline-end: -1rem;
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .testimonials-cards__slide {
+      flex-basis: calc((100% - var(--testimonials-gap)) / 2);
+      min-width: 18rem;
+    }
+
+    #shopify-section-{{ section.id }} .testimonials-cards__nav--prev {
+      inset-inline-start: -1.75rem;
+    }
+
+    #shopify-section-{{ section.id }} .testimonials-cards__nav--next {
+      inset-inline-end: -1.75rem;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .testimonials-cards__slide {
+      flex-basis: 88%;
+      min-width: 16rem;
+    }
+
+    #shopify-section-{{ section.id }} .testimonials-cards__footer {
+      position: static;
+      transform: none;
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      pointer-events: auto;
+    }
+
+    #shopify-section-{{ section.id }} .testimonials-cards__nav {
+      position: static;
+      transform: none;
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+  }
+</style>
+
+<div {% render 'section-properties' %}>
+  <div class="testimonials-cards" data-testimonials-cards>
+    <div class="testimonials-cards__viewport">
+      <div class="testimonials-cards__track" data-testimonials-track>
+        {%- assign total_blocks = section.blocks.size -%}
+
+        {%- for block in section.blocks -%}
+          <div class="testimonials-cards__slide" {{ block.shopify_attributes }}>
+            <div
+              {% render 'surface',
+                class: 'testimonials-cards__surface',
+                background: block.settings.card_background,
+                text_color: block.settings.text_color,
+                background_fallback: 'bg-secondary'
+              %}
+            >
+              <div class="testimonials-cards__card">
+                <div class="testimonials-cards__media-wrap">
+                  {%- if block.settings.image != blank -%}
+                    {%- capture sizes -%}(max-width: 699px) 88vw, (max-width: 999px) 50vw, 33vw{%- endcapture -%}
+                    {%- capture widths -%}400,500,600,700,800,900,1000,1200{%- endcapture -%}
+                    {{
+                      block.settings.image
+                      | image_url: width: 1200
+                      | image_tag: loading: 'lazy', sizes: sizes, widths: widths
+                    }}
+                  {%- else -%}
+                    {{ 'image' | placeholder_svg_tag: 'testimonials-cards__placeholder' }}
+                  {%- endif -%}
+
+                  {%- if block.settings.show_count -%}
+                    <span class="testimonials-cards__count">
+                      {{ block.settings.current_index }}/{{ block.settings.total_index | default: total_blocks }}
+                    </span>
+                  {%- endif -%}
+                </div>
+
+                <div class="testimonials-cards__meta">
+                  <div class="testimonials-cards__author">
+                    <div class="testimonials-cards__avatar">
+                      {%- if block.settings.avatar_image != blank -%}
+                        {%- capture avatar_sizes -%}38px{%- endcapture -%}
+                        {%- capture avatar_widths -%}38, 76{%- endcapture -%}
+                        {{
+                          block.settings.avatar_image
+                          | image_url: width: 76
+                          | image_tag: loading: 'lazy', sizes: avatar_sizes, widths: avatar_widths
+                        }}
+                      {%- elsif block.settings.avatar_text != blank -%}
+                        {{ block.settings.avatar_text | escape }}
+                      {%- else -%}
+                        {{ block.settings.author_name | strip | slice: 0 }}
+                      {%- endif -%}
+                    </div>
+
+                    <div class="testimonials-cards__name">
+                      {{ block.settings.author_name }}
+                    </div>
+                  </div>
+
+                  <div class="testimonials-cards__rating" aria-label="{{ block.settings.rating }} out of 5 stars">
+                    {%- for i in (1..5) -%}
+                      <span class="testimonials-cards__star {% if i > block.settings.rating %}is-empty{% endif %}">
+                        <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                          <path d="M10 1.8L12.47 6.81L18 7.62L14 11.52L14.94 17.02L10 14.42L5.06 17.02L6 11.52L2 7.62L7.53 6.81L10 1.8Z"/>
+                        </svg>
+                      </span>
+                    {%- endfor -%}
+                  </div>
+                </div>
+
+                <div class="testimonials-cards__content">
+                  <div class="prose">
+                    {{ block.settings.content }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="testimonials-cards__footer">
+      <button type="button" class="testimonials-cards__nav testimonials-cards__nav--prev" data-testimonials-prev aria-label="Previous">
+        <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 3.5L5.5 8L10 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <button type="button" class="testimonials-cards__nav testimonials-cards__nav--next" data-testimonials-next aria-label="Next">
+        <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector('#shopify-section-{{ section.id }} [data-testimonials-cards]');
+    if (!root) return;
+
+    const track = root.querySelector('[data-testimonials-track]');
+    const prev = root.querySelector('[data-testimonials-prev]');
+    const next = root.querySelector('[data-testimonials-next]');
+
+    if (!track || !prev || !next) return;
+
+    const getStep = () => {
+      const firstSlide = track.querySelector('.testimonials-cards__slide');
+      if (!firstSlide) return 320;
+
+      const style = window.getComputedStyle(track);
+      const gap = parseFloat(style.columnGap || style.gap || 0);
+      return firstSlide.getBoundingClientRect().width + gap;
+    };
+
+    const updateButtons = () => {
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      prev.disabled = track.scrollLeft <= 4;
+      next.disabled = track.scrollLeft >= maxScroll - 4;
+    };
+
+    prev.addEventListener('click', () => {
+      track.scrollBy({ left: -getStep(), behavior: 'smooth' });
+    });
+
+    next.addEventListener('click', () => {
+      track.scrollBy({ left: getStep(), behavior: 'smooth' });
+    });
+
+    track.addEventListener('scroll', updateButtons, { passive: true });
+    window.addEventListener('resize', updateButtons);
+
+    updateButtons();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "客户评价轮播卡片",
+  "class": "shopify-section--testimonials-slider-cards",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "客户评价",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "顶部图片"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_count",
+          "label": "显示图片数量徽章",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "current_index",
+          "label": "当前序号",
+          "default": "1"
+        },
+        {
+          "type": "text",
+          "id": "total_index",
+          "label": "总序号",
+          "default": "3"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar_image",
+          "label": "头像图片"
+        },
+        {
+          "type": "text",
+          "id": "avatar_text",
+          "label": "头像文字",
+          "default": "A"
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "作者名称",
+          "default": "Alex J."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "评分",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "评论内容",
+          "default": "<p>Very easy installation. I really like having something useful in direct eye view.</p>"
+        },
+        {
+          "type": "header",
+          "content": "颜色"
+        },
+        {
+          "type": "color",
+          "id": "card_background",
+          "label": "卡片背景"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "分区背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "分区背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "avatar_background",
+      "label": "头像圆形背景",
+      "default": "#3B3EF3"
+    },
+    {
+      "type": "color",
+      "id": "avatar_text_color",
+      "label": "头像圆形文字",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "star_active_color",
+      "label": "已选星星颜色",
+      "default": "#F59E0B"
+    },
+    {
+      "type": "color",
+      "id": "star_inactive_color",
+      "label": "未选星星颜色",
+      "default": "#D1D5DB"
+    }
+  ],
+  "presets": [
+    {
+      "name": "客户评价轮播卡片",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "author_name": "Alex J.",
+            "avatar_text": "A",
+            "current_index": "1",
+            "total_index": "3"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "author_name": "Jordan Lia",
+            "avatar_text": "J",
+            "current_index": "1",
+            "total_index": "3"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "author_name": "Sam T.",
+            "avatar_text": "S",
+            "current_index": "1",
+            "total_index": "3"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

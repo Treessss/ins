@@ -1,0 +1,135 @@
+{%- if block.settings.video != blank -%}
+
+  <div {{ block.shopify_attributes }}>
+    {%- capture class -%}content-over-media {% if block.settings.video_size != 'auto' %}content-over-media--{{ block.settings.video_size }}{% endif %}{%- endcapture -%}
+    {%- capture style -%}{%- unless block.settings.autoplay -%}--content-over-media-overlay: {{ block.settings.overlay_color.rgb }} / {{ block.settings.overlay_opacity | divided_by: 100.0 }};{%- endunless -%}{%- endcapture -%}
+
+    <div {% render 'surface', class: class, text_color: block.settings.button_color, style: style  %}>
+      {%- capture poster -%}
+        {%- assign poster_image = block.settings.poster | default: block.settings.video.preview_image -%}
+  
+        {%- if block.settings.autoplay == false and poster_image != blank -%}
+          {%- capture sizes -%}(max-width: 740px) calc(100vw - 40px), (max-width: 999px) calc(100vw - 64px), {{ settings.page_width }}px{%- endcapture -%}
+          {{- poster_image | image_url: width: poster_image.width | image_tag: sizes: sizes, widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200' -}}
+        {%- endif -%}
+      {%- endcapture -%}
+  
+      {%- if block.settings.mobile_video != blank -%}
+        {%- assign poster_image = block.settings.poster | default: block.settings.mobile_video.preview_image -%}
+  
+        <video-media {% if block.settings.autoplay %}autoplay{% endif %} class="sm:hidden" {% if block.settings.video_size == 'auto' %}style="--aspect-ratio: {{ block.settings.video_size }}"{% endif %}>
+          {{- block.settings.mobile_video | video_tag: class: 'object-cover sm:hidden', controls: block.settings.show_controls, playsinline: true, muted: block.settings.autoplay, loop: block.settings.autoplay, preload: 'metadata', image_size: '400x' -}}
+          {{- poster_image | image_url: width: poster_image.width | image_tag: sizes: '100vw', widths: '200,300,400,500,600,700,800,900,1000,1200' -}}
+        </video-media>
+      {%- endif -%}
+  
+      <video-media {% if block.settings.autoplay %}autoplay{% endif %} {% if block.settings.mobile_video != blank %}class="hidden sm:block"{% endif %} {% if block.settings.video_size == 'auto' %}style="--aspect-ratio: {{ block.settings.video_size }}"{% endif %}>
+        {{- block.settings.video | video_tag: playsinline: true, preload: 'metadata', muted: block.settings.autoplay, loop: block.settings.autoplay, controls: block.settings.show_controls, image_size: '800x' -}}
+        {{- poster -}}
+      </video-media>
+  
+      {%- unless block.settings.autoplay -%}
+        <button class="video-play-button" type="button">
+          <span class="sr-only">{{ 'general.accessibility.play_video' | t }}</span>
+          {%- render 'icon' with 'play-button', width: 48, height: 48 -%}
+        </button>
+      {%- endunless -%}
+    </div>
+  </div>
+{%- endif -%}
+  
+{% schema %}
+{
+  "name": "视频",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "自动播放",
+      "info": "视频会静音以允许自动播放。",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "显示控制按钮",
+      "default": true
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "视频"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video",
+      "label": "移动端视频",
+      "info": "如果未设置，默认使用主视频。"
+    },
+    {
+      "type": "select",
+      "id": "video_size",
+      "label": "视频尺寸",
+      "info": "选择“原始视频比例”可避免视频裁切。",
+      "options": [
+        {
+          "value": "auto",
+          "label": "原始宽高比"
+        },
+        {
+          "value": "sm",
+          "label": "小"
+        },
+        {
+          "value": "md",
+          "label": "中"
+        },
+        {
+          "value": "lg",
+          "label": "大"
+        },
+        {
+          "value": "fill",
+          "label": "填满屏幕"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "封面图片",
+      "info": "建议使用 3200 x 1600px .jpg。",
+      "visible_if": "{{ block.settings.autoplay == false }}"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "按钮颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "叠加层",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "叠加层不透明度",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    }
+  ],
+  "presets": [
+    {
+      "name": "视频"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,539 @@
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --images-scrolling-block-count: {{ section.blocks.size }};
+    --images-scrolling-image-ratio: {{ section.blocks.first.settings.image.aspect_ratio | default: 1 }};
+  }
+
+  @media screen and (max-width: 740px) {
+    #shopify-section-{{ section.id }} {
+      --images-scrolling-grid: {% if section.settings.stack_on_mobile %}none{% else %}auto / auto-flow 73vw{% endif %};
+    }
+  }
+
+  @media screen and (min-width: 741px) {
+    #shopify-section-{{ section.id }} {
+      --images-scrolling-grid-template-columns: {% if section.settings.image_position == 'start' %}[media] minmax(0, 1fr) [content] minmax(0, 0.8fr){% else %}[content] minmax(0, 0.8fr) [media] minmax(0, 1fr){% endif %};
+    }
+  }
+</style>
+
+<div {% render 'section-properties', narrow: true %}>
+  {%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  MOBILE VARIATION
+  ----------------------------------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+  <images-with-text-scrolling class="images-scrolling-mobile scroll-area bleed sm:unbleed">
+    {%- for block in section.blocks -%}
+      <div class="images-scrolling-mobile__item snap-start" {{ block.shopify_attributes }}>
+        {%- if block.settings.image != blank -%}
+          {{- block.settings.image | image_url: width: block.settings.image.width | image_tag: loading: 'lazy', sizes: '(max-width: 740px) 100vw, 650px', widths: '200,300,400,600,800,1000,1200,1400,1600', class: 'rounded-sm' -}}
+        {%- else -%}
+          {%- capture image_placeholder -%}product-{%- cycle '1', '2', '3', '4' -%}{%- endcapture -%}
+          {{- image_placeholder | placeholder_svg_tag: 'placeholder' -}}
+        {%- endif -%}
+
+        <div class="images-scrolling__content">
+          {%- if section.settings.show_counter -%}
+            <span class="images-scrolling__counter bold">{{ forloop.index | prepend: '00' | slice: -2, 2 }}</span>
+          {%- endif -%}
+
+          <div class="prose" style="--images-scrolling-item-icon-width: {{ block.settings.icon_width }}px">
+            {%- if block.settings.custom_icon != blank -%}
+              {%- capture sizes -%}{{ block.settings.icon_width }}px{%- endcapture -%}
+              {%- capture widths -%}{{ block.settings.icon_width }}, {{ block.settings.icon_width | times: 2 | at_most: block.settings.custom_icon.width }}{%- endcapture -%}
+              {{- block.settings.custom_icon | image_url: width: block.settings.custom_icon.width | image_tag: loading: 'lazy', sizes: sizes, widths: widths, class: 'images-scrolling__icon' -}}
+            {%- elsif block.settings.icon != 'none' -%}
+              {%- render 'icon' with block.settings.icon, width: block.settings.icon_width, height: block.settings.icon_width, class: 'images-scrolling__icon' -%}
+            {%- endif -%}
+
+            {%- if block.settings.title != blank -%}
+              <p class="h1" {% if settings.heading_apparition != 'none' %}reveal-on-scroll="true"{% endif %}>
+                {%- render 'styled-text', content: block.settings.title, text_color: section.settings.heading_color, gradient: section.settings.heading_gradient, apparition_effect: true -%}
+              </p>
+            {%- endif -%}
+
+            {{- block.settings.content -}}
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  </images-with-text-scrolling>
+
+  {%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  DESKTOP VARIATION
+  ----------------------------------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+  <images-with-text-scrolling scrolling-experience="{{ section.settings.desktop_image_effect }}" class="images-scrolling-desktop">
+    <div class="images-scrolling-desktop__content-list">
+      {%- for block in section.blocks -%}
+        <div class="images-scrolling__content {% unless forloop.first %}opacity-0{% endunless %}">
+          {%- if section.settings.show_counter -%}
+            <span class="images-scrolling__counter bold">{{ forloop.index | prepend: '00' | slice: -2, 2 }}</span>
+          {%- endif -%}
+
+          <div class="prose" style="--images-scrolling-item-icon-width: {{ block.settings.icon_width }}px">
+            {%- if block.settings.custom_icon != blank -%}
+              {%- capture sizes -%}{{ block.settings.icon_width }}px{%- endcapture -%}
+              {%- capture widths -%}{{ block.settings.icon_width }}, {{ block.settings.icon_width | times: 2 | at_most: block.settings.custom_icon.width }}{%- endcapture -%}
+              {{- block.settings.custom_icon | image_url: width: block.settings.custom_icon.width | image_tag: loading: 'lazy', sizes: sizes, widths: widths, class: 'images-scrolling__icon' -}}
+            {%- elsif block.settings.icon != 'none' -%}
+              {%- render 'icon' with block.settings.icon, width: block.settings.icon_width, height: block.settings.icon_width, class: 'images-scrolling__icon' -%}
+            {%- endif -%}
+
+            {%- if block.settings.title != blank -%}
+              <p class="h1" {% if settings.heading_apparition != 'none' %}reveal-on-scroll="true"{% endif %}>
+                {%- render 'styled-text', content: block.settings.title, text_color: section.settings.heading_color, gradient: section.settings.heading_gradient, apparition_effect: true -%}
+              </p>
+            {%- endif -%}
+
+            {{- block.settings.content -}}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="images-scrolling-desktop__media-wrapper">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.image != blank -%}
+          {{- block.settings.image | image_url: width: block.settings.image.width | image_tag: loading: 'lazy', sizes: '(max-width: 740px) 100vw, 650px', widths: '200,300,400,600,800,1000,1200,1400,1600', class: 'rounded-sm' -}}
+        {%- else -%}
+          {%- capture image_placeholder -%}product-{%- cycle '1', '2', '3', '4' -%}{%- endcapture -%}
+          {{- image_placeholder | placeholder_svg_tag: 'placeholder' -}}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </images-with-text-scrolling>
+</div>
+
+{% schema %}
+{
+  "name": "图片与文字滚动",
+  "tag": "section",
+  "class": "shopify-section--images-and-text-scrolling",
+  "disabled_on": {
+    "templates": [
+      "password"
+    ],
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "max_blocks": 15,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_on_mobile",
+      "label": "移动端堆叠",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counter",
+      "label": "显示计数器",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "desktop_image_effect",
+      "label": "桌面端图片过渡",
+      "options": [
+        {
+          "value": "reveal",
+          "label": "显示"
+        },
+        {
+          "value": "fade",
+          "label": "淡入淡出"
+        }
+      ],
+      "default": "reveal"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "图片位置",
+      "options": [
+        {
+          "value": "start",
+          "label": "左侧"
+        },
+        {
+          "value": "end",
+          "label": "右侧"
+        }
+      ],
+      "default": "end"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "项目",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片",
+          "info": "建议使用 1200 x 1600px .jpg"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "picto-coupon",
+              "label": "优惠券",
+              "group": "购物"
+            },
+            {
+              "value": "picto-percent",
+              "label": "百分比",
+              "group": "购物"
+            },
+            {
+              "value": "picto-gift",
+              "label": "礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-star",
+              "label": "星星",
+              "group": "购物"
+            },
+            {
+              "value": "picto-like",
+              "label": "点赞",
+              "group": "购物"
+            },
+            {
+              "value": "picto-building",
+              "label": "建筑",
+              "group": "购物"
+            },
+            {
+              "value": "picto-love",
+              "label": "爱心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-award-gift",
+              "label": "获奖礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-happy",
+              "label": "开心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子",
+              "group": "配送"
+            },
+            {
+              "value": "picto-pin",
+              "label": "图钉",
+              "group": "配送"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器",
+              "group": "配送"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证",
+              "group": "配送"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车",
+              "group": "配送"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货",
+              "group": "配送"
+            },
+            {
+              "value": "picto-earth",
+              "label": "地球",
+              "group": "配送"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机",
+              "group": "配送"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "信用卡",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "安全资料",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-money",
+              "label": "金钱",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "回收",
+              "group": "环保"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "叶子",
+              "group": "环保"
+            },
+            {
+              "value": "picto-tree",
+              "label": "树",
+              "group": "环保"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "手机",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-phone",
+              "label": "电话",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-chat",
+              "label": "聊天",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "客户支持",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-operator",
+              "label": "客服",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "邮箱箱",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-envelope",
+              "label": "信封",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-comment",
+              "label": "评论",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-send",
+              "label": "发送",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "@ 符号",
+              "group": "科技"
+            },
+            {
+              "value": "picto-camera",
+              "label": "相机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "WiFi",
+              "group": "科技"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "蓝牙",
+              "group": "科技"
+            },
+            {
+              "value": "picto-printer",
+              "label": "打印机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表",
+              "group": "科技"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "咖啡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-burger",
+              "label": "汉堡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-beer",
+              "label": "啤酒",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-target",
+              "label": "目标",
+              "group": "其他"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档",
+              "group": "其他"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "珠宝",
+              "group": "其他"
+            },
+            {
+              "value": "picto-music",
+              "label": "音乐",
+              "group": "其他"
+            },
+            {
+              "value": "picto-file",
+              "label": "文件",
+              "group": "其他"
+            },
+            {
+              "value": "picto-mask",
+              "label": "遮罩",
+              "group": "其他"
+            },
+            {
+              "value": "picto-stop",
+              "label": "停止",
+              "group": "其他"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标",
+          "info": "建议使用 240 x 240px .png"
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 24,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "label": "图标宽度",
+          "default": 48
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "图片与文字滚动",
+      "category": "Media",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "Heading 1"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Heading 2"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

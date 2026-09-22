@@ -1,0 +1,244 @@
+{%- comment -%}
+  Product series selector driven by product metafields.
+
+  Supported product/collection metafields:
+  - custom.product_series: list.product_reference
+  - custom.related_series_products: list.product_reference / product_reference / collection_reference
+  - custom.related_series: list.product_reference / product_reference / collection_reference
+  - custom.related_products: list.product_reference
+  - custom.associated_products: list.product_reference
+  - custom.color_series: list.product_reference
+  - custom.series_products: list.product_reference
+
+  Supported collection reference metafields:
+  - custom.series_collection: collection_reference
+  - custom.related_collection: collection_reference
+
+  Optional metafields:
+  - custom.series_label: single_line_text_field
+  - custom.series_option_name: single_line_text_field
+{%- endcomment -%}
+
+{%- liquid
+  assign series_source = product.metafields.custom.product_series.value
+
+  if series_source == blank
+    assign series_source = product.metafields.custom.related_series_products.value
+  endif
+
+  if series_source == blank
+    assign series_source = product.metafields.custom.related_series.value
+  endif
+
+  if series_source == blank
+    assign series_source = product.metafields.custom.related_products.value
+  endif
+
+  if series_source == blank
+    assign series_source = product.metafields.custom.associated_products.value
+  endif
+
+  if series_source == blank
+    assign series_source = product.metafields.custom.color_series.value
+  endif
+
+  if series_source == blank
+    assign series_source = product.metafields.custom.series_products.value
+  endif
+
+  assign series_products = blank
+  assign single_series_product = blank
+
+  if series_source != blank
+    if series_source.products != blank or series_source.products_count != blank
+      assign series_products = series_source.products
+    elsif series_source.featured_media != blank or series_source.selected_or_first_available_variant != blank
+      assign single_series_product = series_source
+    else
+      assign series_products = series_source
+    endif
+  endif
+
+  if series_products == blank and single_series_product == blank
+    assign series_collection = product.metafields.custom.series_collection.value
+
+    if series_collection == blank
+      assign series_collection = product.metafields.custom.related_collection.value
+    endif
+
+    if series_collection != blank
+      assign series_products = series_collection.products
+    endif
+  endif
+-%}
+
+{%- if series_products != blank or single_series_product != blank -%}
+  {%- liquid
+    assign current_series_label = product.metafields.custom.series_label.value | default: product.metafields.custom.color.value | default: product.selected_or_first_available_variant.option1 | default: product.title
+
+    if current_series_label == blank or current_series_label == 'Default Title'
+      assign current_series_label = product.title
+    endif
+
+    assign series_option_name = 'Styles'
+    assign max_visible_series_tiles = 8
+    assign rendered_series_tile_count = 0
+    assign hidden_series_tile_count = 0
+  -%}
+
+  <div class="product-info__series-selector" data-product-series-selector {% if product_form_id != blank %}data-product-form-id="{{ product_form_id | escape }}"{% endif %}>
+    <div class="product-info__series-heading">
+      {{- series_option_name | escape -}}
+    </div>
+
+    <div class="product-info__series-list" role="list">
+      {%- liquid
+        assign tile_image = product.featured_media
+        assign tile_label = current_series_label
+        assign rendered_series_tile_count = rendered_series_tile_count | plus: 1
+      -%}
+
+      <a
+        class="product-info__series-tile is-selected"
+        href="{{ product.url }}"
+        aria-label="{{ tile_label | escape }}"
+        aria-current="page"
+        role="listitem"
+        data-instant
+      >
+        <span class="product-info__series-image">
+          {%- if tile_image != blank -%}
+            {{- tile_image | image_url: width: 360 | image_tag: loading: 'lazy', widths: '120,180,240,360', sizes: '(max-width: 699px) 72px, 84px', alt: tile_label -}}
+          {%- endif -%}
+        </span>
+      </a>
+
+      {%- if single_series_product != blank and single_series_product.id != product.id -%}
+        {%- liquid
+          assign tile_label = single_series_product.metafields.custom.series_label.value | default: single_series_product.metafields.custom.color.value | default: single_series_product.selected_or_first_available_variant.option1 | default: single_series_product.title
+          assign tile_image = single_series_product.featured_media
+
+          if tile_label == blank or tile_label == 'Default Title'
+            assign tile_label = single_series_product.title
+          endif
+
+          assign rendered_series_tile_count = rendered_series_tile_count | plus: 1
+          assign is_hidden_series_tile = false
+
+          if rendered_series_tile_count > max_visible_series_tiles
+            assign is_hidden_series_tile = true
+            assign hidden_series_tile_count = hidden_series_tile_count | plus: 1
+          endif
+        -%}
+
+        <a
+          class="product-info__series-tile{% if is_hidden_series_tile %} product-info__series-tile--hidden{% endif %}"
+          href="{{ single_series_product.url }}"
+          aria-label="{{ tile_label | escape }}"
+          role="listitem"
+          data-instant
+          {% if is_hidden_series_tile %}data-product-series-extra hidden{% endif %}
+        >
+          <span class="product-info__series-image">
+            {%- if tile_image != blank -%}
+              {{- tile_image | image_url: width: 360 | image_tag: loading: 'lazy', widths: '120,180,240,360', sizes: '(max-width: 699px) 72px, 84px', alt: tile_label -}}
+            {%- endif -%}
+          </span>
+        </a>
+      {%- endif -%}
+
+      {%- for series_product in series_products -%}
+        {%- if series_product.id == product.id -%}
+          {%- continue -%}
+        {%- endif -%}
+
+        {%- liquid
+          assign tile_label = series_product.metafields.custom.series_label.value | default: series_product.metafields.custom.color.value | default: series_product.selected_or_first_available_variant.option1 | default: series_product.title
+          assign tile_image = series_product.featured_media
+
+          if tile_label == blank or tile_label == 'Default Title'
+            assign tile_label = series_product.title
+          endif
+
+          assign rendered_series_tile_count = rendered_series_tile_count | plus: 1
+          assign is_hidden_series_tile = false
+
+          if rendered_series_tile_count > max_visible_series_tiles
+            assign is_hidden_series_tile = true
+            assign hidden_series_tile_count = hidden_series_tile_count | plus: 1
+          endif
+        -%}
+
+        <a
+          class="product-info__series-tile{% if is_hidden_series_tile %} product-info__series-tile--hidden{% endif %}"
+          href="{{ series_product.url }}"
+          aria-label="{{ tile_label | escape }}"
+          role="listitem"
+          data-instant
+          {% if is_hidden_series_tile %}data-product-series-extra hidden{% endif %}
+        >
+          <span class="product-info__series-image">
+            {%- if tile_image != blank -%}
+              {{- tile_image | image_url: width: 360 | image_tag: loading: 'lazy', widths: '120,180,240,360', sizes: '(max-width: 699px) 72px, 84px', alt: tile_label -}}
+            {%- endif -%}
+          </span>
+        </a>
+      {%- endfor -%}
+    </div>
+
+    {%- if hidden_series_tile_count > 0 -%}
+      <button type="button" class="product-info__series-expand" data-product-series-expand aria-expanded="false" data-series-page-size="8" data-show-more-text="Show More" data-show-less-text="Show Less">
+        Show More
+      </button>
+
+      <script>
+        (() => {
+          const selectors = document.querySelectorAll('[data-product-series-selector]:not([data-series-ready])');
+
+          selectors.forEach((selector) => {
+            selector.dataset.seriesReady = 'true';
+
+            const button = selector.querySelector('[data-product-series-expand]');
+
+            if (!button) {
+              return;
+            }
+
+            const extraTiles = Array.from(selector.querySelectorAll('[data-product-series-extra]'));
+            const pageSize = parseInt(button.dataset.seriesPageSize || '8', 10);
+
+            button.addEventListener('click', () => {
+              const hiddenTiles = extraTiles.filter((tile) => tile.hidden || tile.classList.contains('product-info__series-tile--hidden'));
+              const hasVisibleExtras = hiddenTiles.length < extraTiles.length;
+              const isFullyExpanded = hiddenTiles.length === 0;
+
+              if (isFullyExpanded && hasVisibleExtras) {
+                extraTiles.forEach((tile) => {
+                  tile.hidden = true;
+                  tile.classList.add('product-info__series-tile--hidden');
+                });
+
+                selector.classList.remove('is-expanded');
+                button.setAttribute('aria-expanded', 'false');
+                button.textContent = button.dataset.showMoreText;
+                return;
+              }
+
+              hiddenTiles.slice(0, pageSize).forEach((tile) => {
+                tile.hidden = false;
+                tile.classList.remove('product-info__series-tile--hidden');
+              });
+
+              const remainingHiddenTiles = extraTiles.filter((tile) => tile.hidden || tile.classList.contains('product-info__series-tile--hidden'));
+              const hasExpandedItems = remainingHiddenTiles.length < extraTiles.length;
+
+              selector.classList.toggle('is-expanded', hasExpandedItems);
+              button.setAttribute('aria-expanded', String(hasExpandedItems));
+              button.textContent = remainingHiddenTiles.length === 0 ? button.dataset.showLessText : button.dataset.showMoreText;
+            });
+          });
+        })();
+      </script>
+    {%- endif -%}
+  </div>
+{%- endif -%}

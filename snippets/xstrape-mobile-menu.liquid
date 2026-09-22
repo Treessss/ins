@@ -1,0 +1,451 @@
+{%- liquid
+  assign mini_product = all_products['starlink-mini-suction-cup-car-mount']
+  assign power_product = all_products['starlink-mini-30v-step-up-car-adapter-with-usb-c-port']
+  assign cable_product = all_products['10ft-cigarette-lighter-to-dc-power-cable-for-starlink-mini']
+  assign mini_image = blank
+  assign power_image = blank
+  assign cable_image = blank
+
+  if mini_product != blank and mini_product.featured_image != blank
+    assign mini_image = mini_product.featured_image
+  endif
+
+  if power_product != blank and power_product.featured_image != blank
+    assign power_image = power_product.featured_image
+  endif
+
+  if cable_product != blank and cable_product.featured_image != blank
+    assign cable_image = cable_product.featured_image
+  endif
+-%}
+
+<style>
+  @media screen and (max-width: 1149px) {
+    .xstrape-mobile-menu {
+      display: grid;
+      gap: 16px;
+    }
+
+    .xstrape-mobile-menu__cards {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .xstrape-mobile-menu__card {
+      display: grid;
+      grid-template-columns: 106px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 128px;
+      padding: 8px 16px 8px 8px;
+      border: 2px solid #17132f;
+      border-radius: 24px;
+      background: #fff;
+      color: #17132f;
+      text-decoration: none;
+      box-shadow: 0 5px 0 #28d7ff, 0 12px 24px rgb(23 19 47 / 0.12);
+    }
+
+    .xstrape-mobile-menu__card--sale .xstrape-mobile-menu__title {
+      color: #ff4f88;
+    }
+
+    .xstrape-mobile-menu__thumb {
+      position: relative;
+      width: 106px;
+      height: 106px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #dfff32;
+      box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.04);
+    }
+
+    .xstrape-mobile-menu__thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
+      mix-blend-mode: multiply;
+    }
+
+    .xstrape-mobile-menu__thumb--lifestyle img {
+      object-fit: cover;
+      padding: 0;
+      mix-blend-mode: normal;
+    }
+
+    .xstrape-mobile-menu__thumb--fallback {
+      background:
+        radial-gradient(circle at 30% 24%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0) 36%),
+        linear-gradient(145deg, #f2f9ed, #28d7ff 62%, #dfff32);
+    }
+
+    .xstrape-mobile-menu__thumb--fallback::before,
+    .xstrape-mobile-menu__thumb--fallback::after {
+      content: "";
+      position: absolute;
+      border: 3px solid rgb(17 17 17 / 0.55);
+    }
+
+    .xstrape-mobile-menu__thumb--fallback::before {
+      width: 56px;
+      height: 34px;
+      left: 25px;
+      top: 43px;
+      border-radius: 9px;
+    }
+
+    .xstrape-mobile-menu__thumb--fallback::after {
+      width: 24px;
+      height: 24px;
+      left: 41px;
+      top: 24px;
+      border-bottom-color: transparent;
+      border-radius: 999px;
+    }
+
+    .xstrape-mobile-menu__thumb--power.xstrape-mobile-menu__thumb--fallback::before {
+      width: 62px;
+      height: 24px;
+      left: 21px;
+      top: 43px;
+      border-radius: 999px;
+    }
+
+    .xstrape-mobile-menu__thumb--power.xstrape-mobile-menu__thumb--fallback::after {
+      width: 12px;
+      height: 28px;
+      left: 76px;
+      top: 40px;
+      border-bottom-color: rgb(17 17 17 / 0.55);
+      border-radius: 3px;
+    }
+
+    .xstrape-mobile-menu__thumb--mini.xstrape-mobile-menu__thumb--fallback::before {
+      width: 62px;
+      height: 42px;
+      left: 22px;
+      top: 34px;
+      border-radius: 12px;
+      transform: skewY(-5deg);
+    }
+
+    .xstrape-mobile-menu__thumb--mini.xstrape-mobile-menu__thumb--fallback::after {
+      width: 34px;
+      height: 10px;
+      left: 36px;
+      top: 77px;
+      border-top: 0;
+      border-radius: 0 0 999px 999px;
+    }
+
+    .xstrape-mobile-menu__thumb--mount.xstrape-mobile-menu__thumb--fallback::before {
+      width: 56px;
+      height: 18px;
+      left: 24px;
+      top: 55px;
+      border-radius: 999px;
+      transform: rotate(-16deg);
+    }
+
+    .xstrape-mobile-menu__thumb--mount.xstrape-mobile-menu__thumb--fallback::after {
+      width: 30px;
+      height: 30px;
+      left: 38px;
+      top: 28px;
+      border-radius: 999px;
+      border-bottom-color: rgb(17 17 17 / 0.55);
+    }
+
+    .xstrape-mobile-menu__thumb--cable.xstrape-mobile-menu__thumb--fallback::before {
+      width: 58px;
+      height: 42px;
+      left: 22px;
+      top: 35px;
+      border-top-color: transparent;
+      border-right-color: transparent;
+      border-radius: 0 0 0 28px;
+    }
+
+    .xstrape-mobile-menu__thumb--cable.xstrape-mobile-menu__thumb--fallback::after {
+      width: 18px;
+      height: 25px;
+      left: 70px;
+      top: 33px;
+      border-bottom-color: rgb(17 17 17 / 0.55);
+      border-radius: 4px;
+    }
+
+    .xstrape-mobile-menu__thumb--sale.xstrape-mobile-menu__thumb--fallback {
+      background:
+        linear-gradient(145deg, rgb(23 19 47 / 0.8), rgb(255 79 136 / 0.92)),
+        linear-gradient(145deg, #dfff32, #28d7ff);
+    }
+
+    .xstrape-mobile-menu__thumb--sale.xstrape-mobile-menu__thumb--fallback::before {
+      width: 58px;
+      height: 40px;
+      left: 24px;
+      top: 33px;
+      border: 0;
+      border-radius: 14px;
+      background: rgb(255 255 255 / 0.9);
+      box-shadow: 0 10px 22px rgb(0 0 0 / 0.2);
+    }
+
+    .xstrape-mobile-menu__thumb--sale.xstrape-mobile-menu__thumb--fallback::after {
+      content: "%";
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 40px;
+      left: 24px;
+      top: 33px;
+      border: 0;
+      color: #ff4f88;
+      font-size: 1.65rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .xstrape-mobile-menu__content {
+      min-width: 0;
+    }
+
+    .xstrape-mobile-menu__title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 5px;
+      font-size: clamp(1.22rem, 5.2vw, 1.75rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.02;
+    }
+
+    .xstrape-mobile-menu__subtitle {
+      margin: 0;
+      color: rgb(23 19 47 / 0.72);
+      font-size: clamp(0.86rem, 3.3vw, 1.1rem);
+      font-weight: 550;
+      line-height: 1.22;
+    }
+
+    .xstrape-mobile-menu__badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: #28d7ff;
+      color: #17132f;
+      font-size: clamp(0.72rem, 3vw, 0.94rem);
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      box-shadow: 0 5px 0 #17132f;
+    }
+
+    .xstrape-mobile-menu__badge--hot,
+    .xstrape-mobile-menu__badge--sale {
+      background: #ff4f88;
+      color: #17132f;
+      box-shadow: 0 5px 0 #17132f;
+    }
+
+    .xstrape-mobile-menu__arrow {
+      color: #17132f;
+      font-size: 2.45rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .xstrape-mobile-menu__single {
+      display: flex;
+      min-height: 62px;
+      align-items: center;
+      padding: 0 24px;
+      border: 2px solid #17132f;
+      border-radius: 999px;
+      background: #dfff32;
+      color: #17132f;
+      font-size: 1.45rem;
+      font-weight: 900;
+      line-height: 1;
+      text-decoration: none;
+      box-shadow: 0 5px 0 #ff4f88, 0 10px 20px rgb(23 19 47 / 0.1);
+    }
+
+    .xstrape-mobile-menu__groups {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 22px;
+      padding: 6px 4px 2px;
+    }
+
+    .xstrape-mobile-menu__group-title {
+      margin: 0 0 10px;
+      color: rgb(23 19 47 / 0.58);
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .xstrape-mobile-menu__links {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .xstrape-mobile-menu__links a {
+      color: #17132f;
+      font-size: 0.95rem;
+      font-weight: 760;
+      line-height: 1.15;
+      text-decoration: none;
+    }
+
+    @media screen and (max-width: 374px) {
+      .xstrape-mobile-menu__card {
+        grid-template-columns: 88px minmax(0, 1fr) auto;
+        min-height: 110px;
+      }
+
+      .xstrape-mobile-menu__thumb {
+        width: 88px;
+        height: 88px;
+      }
+
+      .xstrape-mobile-menu__badge {
+        min-height: 28px;
+        padding-inline: 10px;
+      }
+    }
+  }
+
+  @media screen and (min-width: 1150px) {
+    .xstrape-mobile-menu {
+      display: none;
+    }
+  }
+</style>
+
+<div class="xstrape-mobile-menu">
+  <ul class="xstrape-mobile-menu__cards" role="list">
+    <li>
+      <a class="xstrape-mobile-menu__card">
+        <span class="xstrape-mobile-menu__thumb xstrape-mobile-menu__thumb--mini{% unless mini_image != blank %} xstrape-mobile-menu__thumb--fallback{% endunless %}">
+          {%- if mini_image != blank -%}
+            {{- mini_image | image_url: width: 220 | image_tag: loading: 'lazy', sizes: '106px', widths: '160,220,320', alt: '' -}}
+          {%- endif -%}
+        </span>
+        <span class="xstrape-mobile-menu__content">
+          <span class="xstrape-mobile-menu__title">Featured Item <span class="xstrape-mobile-menu__badge">New</span></span>
+          <span class="xstrape-mobile-menu__subtitle">Add supporting copy</span>
+        </span>
+        <span class="xstrape-mobile-menu__arrow">›</span>
+      </a>
+    </li>
+    <li>
+      <a class="xstrape-mobile-menu__card">
+        <span class="xstrape-mobile-menu__thumb xstrape-mobile-menu__thumb--power{% unless power_image != blank %} xstrape-mobile-menu__thumb--fallback{% endunless %}">
+          {%- if power_image != blank -%}
+            {{- power_image | image_url: width: 220 | image_tag: loading: 'lazy', sizes: '106px', widths: '160,220,320', alt: '' -}}
+          {%- endif -%}
+        </span>
+        <span class="xstrape-mobile-menu__content">
+          <span class="xstrape-mobile-menu__title">Power <span class="xstrape-mobile-menu__badge xstrape-mobile-menu__badge--hot">Hot</span></span>
+          <span class="xstrape-mobile-menu__subtitle">Add supporting copy</span>
+        </span>
+        <span class="xstrape-mobile-menu__arrow">›</span>
+      </a>
+    </li>
+    <li>
+      <a class="xstrape-mobile-menu__card">
+        <span class="xstrape-mobile-menu__thumb xstrape-mobile-menu__thumb--mount{% unless mini_image != blank %} xstrape-mobile-menu__thumb--fallback{% endunless %}">
+          {%- if mini_image != blank -%}
+            {{- mini_image | image_url: width: 220 | image_tag: loading: 'lazy', sizes: '106px', widths: '160,220,320', alt: '' -}}
+          {%- endif -%}
+        </span>
+        <span class="xstrape-mobile-menu__content">
+          <span class="xstrape-mobile-menu__title">Mounts</span>
+          <span class="xstrape-mobile-menu__subtitle">Add supporting copy</span>
+        </span>
+        <span class="xstrape-mobile-menu__arrow">›</span>
+      </a>
+    </li>
+    <li>
+      <a class="xstrape-mobile-menu__card">
+        <span class="xstrape-mobile-menu__thumb xstrape-mobile-menu__thumb--cable{% unless cable_image != blank %} xstrape-mobile-menu__thumb--fallback{% endunless %}">
+          {%- if cable_image != blank -%}
+            {{- cable_image | image_url: width: 220 | image_tag: loading: 'lazy', sizes: '106px', widths: '160,220,320', alt: '' -}}
+          {%- endif -%}
+        </span>
+        <span class="xstrape-mobile-menu__content">
+          <span class="xstrape-mobile-menu__title">Cables</span>
+          <span class="xstrape-mobile-menu__subtitle">Add supporting copy</span>
+        </span>
+        <span class="xstrape-mobile-menu__arrow">›</span>
+      </a>
+    </li>
+    <li>
+      <a class="xstrape-mobile-menu__card xstrape-mobile-menu__card--sale">
+        <span class="xstrape-mobile-menu__thumb xstrape-mobile-menu__thumb--lifestyle xstrape-mobile-menu__thumb--sale{% unless mini_image != blank %} xstrape-mobile-menu__thumb--fallback{% endunless %}">
+          {%- if mini_image != blank -%}
+            {{- mini_image | image_url: width: 220 | image_tag: loading: 'lazy', sizes: '106px', widths: '160,220,320', alt: '' -}}
+          {%- endif -%}
+        </span>
+        <span class="xstrape-mobile-menu__content">
+          <span class="xstrape-mobile-menu__title">Sale <span class="xstrape-mobile-menu__badge xstrape-mobile-menu__badge--sale">Featured Discounts</span></span>
+        </span>
+        <span class="xstrape-mobile-menu__arrow">›</span>
+      </a>
+    </li>
+    <li>
+      <a class="xstrape-mobile-menu__single">Best Sellers</a>
+    </li>
+  </ul>
+
+  <div class="xstrape-mobile-menu__groups">
+    <div>
+      <p class="xstrape-mobile-menu__group-title">Shop Categories</p>
+      <ul class="xstrape-mobile-menu__links" role="list">
+        <li><a>Featured Item</a></li>
+        <li><a>Featured Item</a></li>
+        <li><a>Featured Item</a></li>
+        <li><a>Featured Item</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="xstrape-mobile-menu__group-title">Use Cases</p>
+      <ul class="xstrape-mobile-menu__links" role="list">
+        <li><a>Featured Use</a></li>
+        <li><a>Featured Use</a></li>
+        <li><a>Featured Use</a></li>
+        <li><a>All Products</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="xstrape-mobile-menu__group-title">Support</p>
+      <ul class="xstrape-mobile-menu__links" role="list">
+        <li><a>Contact Us</a></li>
+        <li><a>Shipping</a></li>
+        <li><a>Returns</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="xstrape-mobile-menu__group-title">Quick Links</p>
+      <ul class="xstrape-mobile-menu__links" role="list">
+        <li><a>Search</a></li>
+        <li><a>Cart</a></li>
+        <li><a>Sale</a></li>
+      </ul>
+    </div>
+  </div>
+</div>

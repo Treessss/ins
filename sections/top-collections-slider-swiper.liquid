@@ -1,0 +1,818 @@
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    
+    --top-collections-card-radius: 1.75rem;
+    --top-collections-gap: 1rem;
+     --top-collections-heading-size: {{ section.settings.heading_size_desktop | default: 40 }}px;
+    --top-collections-heading-weight: {{ section.settings.heading_weight | default: 800 }};
+    --top-collections-heading-line-height: {{ section.settings.heading_line_height | default: 1.05 }};
+    --top-collections-heading-letter-spacing: {{ section.settings.heading_letter_spacing | default: -0.02 }}em;
+     {%- if section.settings.item_corner_background_image != blank -%}
+      --top-collections-item-corner-bg: url('{{ section.settings.item_corner_background_image | image_url: width: 1200 }}');
+    {%- endif -%}
+  }
+
+  /* Allow slides to show outside 1440 until viewport edge */
+  #shopify-section-{{ section.id }} {
+    overflow-x: clip;
+  }
+
+  
+  #shopify-section-{{ section.id }} .top-collections {
+    position: relative;
+    max-width: 1440px;
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__viewport {
+    {% comment %} overflow: hidden; {% endcomment %}
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__bleed {
+    --top-collections-bleed: max(0px, calc(((100vw - var(--scrollbar-width, 0px)) - 1440px) / 2));
+    margin-inline: calc(-1 * var(--top-collections-bleed));
+    padding-inline: var(--top-collections-bleed);
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__track {
+    display: flex;
+    gap: var(--top-collections-gap);
+    /* Swiper will manage scroll; keep layout classes only */
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__swiper .swiper {
+    overflow: visible;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__slide {
+    /* Let Swiper control slide widths */
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__surface {
+    height: 100%;
+    border-radius: var(--top-collections-card-radius);
+    overflow: hidden;
+    position: relative;
+    /* Background layers handled by ::before to match original stacking */
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__surface::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--top-collections-item-corner-bg, none) right top / 100% auto no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__slide.is-active .top-collections__surface {
+    --background: 25 25 25;
+    --text-color: 255 255 255;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__slide.is-active .top-collections__surface::before {
+    background:
+      radial-gradient(circle at left top, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 3%),
+      linear-gradient(48deg, rgba(255, 255, 255, 0) 28%, rgba(255, 255, 255, 0.05) 78%),
+      linear-gradient(rgba(25, 25, 25, 0.9), rgba(25, 25, 25, 0.8)),
+      var(--top-collections-item-corner-bg, none) right top / 100% auto no-repeat,
+      #191919 !important;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__slide.is-active .top-collections__description {
+    color: rgb(255 255 255 / 0.72);
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__slide.is-active .top-collections__media {
+    background: rgb(255 255 255 / 0.08);
+  }
+  
+ #shopify-section-{{ section.id }} .is-active .top-collections__card {
+    border: 4px solid transparent;
+}
+  #shopify-section-{{ section.id }} .top-collections__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+box-shadow: 0 12px 16px 0 #6b6f7314;
+border: 4px solid #FFF;
+
+    padding: 0.5rem;
+    border-radius: var(--top-collections-card-radius);
+    overflow: hidden;
+  }
+
+  
+
+  #shopify-section-{{ section.id }} .top-collections__content {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1.25rem;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__content .prose {
+    max-width: 14rem;
+    padding:1rem;
+  }
+    #shopify-section-{{ section.id }} .top-collections__heading {
+    margin: 0;
+    font-size: var(--top-collections-heading-size);
+    font-weight: var(--top-collections-heading-weight);
+    line-height: var(--top-collections-heading-line-height);
+    letter-spacing: var(--top-collections-heading-letter-spacing);
+    color: rgb(var(--text-color));
+    text-wrap: balance;
+  }
+   #shopify-section-{{ section.id }} .top-collections__slide.is-active .top-collections__heading,
+  #shopify-section-{{ section.id }} .top-collections__slide.is-active .top-collections__heading .text-custom,
+  #shopify-section-{{ section.id }} .top-collections__slide.is-active .top-collections__heading .text-gradient {
+    color: #fff !important;
+    --text-color: 255 255 255 !important;
+  }
+  #shopify-section-{{ section.id }} .top-collections__slide.is-active .top-collections__heading .text-gradient {
+    background-image: none !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__description {
+    color: rgb(var(--text-color) / 0.72);
+  } 
+
+  #shopify-section-{{ section.id }} .top-collections__media {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    background: rgb(var(--text-color) / 0.03);
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__media img,
+  #shopify-section-{{ section.id }} .top-collections__placeholder {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__button {
+    position: absolute;
+    inset-inline-start: 1rem;
+    inset-block-end: 1rem;
+    z-index: 2;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.5rem;
+    padding: 0.45rem 0.8rem 0.45rem 0.95rem;
+    border-radius: 999px;
+    {% comment %} background: rgb(255 255 255 / 0.88); {% endcomment %}
+    color: #111;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1;
+    backdrop-filter: blur(6px);
+    color:#fff;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__cta-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+    flex-shrink: 0;
+    color:#191919;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__nav {
+    appearance: none;
+    border: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(var(--text-color) / 0.06);
+    color: rgb(var(--text-color) / 0.7);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__nav:hover {
+    background: rgb(var(--text-color) / 0.1);
+    color: rgb(var(--text-color));
+  }
+
+  #shopify-section-{{ section.id }} .top-collections__nav[disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .top-collections__card {
+     
+      padding: 1.25rem;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+      #shopify-section-{{ section.id }} {
+        
+      --top-collections-heading-size: {{ section.settings.heading_size_mobile | default: 32 }}px;
+    }
+
+    #shopify-section-{{ section.id }} > .section {
+      padding-block-end: 60px;
+    }
+    #shopify-section-{{ section.id }} .top-collections__slide { min-width: 0; }
+
+
+    #shopify-section-{{ section.id }} .top-collections__card {
+     
+      padding: 1rem;
+    }
+
+    #shopify-section-{{ section.id }} .top-collections__media {
+      border-radius: 1rem;
+    }
+  }
+</style>
+
+<div {% render 'section-properties' %}>
+  <div class="top-collections" data-top-collections>
+    <div class="top-collections__viewport top-collections__bleed">
+      <top-collections-swiper
+        class="top-collections__swiper"
+        data-slides-mobile="{{ section.settings.slides_mobile }}"
+        data-slides-tablet="{{ section.settings.slides_tablet }}"
+        data-slides-desktop="{{ section.settings.slides_desktop }}"
+        data-gap="{{ section.settings.slides_gap }}"
+        data-loop="{{ section.settings.loop }}"
+        data-speed="{{ section.settings.speed }}"
+      >
+        <div class="swiper">
+          <div class="swiper-wrapper top-collections__track">
+            {%- for block in section.blocks -%}
+              <div class="swiper-slide top-collections__slide {% if forloop.first %}is-active{% endif %}" data-top-collections-slide {{ block.shopify_attributes }}>
+            <div
+              {% render 'surface',
+                class: 'top-collections__surface',
+                background: block.settings.card_background,
+                text_color: block.settings.text_color,
+                background_fallback: 'bg-secondary'
+              %}
+            >
+              <div class="top-collections__card">
+                <div class="top-collections__content">
+                  <div class="prose">
+                    {%- if block.settings.title != blank -%}
+                       <h3 class="top-collections__heading">
+                        {%- render 'styled-text',
+                          content: block.settings.title,
+                          text_color: block.settings.heading_color,
+                          gradient: block.settings.heading_gradient
+                        -%}
+                      </h3>
+                    {%- endif -%}
+
+                    {%- if block.settings.content != blank -%}
+                      <div class="top-collections__description">
+                        {{ block.settings.content }}
+                      </div>
+                    {%- endif -%}
+                  </div>
+                </div>
+
+                <div class="top-collections__media">
+                  {%- if block.settings.image != blank -%}
+                    {%- capture sizes -%}(max-width: 699px) 82vw, (max-width: 999px) 50vw, 25vw{%- endcapture -%}
+                    {%- capture widths -%}400,500,600,700,800,900,1000,1200{%- endcapture -%}
+                    {{
+                      block.settings.image
+                      | image_url: width: 1200
+                      | image_tag: loading: 'lazy', sizes: sizes, widths: widths
+                    }}
+                  {%- else -%}
+                    {{ 'image' | placeholder_svg_tag: 'top-collections__placeholder' }}
+                  {%- endif -%}
+
+                  {%- if block.settings.button_text != blank -%}
+                    <div class="top-collections__button">
+                      <a {% if block.settings.button_url != blank %}href="{{ block.settings.button_url }}"{% endif %} class="top-collections__cta">
+                        <span>{{ block.settings.button_text }}</span>
+                        <span class="top-collections__cta-icon">
+                          <svg aria-hidden="true" focusable="false" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
+                      </a>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </top-collections-swiper>
+    </div>
+
+    <div class="top-collections__footer">
+      <button type="button" class="top-collections__nav" data-top-collections-prev aria-label="Previous">
+        <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M8.75 3.5L5.25 7L8.75 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <button type="button" class="top-collections__nav" data-top-collections-next aria-label="Next">
+        <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M5.25 3.5L8.75 7L5.25 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const CSS_URL = "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css";
+    const JS_URL = "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js";
+
+    function ensureSwiperAssets() {
+      const promises = [];
+
+      if (!document.querySelector('link[data-swiper-bundle]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = CSS_URL;
+        link.dataset.swiperBundle = 'true';
+        document.head.appendChild(link);
+      }
+
+      if (window.Swiper) return Promise.resolve();
+
+      let script = document.querySelector('script[data-swiper-bundle]');
+      if (!script) {
+        script = document.createElement('script');
+        script.src = JS_URL;
+        script.async = true;
+        script.dataset.swiperBundle = 'true';
+        document.head.appendChild(script);
+      }
+
+      promises.push(new Promise((resolve, reject) => {
+        script.addEventListener('load', resolve, { once: true });
+        script.addEventListener('error', reject, { once: true });
+      }));
+
+      return Promise.all(promises).then(() => {});
+    }
+
+    class TopCollectionsSwiper extends HTMLElement {
+      connectedCallback() {
+        this._abortController = new AbortController();
+        this._init();
+      }
+
+      disconnectedCallback() {
+        this._abortController?.abort();
+        this._destroy();
+      }
+
+      async _init() {
+        await ensureSwiperAssets().catch(() => {});
+        if (!window.Swiper) return;
+
+        const sectionEl = this.closest('#shopify-section-{{ section.id }}');
+        if (!sectionEl) return;
+
+        const prev = sectionEl.querySelector('[data-top-collections-prev]');
+        const next = sectionEl.querySelector('[data-top-collections-next]');
+        const swiperEl = this.querySelector('.swiper');
+        const slides = Array.from(sectionEl.querySelectorAll('[data-top-collections-slide]'));
+
+        if (!swiperEl || slides.length === 0 || this._swiper) return;
+
+        const setActiveByIndex = (activeIndex) => {
+          slides.forEach((slide, index) => {
+            slide.classList.toggle('is-active', index === activeIndex);
+          });
+        };
+
+        const slidesMobile = parseFloat(this.dataset.slidesMobile || '1.15');
+        const slidesTablet = parseFloat(this.dataset.slidesTablet || '2');
+        const slidesDesktop = parseFloat(this.dataset.slidesDesktop || '4');
+        const gap = parseInt(this.dataset.gap || '16', 10);
+        const loop = (this.dataset.loop || 'true') === 'true';
+        const speed = parseInt(this.dataset.speed || '450', 10);
+
+        this._swiper = new window.Swiper(swiperEl, {
+          slidesPerView: slidesDesktop,
+          spaceBetween: gap,
+          speed,
+          loop,
+          watchOverflow: true,
+          grabCursor: true,
+          observer: true,
+          observeParents: true,
+          resizeObserver: true,
+          navigation: {
+            prevEl: prev,
+            nextEl: next
+          },
+          breakpoints: {
+            0: { slidesPerView: slidesMobile, spaceBetween: gap },
+            700: { slidesPerView: slidesTablet, spaceBetween: gap },
+            1000: { slidesPerView: slidesDesktop, spaceBetween: gap }
+          },
+          on: {
+            init: (swiper) => setActiveByIndex(swiper.realIndex || 0),
+            slideChange: (swiper) => setActiveByIndex(swiper.realIndex || 0)
+          }
+        });
+
+        if (window.Shopify?.designMode) {
+          sectionEl.addEventListener('shopify:section:unload', () => this._destroy(), { signal: this._abortController.signal });
+        }
+      }
+
+      _destroy() {
+        if (this._swiper) {
+          try { this._swiper.destroy(true, true); } catch (e) {}
+          this._swiper = null;
+        }
+      }
+    }
+
+    if (!window.customElements.get('top-collections-swiper')) {
+      window.customElements.define('top-collections-swiper', TopCollectionsSwiper);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "顶部系列 11111",
+  "class": "shopify-section--top-collections-slider",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "blocks": [
+    {
+      "type": "card",
+      "name": "卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Featured Collection"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Use Featured Item anytime, anywhere</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "按钮文本",
+          "default": "Read More"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "按钮链接"
+        },
+        {
+          "type": "header",
+          "content": "颜色",
+          "info": "设置渐变后会替代纯色。"
+        },
+        {
+          "type": "color",
+          "id": "card_background",
+          "label": "卡片背景"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本"
+        },
+        {
+          "type": "color",
+          "id": "heading_color",
+          "label": "标题颜色"
+        },
+        {
+          "type": "color_background",
+          "id": "heading_gradient",
+          "label": "标题渐变"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "轮播"
+    },
+    {
+      "type": "select",
+      "id": "slides_mobile",
+      "label": "每屏幻灯片数（移动端）",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "1.1",
+          "label": "1.1"
+        },
+        {
+          "value": "1.15",
+          "label": "1.15"
+        },
+        {
+          "value": "1.2",
+          "label": "1.2"
+        },
+        {
+          "value": "1.3",
+          "label": "1.3"
+        },
+        {
+          "value": "1.4",
+          "label": "1.4"
+        },
+        {
+          "value": "1.5",
+          "label": "1.5"
+        },
+        {
+          "value": "1.6",
+          "label": "1.6"
+        },
+        {
+          "value": "1.75",
+          "label": "1.75"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1.15"
+    },
+    {
+      "type": "select",
+      "id": "slides_tablet",
+      "label": "每屏幻灯片数（平板端）",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "1.2",
+          "label": "1.2"
+        },
+        {
+          "value": "1.5",
+          "label": "1.5"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "2.2",
+          "label": "2.2"
+        },
+        {
+          "value": "2.5",
+          "label": "2.5"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "3.5",
+          "label": "3.5"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "slides_desktop",
+      "label": "每屏幻灯片数（桌面端）",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "2.5",
+          "label": "2.5"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "3.5",
+          "label": "3.5"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        },
+        {
+          "value": "4.5",
+          "label": "4.5"
+        },
+        {
+          "value": "5",
+          "label": "5"
+        },
+        {
+          "value": "6",
+          "label": "6"
+        }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "range",
+      "id": "slides_gap",
+      "label": "幻灯片间距",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "过渡速度",
+      "min": 150,
+      "max": 1200,
+      "step": 50,
+      "unit": "ms",
+      "default": 450
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "循环播放幻灯片",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "标题排版"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "标题大小（桌面端）",
+      "min": 24,
+      "max": 72,
+      "step": 1,
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "标题大小（移动端）",
+      "min": 20,
+      "max": 54,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "标题字重",
+      "default": "800",
+      "options": [
+        {
+          "value": "600",
+          "label": "600"
+        },
+        {
+          "value": "700",
+          "label": "700"
+        },
+        {
+          "value": "800",
+          "label": "800"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "标题行高",
+      "min": 0.9,
+      "max": 1.3,
+      "step": 0.1,
+      "default": 1.1
+    },
+    {
+      "type": "image_picker",
+      "id": "item_corner_background_image",
+      "label": "项目角落背景图片（右上）"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "分区背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "分区背景渐变"
+    }
+  ],
+  "presets": [
+    {
+      "name": "顶部系列轮播",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "title": "Featured Collection"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Featured Collection"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Featured Collection"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "title": "Featured Collection"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,293 @@
+{%- if section.blocks.size > 0 -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  {%- comment -%}
+  ------------------------------------------------------------------------------------------------------------------------
+  CSS
+  ------------------------------------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      --impact-text-font-size: calc(min(20vw, 65px) * {{ section.settings.impact_text_size_ratio }});
+      --impact-text-auto-columns: {% if section.blocks.size == 1 %}minmax(0, 1fr){% else %}{% if section.settings.text_divider != 'none' %}48vw auto{% else %}64vw{% endif %}{% endif %};
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} {
+        --impact-text-font-size: calc(min(15vw, var(--container-max-width) * 0.15) / {{ section.blocks.size }} * {{ section.settings.impact_text_size_ratio }});
+        --impact-text-auto-columns: {% if section.settings.text_divider != 'none' %}minmax(0, 1fr) auto{% else %}minmax(0, 1fr){% endif %};
+      }
+    }
+  </style>
+
+  {%- comment -%}
+  ------------------------------------------------------------------------------------------------------------------------
+  LIQUID
+  ------------------------------------------------------------------------------------------------------------------------
+  {%- endcomment -%}
+
+  <div {% render 'section-properties' %}>
+    <div {% unless section.settings.stack_mobile %}class="scroll-area bleed {% if section.blocks.size < 3 %}sm:unbleed{% else %}md:unbleed{% endif %}"{% endunless %}>
+      <div class="impact-text impact-text--{{ section.settings.text_alignment }} {% unless section.settings.stack_mobile %}impact-text--scroll{% endunless %}">
+          {%- for block in section.blocks -%}
+            <div class="snap-center" {{ block.shopify_attributes }}>
+              {%- if block.settings.title != blank -%}
+                <h2 class="impact-text__text heading break-all">
+                  <impact-text {% if block.settings.animate_impact_text %}count-up="{{ block.settings.animate_impact_text_duration }}"{% endif %} reveal-js>
+                    {%- render 'styled-text', content: block.settings.title, text_color: section.settings.heading_text_color, gradient: section.settings.heading_gradient, style: section.settings.impact_text_style -%}
+                  </impact-text>
+                </h2>
+              {%- endif -%}
+
+              {%- if block.settings.subheading != blank or block.settings.content != blank or block.settings.button_text != blank -%}
+                <div class="impact-text__content">
+                  <div class="prose">
+                    {%- if block.settings.subheading != blank -%}
+                      <h3 class="h4">{{ block.settings.subheading | escape }}</h3>
+                    {%- endif -%}
+
+                    {{- block.settings.content -}}
+
+                    {%- if block.settings.button_text != blank -%}
+                      {%- render 'button', content: block.settings.button_text, href: block.settings.button_url, size: 'xl', background: section.settings.button_background, text_color: section.settings.button_text_color -%}
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+
+            {%- unless forloop.last or section.settings.text_divider == 'none' -%}
+              {%- case section.settings.text_divider -%}
+                {%- when 'square' -%}
+                  <span class="shape-square shape--lg place-self-center"></span>
+                {%- when 'circle' -%}
+                  <span class="shape-circle shape--lg place-self-center"></span>
+                {%- when 'diamond' -%}
+                  <span class="shape-diamond shape--lg place-self-center"></span>
+                {%- when 'line' -%}
+                  <span class="shape-line {% if section.settings.stack_mobile %}hidden sm:block{% endif %}"></span>
+              {%- endcase -%}
+            {%- endunless -%}
+          {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "强调文字",
+  "class": "shopify-section--impact-text",
+  "tag": "section",
+  "disabled_on": {
+    "templates": [
+      "password"
+    ],
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "项目",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "强调文字",
+          "info": "为获得最佳效果，请保持文本简短有力。",
+          "default": "100%"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "副标题",
+          "default": "Showcase a benefit of your product"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "按钮文本"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "按钮链接"
+        },
+        {
+          "type": "header",
+          "content": "数字动画"
+        },
+        {
+          "type": "paragraph",
+          "content": "只有数字可以做动画。点号、逗号和空格可作为分隔符。"
+        },
+        {
+          "type": "checkbox",
+          "id": "animate_impact_text",
+          "label": "显示计数动画",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "animate_impact_text_duration",
+          "label": "计数动画时长",
+          "min": 0.5,
+          "max": 5,
+          "step": 0.1,
+          "unit": "s",
+          "default": 2,
+          "visible_if": "{{ block.settings.animate_impact_text }}"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "移动端堆叠",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "文本对齐方式",
+      "options": [
+        {
+          "value": "start",
+          "label": "左侧"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "end",
+          "label": "右侧"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "impact_text_style",
+      "label": "强调文字样式",
+      "options": [
+        {
+          "value": "outline",
+          "label": "描边"
+        },
+        {
+          "value": "fill",
+          "label": "填充"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "select",
+      "id": "text_divider",
+      "label": "多段文本分隔符",
+      "options": [
+        {
+          "value": "none",
+          "label": "无"
+        },
+        {
+          "value": "square",
+          "label": "正方形"
+        },
+        {
+          "value": "circle",
+          "label": "圆形"
+        },
+        {
+          "value": "diamond",
+          "label": "菱形"
+        },
+        {
+          "value": "line",
+          "label": "线条"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "impact_text_size_ratio",
+      "label": "强调文字大小比例",
+      "min": 0.5,
+      "max": 1.5,
+      "step": 0.1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。渐变文字描边不能与渐变背景同时使用。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "heading_text_color",
+      "label": "强调文字"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "强调文字渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "按钮背景"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "按钮文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "强调文字",
+      "category": "Storytelling",
+      "blocks": [
+        {
+          "type": "item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

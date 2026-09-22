@@ -1,0 +1,79 @@
+{%- if section.blocks.size > 0 -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      {% if section.settings.remove_vertical_spacing %}--section-spacing-block: 0px;{% endif %}
+      {% if section.settings.remove_horizontal_spacing %}--section-spacing-inline: 0px;{% endif %}
+    }
+  </style>
+
+  <div {% render 'section-properties' %}>
+    {%- for block in section.blocks -%}
+      {%- render block -%}
+    {%- endfor -%}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "应用",
+  "class": "shopify-section--apps",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_vertical_spacing",
+      "label": "移除垂直间距",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_horizontal_spacing",
+      "label": "移除水平间距",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "应用"
+    }
+  ]
+}
+{% endschema %}

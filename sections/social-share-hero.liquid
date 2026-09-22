@@ -1,0 +1,296 @@
+{% liquid
+  assign section_id = 'social-share-hero-' | append: section.id
+%}
+
+<style>
+  #{{ section_id }} {
+    --ssh-height-desktop: {{ section.settings.height_desktop }}px;
+    --ssh-height-mobile: {{ section.settings.height_mobile }}px;
+    --ssh-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --ssh-content-max: 1440px;
+    --ssh-text-max: 56%;
+  }
+
+  #{{ section_id }} .social-share-hero {
+    position: relative;
+    min-height: var(--ssh-height-desktop);
+    width: 100%;
+    overflow: hidden;
+    background: #111;
+    display: flex;
+    align-items: center;
+    isolation: isolate;
+  }
+
+  #{{ section_id }} .social-share-hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  #{{ section_id }} .social-share-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #{{ section_id }} .social-share-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, calc(var(--ssh-overlay-opacity) + 0.2)) 0%,
+      rgba(0, 0, 0, calc(var(--ssh-overlay-opacity) - 0.05)) 38%,
+      rgba(0, 0, 0, 0.08) 100%
+    );
+  }
+
+  #{{ section_id }} .social-share-hero__inner {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: var(--ssh-content-max);
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  #{{ section_id }} .social-share-hero__content {
+    max-width: var(--ssh-text-max);
+    padding: 48px 0;
+    color: {{ section.settings.text_color }};
+  }
+
+  #{{ section_id }} .social-share-hero__title {
+    margin: 0 0 14px;
+    font-size: {{ section.settings.heading_size }}px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: {{ section.settings.text_color }};
+  }
+
+  #{{ section_id }} .social-share-hero__text {
+    margin: 0;
+    font-size: {{ section.settings.text_size }}px;
+    line-height: 1.65;
+    color: {{ section.settings.text_color }};
+    opacity: 0.92;
+  }
+
+  #{{ section_id }} .social-share-hero__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+    min-height: 46px;
+    padding: 0 20px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    background: {{ section.settings.button_bg }};
+    color: {{ section.settings.button_text_color }};
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  #{{ section_id }} .social-share-hero__button:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+  }
+
+  @media screen and (max-width: 989px) {
+    #{{ section_id }} .social-share-hero {
+      min-height: var(--ssh-height-mobile);
+    }
+
+    #{{ section_id }} .social-share-hero__inner {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    #{{ section_id }} .social-share-hero__content {
+      max-width: 100%;
+      padding: 28px 0;
+    }
+
+    #{{ section_id }} .social-share-hero__title {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+      margin-bottom: 10px;
+    }
+
+    #{{ section_id }} .social-share-hero__text {
+      font-size: {{ section.settings.text_size_mobile }}px;
+      line-height: 1.6;
+    }
+
+    #{{ section_id }} .social-share-hero__button {
+      margin-top: 18px;
+    }
+  }
+</style>
+
+<section id="{{ section_id }}" class="social-share-hero-section">
+  <div class="social-share-hero">
+    <div class="social-share-hero__media">
+      {% if section.settings.image != blank %}
+        {{
+          section.settings.image
+          | image_url: width: 2400
+          | image_tag:
+            class: 'social-share-hero__image',
+            loading: 'lazy',
+            alt: section.settings.heading
+        }}
+      {% endif %}
+      <div class="social-share-hero__overlay"></div>
+    </div>
+
+    <div class="social-share-hero__inner">
+      <div class="social-share-hero__content">
+        {% if section.settings.heading != blank %}
+          <h1 class="social-share-hero__title">{{ section.settings.heading }}</h1>
+        {% endif %}
+
+        {% if section.settings.text != blank %}
+          <div class="social-share-hero__text rte">
+            {{ section.settings.text }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+          <a href="{{ section.settings.button_link }}" class="social-share-hero__button">
+            {{ section.settings.button_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "社交分享首屏",
+  "tag": "section",
+  "class": "shopify-section--social-share-hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "背景图"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "Free Product for Social Share"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "描述",
+      "default": "<p>We want more people to experience our products and services. By sharing your genuine experience, you help others better understand us.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "按钮文字",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "按钮链接"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字颜色",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "按钮背景色",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "按钮文字颜色",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "遮罩强度",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "label": "桌面高度",
+      "min": 240,
+      "max": 700,
+      "step": 10,
+      "default": 420
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "移动端高度",
+      "min": 180,
+      "max": 500,
+      "step": 10,
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "桌面标题大小",
+      "min": 20,
+      "max": 72,
+      "step": 2,
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "移动端标题大小",
+      "min": 18,
+      "max": 42,
+      "step": 1,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "桌面正文字号",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "移动端正文字号",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "社交分享首屏"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,872 @@
+<style>
+  #shopify-section-{{ section.id }} {
+    --xpdc-page-bg: {{ section.settings.background | default: '#f3f3f3' }};
+    --xpdc-card-bg: {{ section.settings.card_background | default: '#ffffff' }};
+    --xpdc-text: {{ section.settings.text_color | default: '#000000' }};
+    --xpdc-radius: {{ section.settings.card_radius }}px;
+    --xpdc-card-height: {{ section.settings.desktop_card_height }}px;
+    --xpdc-mobile-image-height: {{ section.settings.mobile_image_height }}px;
+    background: var(--xpdc-page-bg);
+  }
+
+  #shopify-section-{{ section.id }} .xpdc {
+    background: var(--xpdc-page-bg);
+    color: var(--xpdc-text);
+  }
+
+  #shopify-section-{{ section.id }} .xpdc__item {
+    padding: 8px 20px;
+    background: var(--xpdc-page-bg);
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card {
+    position: relative;
+    display: flex;
+    min-height: var(--xpdc-card-height);
+    overflow: hidden;
+    border-radius: var(--xpdc-radius);
+    background: var(--xpdc-card-bg);
+    color: var(--xpdc-text);
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card--media-end {
+    flex-direction: row-reverse;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card--media-start {
+    flex-direction: row;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card--image-only,
+  #shopify-section-{{ section.id }} .xpdc-card--video {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__media,
+  #shopify-section-{{ section.id }} .xpdc-card__text {
+    position: relative;
+    z-index: 1;
+    width: 50%;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card--image-only .xpdc-card__media,
+  #shopify-section-{{ section.id }} .xpdc-card--video .xpdc-card__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__media-inner {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__media-inner picture {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__image,
+  #shopify-section-{{ section.id }} .xpdc-card__video,
+  #shopify-section-{{ section.id }} .xpdc-card__iframe,
+  #shopify-section-{{ section.id }} .xpdc-card__placeholder {
+    display: block;
+    width: min(100%, var(--xpdc-media-width, 86%));
+    height: min(100%, var(--xpdc-media-height, 100%));
+    object-fit: var(--xpdc-media-fit, contain);
+    object-position: var(--xpdc-media-position, center);
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card--image-only .xpdc-card__image,
+  #shopify-section-{{ section.id }} .xpdc-card--image-only .xpdc-card__placeholder,
+  #shopify-section-{{ section.id }} .xpdc-card--video .xpdc-card__video,
+  #shopify-section-{{ section.id }} .xpdc-card--video .xpdc-card__iframe,
+  #shopify-section-{{ section.id }} .xpdc-card--video .xpdc-card__placeholder {
+    width: 100%;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__mobile-source {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 40px;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__text-inner {
+    width: 100%;
+    max-width: 530px;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__heading {
+    margin: 0;
+    color: inherit;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 77px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 0.95;
+    text-transform: none;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__body {
+    margin: 0;
+    color: inherit;
+    font-family: Aleo, var(--text-font-family), sans-serif;
+    font-size: 23px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.5;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__heading + .xpdc-card__body {
+    margin-top: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__body p {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__body p + p {
+    margin-top: 0.85em;
+  }
+
+  #shopify-section-{{ section.id }} .xpdc-card__poster-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  @media screen and (min-width: 1400px) {
+    #shopify-section-{{ section.id }} .xpdc-card__heading {
+      font-size: 77px;
+      line-height: 0.95;
+    }
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .xpdc__item {
+      padding: 8px 10px;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card {
+      min-height: {{ section.settings.mobile_card_height }}px;
+      border-radius: var(--xpdc-radius);
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card--image-text,
+    #shopify-section-{{ section.id }} .xpdc-card--media-start,
+    #shopify-section-{{ section.id }} .xpdc-card--media-end {
+      flex-direction: column;
+      min-height: auto;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card--image-text .xpdc-card__media,
+    #shopify-section-{{ section.id }} .xpdc-card--image-text .xpdc-card__text {
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card--image-text .xpdc-card__media {
+      height: var(--xpdc-mobile-image-height);
+      padding: 20px 15px 0;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card--image-text .xpdc-card__image,
+    #shopify-section-{{ section.id }} .xpdc-card--image-text .xpdc-card__placeholder {
+      width: 100%;
+      height: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card__text {
+      padding: 30px 20px 40px;
+      justify-content: flex-start;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card__text-inner {
+      max-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card__heading {
+      font-size: 47px;
+      line-height: 0.95;
+    }
+
+    #shopify-section-{{ section.id }} .xpdc-card__body {
+      font-size: 20px;
+      line-height: 1.5;
+    }
+  }
+</style>
+
+<div class="xpdc" data-xstrape-product-detail-cards>
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign card_type = block.settings.card_type
+      assign meta_namespace = block.settings.meta_namespace | default: section.settings.metafield_namespace
+
+      assign meta_heading = blank
+      assign meta_body = blank
+      assign meta_image = blank
+      assign meta_mobile_image = blank
+      assign meta_video = blank
+      assign meta_mobile_video = blank
+      assign meta_video_url = blank
+
+      if section.settings.enable_metafields and product != blank and meta_namespace != blank
+        if block.settings.meta_heading_key != blank
+          assign heading_metafield = product.metafields[meta_namespace][block.settings.meta_heading_key]
+          assign meta_heading = heading_metafield.value | default: heading_metafield
+        endif
+
+        if block.settings.meta_body_key != blank
+          assign body_metafield = product.metafields[meta_namespace][block.settings.meta_body_key]
+          assign meta_body = body_metafield.value | default: body_metafield
+        endif
+
+        if block.settings.meta_image_key != blank
+          assign image_metafield = product.metafields[meta_namespace][block.settings.meta_image_key]
+          assign meta_image_candidate = image_metafield.value | default: image_metafield
+          if meta_image_candidate.preview_image != blank or meta_image_candidate.width != blank
+            assign meta_image = meta_image_candidate
+          endif
+        endif
+
+        if block.settings.meta_mobile_image_key != blank
+          assign mobile_image_metafield = product.metafields[meta_namespace][block.settings.meta_mobile_image_key]
+          assign meta_mobile_image_candidate = mobile_image_metafield.value | default: mobile_image_metafield
+          if meta_mobile_image_candidate.preview_image != blank or meta_mobile_image_candidate.width != blank
+            assign meta_mobile_image = meta_mobile_image_candidate
+          endif
+        endif
+
+        if block.settings.meta_video_key != blank
+          assign video_metafield = product.metafields[meta_namespace][block.settings.meta_video_key]
+          assign meta_video_candidate = video_metafield.value | default: video_metafield
+          if meta_video_candidate.sources != blank or meta_video_candidate.media_type == 'video'
+            assign meta_video = meta_video_candidate
+          endif
+        endif
+
+        if block.settings.meta_mobile_video_key != blank
+          assign mobile_video_metafield = product.metafields[meta_namespace][block.settings.meta_mobile_video_key]
+          assign meta_mobile_video_candidate = mobile_video_metafield.value | default: mobile_video_metafield
+          if meta_mobile_video_candidate.sources != blank or meta_mobile_video_candidate.media_type == 'video'
+            assign meta_mobile_video = meta_mobile_video_candidate
+          endif
+        endif
+
+        if block.settings.meta_video_url_key != blank
+          assign video_url_metafield = product.metafields[meta_namespace][block.settings.meta_video_url_key]
+          assign meta_video_url = video_url_metafield.value | default: video_url_metafield
+        endif
+      endif
+
+      assign heading = meta_heading | default: block.settings.heading
+      assign body = meta_body | default: block.settings.body
+      assign desktop_image = meta_image | default: block.settings.image
+      assign mobile_image = meta_mobile_image | default: block.settings.mobile_image | default: desktop_image
+      assign desktop_video = meta_video | default: block.settings.video
+      assign mobile_video = meta_mobile_video | default: block.settings.mobile_video | default: desktop_video
+      assign direct_video_url = meta_video_url | default: block.settings.direct_video_url
+      assign direct_image_url = block.settings.direct_image_url
+      assign direct_mobile_image_url = block.settings.direct_mobile_image_url | default: direct_image_url
+
+      assign desktop_asset_file = blank
+      assign mobile_asset_file = blank
+
+      assign image_alt = block.settings.image_alt | default: heading | default: product.title
+      assign card_type_class = card_type | replace: '_', '-'
+      assign media_fit = block.settings.media_fit
+      assign media_position = block.settings.media_position
+      assign media_max_width = block.settings.media_max_width | append: '%'
+      assign media_max_height = block.settings.media_max_height | append: '%'
+      assign autoplay = block.settings.autoplay
+      assign controls = block.settings.show_controls
+      assign muted = autoplay
+      assign loop = block.settings.loop_video
+      assign video_preload = 'none'
+
+      if autoplay
+        assign video_preload = 'metadata'
+      endif
+    -%}
+
+    {%- capture image_markup -%}
+      {%- assign render_image_source = desktop_image -%}
+      {%- if render_image_source.preview_image != blank -%}
+        {%- assign render_image_source = render_image_source.preview_image -%}
+      {%- endif -%}
+
+      {%- assign render_mobile_image_source = mobile_image -%}
+      {%- if render_mobile_image_source.preview_image != blank -%}
+        {%- assign render_mobile_image_source = render_mobile_image_source.preview_image -%}
+      {%- endif -%}
+
+      {%- if render_image_source != blank or direct_image_url != blank or desktop_asset_file != blank -%}
+        <picture>
+          {%- if render_mobile_image_source != blank -%}
+            <source
+              media="(max-width: 999px)"
+              srcset="
+                {{ render_mobile_image_source | image_url: width: 360 }} 360w,
+                {{ render_mobile_image_source | image_url: width: 480 }} 480w,
+                {{ render_mobile_image_source | image_url: width: 600 }} 600w,
+                {{ render_mobile_image_source | image_url: width: 720 }} 720w,
+                {{ render_mobile_image_source | image_url: width: 900 }} 900w,
+                {{ render_mobile_image_source | image_url: width: 1100 }} 1100w
+              "
+              sizes="(max-width: 699px) calc(100vw - 20px), calc(100vw - 40px)"
+            >
+          {%- elsif direct_mobile_image_url != blank -%}
+            <source media="(max-width: 999px)" srcset="{{ direct_mobile_image_url | escape }}">
+          {%- elsif mobile_asset_file != blank -%}
+            <source media="(max-width: 999px)" srcset="{{ mobile_asset_file | asset_url }}">
+          {%- endif -%}
+
+          {%- if render_image_source != blank -%}
+            {{- render_image_source | image_url: width: 1600 | image_tag: loading: 'lazy', widths: '360,480,600,720,900,1100,1300,1600', sizes: '(max-width: 699px) calc(100vw - 20px), (max-width: 999px) calc(100vw - 40px), 50vw', class: 'xpdc-card__image', alt: image_alt -}}
+          {%- elsif direct_image_url != blank -%}
+            <img class="xpdc-card__image" src="{{ direct_image_url | escape }}" alt="{{ image_alt | escape }}" loading="lazy" decoding="async" width="1600" height="1067">
+          {%- else -%}
+            <img class="xpdc-card__image" src="{{ desktop_asset_file | asset_url }}" alt="{{ image_alt | escape }}" loading="lazy" decoding="async" width="1600" height="1067">
+          {%- endif -%}
+        </picture>
+      {%- else -%}
+        {{- 'image' | placeholder_svg_tag: 'xpdc-card__placeholder' -}}
+      {%- endif -%}
+    {%- endcapture -%}
+
+    <div class="xpdc__item" {{ block.shopify_attributes }}>
+      <div
+        class="xpdc-card xpdc-card--{{ card_type_class }} {% if card_type == 'image_text' %}xpdc-card--media-{{ media_position }}{% endif %}"
+        style="
+          --xpdc-media-fit: {{ media_fit }};
+          --xpdc-media-position: {{ block.settings.media_object_position }};
+          --xpdc-media-width: {{ media_max_width }};
+          --xpdc-media-height: {{ media_max_height }};
+          {%- if block.settings.card_background != blank -%} --xpdc-card-bg: {{ block.settings.card_background }};{%- endif -%}
+          {%- if block.settings.text_color != blank -%} --xpdc-text: {{ block.settings.text_color }};{%- endif -%}
+        "
+      >
+        {%- if card_type == 'image_text' -%}
+          <div class="xpdc-card__media">
+            <div class="xpdc-card__media-inner">
+              {{- image_markup -}}
+            </div>
+          </div>
+
+          <div class="xpdc-card__text">
+            <div class="xpdc-card__text-inner">
+              {%- if heading != blank -%}
+                <h2 class="xpdc-card__heading">{{ heading | escape }}</h2>
+              {%- endif -%}
+
+              {%- if body != blank -%}
+                <div class="xpdc-card__body">{{ body }}</div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- elsif card_type == 'video' -%}
+          <div class="xpdc-card__media">
+            <div class="xpdc-card__media-inner">
+              {%- if desktop_video != blank -%}
+                {%- if mobile_video != blank and mobile_video != desktop_video -%}
+                  {{- mobile_video | video_tag: class: 'xpdc-card__video sm:hidden', autoplay: autoplay, controls: controls, loop: loop, muted: muted, playsinline: true, preload: video_preload, image_size: '700x' -}}
+                  {{- desktop_video | video_tag: class: 'xpdc-card__video hidden sm:block', autoplay: autoplay, controls: controls, loop: loop, muted: muted, playsinline: true, preload: video_preload, image_size: '1100x' -}}
+                {%- else -%}
+                  {{- desktop_video | video_tag: class: 'xpdc-card__video', autoplay: autoplay, controls: controls, loop: loop, muted: muted, playsinline: true, preload: video_preload, image_size: '1100x' -}}
+                {%- endif -%}
+              {%- elsif direct_video_url != blank -%}
+                <video class="xpdc-card__video" {% if autoplay %}autoplay muted{% endif %} {% if controls %}controls{% endif %} {% if loop %}loop{% endif %} playsinline preload="{{ video_preload }}">
+                  <source src="{{ direct_video_url | escape }}" type="video/mp4">
+                </video>
+              {%- elsif block.settings.external_video_url != blank -%}
+                {%- if block.settings.external_video_url.type == 'youtube' -%}
+                  <iframe class="xpdc-card__iframe" src="https://www.youtube.com/embed/{{ block.settings.external_video_url.id }}?playsinline=1&autoplay={% if autoplay %}1{% else %}0{% endif %}&controls={% if controls %}1{% else %}0{% endif %}&mute={% if autoplay %}1{% else %}0{% endif %}&loop={% if loop %}1{% else %}0{% endif %}&playlist={{ block.settings.external_video_url.id }}&rel=0&modestbranding=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                {%- elsif block.settings.external_video_url.type == 'vimeo' -%}
+                  <iframe class="xpdc-card__iframe" src="https://player.vimeo.com/video/{{ block.settings.external_video_url.id }}?autoplay={% if autoplay %}1{% else %}0{% endif %}&background={% if autoplay and controls == false %}1{% else %}0{% endif %}&loop={% if loop %}1{% else %}0{% endif %}&muted={% if autoplay %}1{% else %}0{% endif %}&title=0&byline=0&portrait=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                {%- endif -%}
+              {%- else -%}
+                {{- image_markup -}}
+              {%- endif -%}
+            </div>
+          </div>
+        {%- else -%}
+          <div class="xpdc-card__media">
+            <div class="xpdc-card__media-inner">
+              {{- image_markup -}}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "产品详情大卡片",
+  "class": "shopify-section--xstrape-product-detail-cards",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_metafields",
+      "label": "启用产品元字段读取",
+      "info": "每个卡片可以填写元字段键。产品元字段有值时优先使用，没有值时使用编辑器里的兜底内容。",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "metafield_namespace",
+      "label": "默认元字段命名空间",
+      "default": "custom"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "外层背景",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "卡片背景",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "卡片圆角",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "desktop_card_height",
+      "label": "桌面端卡片高度",
+      "min": 420,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_height",
+      "label": "移动端纯图/视频高度",
+      "min": 320,
+      "max": 720,
+      "step": 10,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_height",
+      "label": "移动端图文卡图片高度",
+      "min": 260,
+      "max": 560,
+      "step": 10,
+      "unit": "px",
+      "default": 420
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "详情卡片",
+      "settings": [
+        {
+          "type": "select",
+          "id": "card_type",
+          "label": "展示类型",
+          "options": [
+            {
+              "value": "image_text",
+              "label": "图文展示"
+            },
+            {
+              "value": "video",
+              "label": "视频展示"
+            },
+            {
+              "value": "image_only",
+              "label": "纯图片展示"
+            }
+          ],
+          "default": "image_text"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "标题",
+          "default": "Workout Ready"
+        },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "正文",
+          "default": "<p>Sport Band keeps weight low and ventilation high. Channels in the bottom of the band and full-length adjustment holes offer remarkable breathability and flexibility.</p>"
+        },
+        {
+          "type": "header",
+          "content": "图片"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "桌面端图片"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "移动端图片"
+        },
+        {
+          "type": "text",
+          "id": "direct_image_url",
+          "label": "图片 URL 兜底"
+        },
+        {
+          "type": "text",
+          "id": "direct_mobile_image_url",
+          "label": "移动端图片 URL 兜底"
+        },
+        {
+          "type": "select",
+          "id": "default_asset",
+          "label": "默认主题图片",
+          "options": [
+            {
+              "value": "none",
+              "label": "不使用"
+            },
+            {
+              "value": "feature_1",
+              "label": "主题图文 1"
+            },
+            {
+              "value": "feature_2",
+              "label": "主题图文 2"
+            },
+            {
+              "value": "feature_3",
+              "label": "主题图文 3"
+            },
+            {
+              "value": "feature_4",
+              "label": "主题图文 4"
+            },
+            {
+              "value": "banner_1",
+              "label": "主题横幅 1"
+            },
+            {
+              "value": "banner_1_mobile",
+              "label": "移动横幅 1"
+            },
+            {
+              "value": "banner_2",
+              "label": "主题横幅 2"
+            },
+            {
+              "value": "banner_2_mobile",
+              "label": "移动横幅 2"
+            },
+            {
+              "value": "banner_3",
+              "label": "主题横幅 3"
+            },
+            {
+              "value": "banner_3_mobile",
+              "label": "移动横幅 3"
+            }
+          ],
+          "default": "feature_1"
+        },
+        {
+          "type": "select",
+          "id": "mobile_default_asset",
+          "label": "默认移动端主题图片",
+          "options": [
+            {
+              "value": "none",
+              "label": "跟随桌面端"
+            },
+            {
+              "value": "feature_1",
+              "label": "主题图文 1"
+            },
+            {
+              "value": "feature_2",
+              "label": "主题图文 2"
+            },
+            {
+              "value": "feature_3",
+              "label": "主题图文 3"
+            },
+            {
+              "value": "feature_4",
+              "label": "主题图文 4"
+            },
+            {
+              "value": "banner_1",
+              "label": "主题横幅 1"
+            },
+            {
+              "value": "banner_1_mobile",
+              "label": "移动横幅 1"
+            },
+            {
+              "value": "banner_2",
+              "label": "主题横幅 2"
+            },
+            {
+              "value": "banner_2_mobile",
+              "label": "移动横幅 2"
+            },
+            {
+              "value": "banner_3",
+              "label": "主题横幅 3"
+            },
+            {
+              "value": "banner_3_mobile",
+              "label": "移动横幅 3"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "图片替代文字"
+        },
+        {
+          "type": "header",
+          "content": "视频"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "桌面端 Shopify 视频"
+        },
+        {
+          "type": "video",
+          "id": "mobile_video",
+          "label": "移动端 Shopify 视频"
+        },
+        {
+          "type": "text",
+          "id": "direct_video_url",
+          "label": "MP4 视频 URL 兜底"
+        },
+        {
+          "type": "video_url",
+          "id": "external_video_url",
+          "label": "YouTube / Vimeo 视频",
+          "accept": [
+            "youtube",
+            "vimeo"
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay",
+          "label": "自动播放",
+          "info": "自动播放时会静音。",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "loop_video",
+          "label": "循环播放",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_controls",
+          "label": "显示视频控制条",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "版式"
+        },
+        {
+          "type": "select",
+          "id": "media_position",
+          "label": "桌面端媒体位置",
+          "options": [
+            {
+              "value": "end",
+              "label": "右侧"
+            },
+            {
+              "value": "start",
+              "label": "左侧"
+            }
+          ],
+          "default": "end"
+        },
+        {
+          "type": "select",
+          "id": "media_fit",
+          "label": "媒体填充方式",
+          "options": [
+            {
+              "value": "contain",
+              "label": "完整显示"
+            },
+            {
+              "value": "cover",
+              "label": "铺满裁切"
+            }
+          ],
+          "default": "contain"
+        },
+        {
+          "type": "select",
+          "id": "media_object_position",
+          "label": "媒体对齐",
+          "options": [
+            {
+              "value": "center",
+              "label": "居中"
+            },
+            {
+              "value": "top center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "bottom center",
+              "label": "底部居中"
+            },
+            {
+              "value": "left center",
+              "label": "左侧居中"
+            },
+            {
+              "value": "right center",
+              "label": "右侧居中"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "range",
+          "id": "media_max_width",
+          "label": "图文卡媒体最大宽度",
+          "min": 60,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 86
+        },
+        {
+          "type": "range",
+          "id": "media_max_height",
+          "label": "图文卡媒体最大高度",
+          "min": 60,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 100
+        },
+        {
+          "type": "color",
+          "id": "card_background",
+          "label": "单张卡片背景"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "单张文字颜色"
+        },
+        {
+          "type": "header",
+          "content": "产品元字段"
+        },
+        {
+          "type": "text",
+          "id": "meta_namespace",
+          "label": "元字段命名空间",
+          "info": "留空时使用分区里的默认命名空间。"
+        },
+        {
+          "type": "text",
+          "id": "meta_heading_key",
+          "label": "标题元字段键"
+        },
+        {
+          "type": "text",
+          "id": "meta_body_key",
+          "label": "正文元字段键"
+        },
+        {
+          "type": "text",
+          "id": "meta_image_key",
+          "label": "桌面端图片元字段键"
+        },
+        {
+          "type": "text",
+          "id": "meta_mobile_image_key",
+          "label": "移动端图片元字段键"
+        },
+        {
+          "type": "text",
+          "id": "meta_video_key",
+          "label": "桌面端视频元字段键"
+        },
+        {
+          "type": "text",
+          "id": "meta_mobile_video_key",
+          "label": "移动端视频元字段键"
+        },
+        {
+          "type": "text",
+          "id": "meta_video_url_key",
+          "label": "MP4 视频 URL 元字段键"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "产品详情大卡片",
+      "blocks": [
+        {
+          "type": "card"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

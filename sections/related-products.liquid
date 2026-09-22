@@ -1,0 +1,703 @@
+{%- liquid
+  assign carousel_id = 'xstrape-related-carousel-' | append: section.id
+  assign products = section.settings.products
+  assign mobile_card_width = 'minmax(282px, 78vw)'
+
+  if section.settings.products_per_row_mobile == '2'
+    assign mobile_card_width = 'calc(50vw - 24px)'
+  endif
+-%}
+
+<section
+  class="product-related-carousel xstrape-home-scope xh-section xh-series-carousel xh-series-carousel--mobile-{{ section.settings.products_per_row_mobile }}"
+  style="--xh-page-bg: {{ section.settings.background | default: '#f3f3f3' }}; --xh-text: {{ section.settings.text_color | default: '#000000' }}; --xh-muted: #6c6c6c; --xh-card-bg: {{ section.settings.product_card_background | default: '#f3f3f3' }}; --xh-series-columns: {{ section.settings.products_per_row_desktop | default: 5 }}; --xh-series-mobile-card: {{ mobile_card_width }};"
+>
+  <div class="xh-container">
+    <div class="xh-series-carousel__header">
+      <div>
+        {%- if section.settings.subheading != blank -%}
+          <p class="xh-eyebrow">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="xh-heading">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="xh-series-carousel__shell">
+      <button class="xh-series-carousel__arrow xh-series-carousel__arrow--prev" type="button" aria-label="{{ 'general.accessibility.previous' | t | escape }}" aria-controls="{{ carousel_id }}" disabled>
+        <span aria-hidden="true"></span>
+      </button>
+
+      {%- if products.count > 0 -%}
+        <div id="{{ carousel_id }}" class="xh-series-carousel__track" tabindex="0">
+          {%- for product in products -%}
+            <div class="xh-series-carousel__item">
+              {%- render 'product-card',
+                product: product,
+                stacked: false,
+                position: forloop.index,
+                background: section.settings.product_card_background,
+                text_color: section.settings.product_card_text_color,
+                show_badges: true,
+                badge_types: 'custom, sold_out',
+                show_quick_buy: settings.show_quick_buy,
+                show_rating: false,
+                show_vendor: false,
+                show_secondary_image: settings.show_secondary_image,
+                show_swatches: false
+              -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <product-recommendations product="{{ product.id }}" limit="{{ section.settings.recommendations_count }}" intent="related" class="contents">
+          {%- if recommendations.performed and recommendations.products_count > 0 -%}
+            <div id="{{ carousel_id }}" class="xh-series-carousel__track" tabindex="0">
+              {%- for product in recommendations.products -%}
+                <div class="xh-series-carousel__item">
+                  {%- render 'product-card',
+                    product: product,
+                    stacked: false,
+                    position: forloop.index,
+                    background: section.settings.product_card_background,
+                    text_color: section.settings.product_card_text_color,
+                    show_badges: true,
+                    badge_types: 'custom, sold_out',
+                    show_quick_buy: settings.show_quick_buy,
+                    show_rating: false,
+                    show_vendor: false,
+                    show_secondary_image: settings.show_secondary_image,
+                    show_swatches: false
+                  -%}
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </product-recommendations>
+      {%- endif -%}
+
+      <button class="xh-series-carousel__arrow xh-series-carousel__arrow--next" type="button" aria-label="{{ 'general.accessibility.next' | t | escape }}" aria-controls="{{ carousel_id }}">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .product-related-carousel {
+    --xh-accent: #111111;
+    --xh-radius: 25px;
+    --xh-gap: clamp(14px, 1.4vw, 22px);
+    --xh-max: 1480px;
+    --xh-card-shadow: inset 0 0 0 1px rgb(0 0 0 / 5.5%), inset 0 -1px 0 rgb(0 0 0 / 3.5%);
+    color: var(--xh-text);
+    padding: 28px 0 62px;
+    overflow: hidden;
+    background: var(--xh-page-bg);
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-container {
+    width: 100%;
+    max-width: none;
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__header {
+    display: flex;
+    min-height: 0;
+    margin: 0;
+    padding: 0 20px 18px;
+    align-items: end;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__header .xh-eyebrow {
+    margin: 0 0 7px;
+    color: var(--xh-muted);
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 1.4px;
+    line-height: 18px;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__header .xh-heading {
+    margin: 0;
+    color: var(--xh-text);
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 55px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 52.25px;
+    white-space: normal;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__shell {
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: clamp(280px, calc((100vw - 204px) / var(--xh-series-columns, 5)), 353.333px);
+    gap: 20px;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    padding: 0 clamp(16px, 5vw, 102px) 28px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-padding-inline: clamp(16px, 5vw, 102px);
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__item {
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel product-card {
+    display: flex !important;
+    width: 100%;
+    min-width: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0 !important;
+    padding: 7px !important;
+    border: 0 !important;
+    border-radius: 25px !important;
+    background: #ffffff !important;
+    color: var(--xh-text) !important;
+    box-shadow: var(--xh-card-shadow) !important;
+    line-height: normal;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 18px !important;
+    background: var(--xh-card-bg);
+    box-shadow: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure > a,
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure .placeholder {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+    padding: 0;
+    border-radius: inherit;
+    background: var(--xh-card-bg);
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure .product-card__image,
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure .placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit !important;
+    object-fit: contain;
+    object-position: center;
+    transition: transform 0.45s ease;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure .product-card__image--secondary {
+    display: none;
+  }
+
+  @media screen and (min-width: 700px) and (pointer: fine) {
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card--show-secondary-media .product-card__figure .product-card__image--secondary {
+      display: block;
+      opacity: 0;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card--show-secondary-media .product-card__figure:hover .product-card__image--primary {
+      opacity: 0;
+      transform: scale(1.035);
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card--show-secondary-media .product-card__figure:hover .product-card__image--secondary {
+      opacity: 1;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__info {
+    width: 100%;
+    min-height: 99.625px;
+    padding: 10px 8px 3px !important;
+    background: transparent;
+    color: var(--xh-text);
+    font-family: "Gotham-Book", var(--text-font-family), sans-serif;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__info > .v-stack {
+    display: flex !important;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0 !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__title,
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__title .bold,
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__info .bold {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    color: #000000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 26.64px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__bottom-row {
+    display: flex;
+    width: 100%;
+    min-height: 33px;
+    margin-top: auto !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill,
+  #shopify-section-{{ section.id }} .product-related-carousel .price-list {
+    min-width: 0;
+    color: #000000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill .price-list {
+    display: flex;
+    align-items: baseline;
+    gap: 6px !important;
+    flex-wrap: wrap;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill sale-price {
+    color: #000000 !important;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill compare-at-price,
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill unit-price {
+    display: inline !important;
+    color: #6c6c6c !important;
+    font-family: "Gotham-Book", var(--text-font-family), sans-serif;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__aside {
+    display: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__cart {
+    flex: 0 0 auto;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__cart-button {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000000;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #2f2f2f, #1a1a1a);
+    box-shadow: inset 0 -10px 15px 1px #0e0e0e, inset 0 0 0 1px #292929;
+    color: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .product-card__cart-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__arrow {
+    position: absolute;
+    top: 176px;
+    z-index: 3;
+    display: inline-flex;
+    width: 54px;
+    height: 54px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #000000;
+    box-shadow: var(--xh-card-shadow);
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__arrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__arrow--prev {
+    left: clamp(16px, 3vw, 42px);
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__arrow--next {
+    right: clamp(16px, 3vw, 42px);
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__arrow span {
+    width: 13px;
+    height: 13px;
+    border-top: 3px solid currentColor;
+    border-right: 3px solid currentColor;
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__arrow--prev span {
+    transform: rotate(-135deg);
+  }
+
+  #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__arrow--next span {
+    transform: rotate(45deg);
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__track {
+      grid-auto-columns: clamp(282px, 42vw, 353px);
+      padding-inline: 30px;
+      scroll-padding-inline: 30px;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .product-related-carousel {
+      padding: 20px 0 34px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__header {
+      min-height: 0;
+      padding: 0 16px 14px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__header .xh-eyebrow {
+      font-size: 12px;
+      line-height: 15px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__header .xh-heading {
+      font-size: 44px;
+      letter-spacing: 0;
+      line-height: 41.8px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__track {
+      grid-auto-columns: var(--xh-series-mobile-card, minmax(282px, 78vw));
+      gap: 16px;
+      padding-inline: 16px;
+      scroll-padding-inline: 16px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel.xh-series-carousel--mobile-2 .xh-series-carousel__track {
+      grid-auto-columns: calc(50vw - 24px);
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel product-card {
+      min-height: auto;
+      padding: 5px !important;
+      border-radius: 18px !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure {
+      border-radius: 14px !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure > a,
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure .placeholder {
+      padding: 0;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure .product-card__image,
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure .placeholder {
+      border-radius: inherit !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__figure .product-card__image--secondary {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__info {
+      min-height: 78px;
+      padding: 8px 5px 2px !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__title,
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__title .bold,
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__info .bold {
+      font-size: 16px;
+      line-height: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__bottom-row {
+      min-height: 25px;
+      gap: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill,
+    #shopify-section-{{ section.id }} .product-related-carousel .price-list,
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill sale-price {
+      font-size: 13px !important;
+      line-height: 17px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill compare-at-price,
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__price-pill unit-price {
+      font-size: 12px !important;
+      line-height: 17px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .product-card__cart-button {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      min-height: 38px;
+    }
+
+    #shopify-section-{{ section.id }} .product-related-carousel .xh-series-carousel__arrow {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const section = document.currentScript.closest('.shopify-section');
+    if (!section) return;
+
+    const prev = section.querySelector('.xh-series-carousel__arrow--prev');
+    const next = section.querySelector('.xh-series-carousel__arrow--next');
+    if (!prev || !next) return;
+
+    const getTrack = () => section.querySelector('.xh-series-carousel__track');
+
+    const getStep = (track) => {
+      const item = track.querySelector('.xh-series-carousel__item');
+      if (!item) return track.clientWidth * 0.8;
+      const styles = getComputedStyle(track);
+      const gap = parseFloat(styles.columnGap || styles.gap || 0);
+      return item.getBoundingClientRect().width + gap;
+    };
+
+    const updateButtons = () => {
+      const track = getTrack();
+      if (!track) {
+        prev.disabled = true;
+        next.disabled = true;
+        return;
+      }
+
+      const maxScroll = track.scrollWidth - track.clientWidth - 2;
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= maxScroll;
+    };
+
+    prev.addEventListener('click', () => {
+      const track = getTrack();
+      if (track) track.scrollBy({ left: -getStep(track), behavior: 'smooth' });
+    });
+
+    next.addEventListener('click', () => {
+      const track = getTrack();
+      if (track) track.scrollBy({ left: getStep(track), behavior: 'smooth' });
+    });
+
+    section.addEventListener('scroll', updateButtons, { passive: true, capture: true });
+    window.addEventListener('resize', updateButtons, { passive: true });
+
+    const observer = new MutationObserver(updateButtons);
+    observer.observe(section, { childList: true, subtree: true });
+    updateButtons();
+
+    document.addEventListener('shopify:section:load', (event) => {
+      if (event.target === section) updateButtons();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "相关商品",
+  "class": "shopify-section--product-recommendations",
+  "tag": "section",
+  "enabled_on": {
+    "templates": [
+      "product"
+    ]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "动态推荐会随着时间变化并优化。你也可以使用 Shopify 搜索与发现应用创建手动商品推荐。[了解更多](https://help.shopify.com/en/manual/online-store/search-and-discovery/product-recommendations)。"
+    },
+    {
+      "type": "range",
+      "id": "recommendations_count",
+      "min": 2,
+      "max": 10,
+      "label": "动态推荐数量",
+      "default": 6
+    },
+    {
+      "type": "product_list",
+      "id": "products",
+      "limit": 20,
+      "label": "手动推荐",
+      "info": "选择后会替代自动推荐。"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_products",
+      "label": "堆叠商品",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress_bar",
+      "label": "显示轮播进度条",
+      "default": false,
+      "visible_if": "{{ section.settings.stack_products == false }}"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "每行商品数（移动端）",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "min": 2,
+      "max": 6,
+      "label": "每行商品数（桌面端）",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "副标题"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "You may also like"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "内容"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    },
+    {
+      "type": "color",
+      "id": "product_card_background",
+      "label": "商品卡片背景"
+    },
+    {
+      "type": "color",
+      "id": "product_card_text_color",
+      "label": "商品卡片文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "相关商品",
+      "category": "Products"
+    }
+  ]
+}
+{% endschema %}

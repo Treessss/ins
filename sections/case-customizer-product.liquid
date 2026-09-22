@@ -1,0 +1,2353 @@
+{%- render 'section-spacing-collapsing' -%}
+
+{%- liquid
+  assign selected_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'custom-case-product-form-' | append: product.id | append: '-' | append: section.id
+  assign preview_map_id = 'custom-case-preview-map-' | append: section.id
+  assign default_base_image_url = ''
+
+  if section.settings.default_base_image != blank
+    assign default_base_image_url = section.settings.default_base_image | image_url: width: 1400
+  elsif selected_variant.featured_media != blank
+    assign default_base_image_url = selected_variant.featured_media | image_url: width: 1400
+  elsif product.featured_media != blank
+    assign default_base_image_url = product.featured_media | image_url: width: 1400
+  endif
+-%}
+
+<script>
+  document.documentElement.classList.toggle('custom-case-customizing', new URL(window.location.href).searchParams.get('customize') === '1');
+</script>
+
+<style>
+  html:not(.custom-case-customizing) .shopify-section--case-customizer-product {
+    display: none !important;
+  }
+
+  html.custom-case-customizing {
+    background: #eeeeee;
+  }
+
+  html.custom-case-customizing body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: #eeeeee;
+  }
+
+  html.custom-case-customizing .shopify-section:not(.shopify-section--case-customizer-product) {
+    display: none !important;
+  }
+
+  html.custom-case-customizing .shopify-section--case-customizer-product {
+    display: block !important;
+  }
+
+  #shopify-section-{{ section.id }} {
+    --custom-case-bg: {{ section.settings.background | default: '#f4f4f2' }};
+    --custom-case-text: {{ section.settings.text_color | default: '#111111' }};
+    --custom-case-muted: #636363;
+    --custom-case-card: #fff;
+    --custom-case-border: #dfdfdf;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page {
+    min-height: 100vh;
+    color: var(--custom-case-text);
+    background: var(--custom-case-bg);
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__inner {
+    width: min(100%, 1480px);
+    margin-inline: auto;
+    padding: clamp(14px, 2vw, 28px);
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__eyebrow,
+  #shopify-section-{{ section.id }} .custom-case-page__step-eyebrow {
+    margin: 0 0 8px;
+    color: var(--custom-case-muted);
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__title {
+    max-width: 820px;
+    margin: 0;
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: clamp(38px, 5vw, 76px);
+    font-weight: 400;
+    line-height: 0.94;
+    letter-spacing: 0;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__subtitle {
+    max-width: 720px;
+    margin: 12px 0 0;
+    color: var(--custom-case-muted);
+    font-size: clamp(15px, 1.35vw, 19px);
+    line-height: 1.4;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__close,
+  #shopify-section-{{ section.id }} .custom-case-page__brand {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} [data-custom-case-view] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-configuring [data-custom-case-view="configure"],
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing [data-custom-case-view="customize"] {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 460px);
+    gap: clamp(14px, 2vw, 24px);
+    align-items: start;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config__preview-card,
+  #shopify-section-{{ section.id }} .custom-case-panel,
+  #shopify-section-{{ section.id }} .custom-case-page__studio,
+  #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+    border-radius: 28px;
+    background: var(--custom-case-card);
+    box-shadow: 0 12px 16px 0 #6b6f7314;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config__preview-card {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1fr);
+    gap: clamp(16px, 2vw, 28px);
+    align-items: center;
+    min-height: 620px;
+    padding: clamp(16px, 2.3vw, 32px);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(100%, 430px);
+    aspect-ratio: 0.72;
+    margin-inline: auto;
+    overflow: hidden;
+    border: 1px solid #e7e7e7;
+    border-radius: 36px;
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 92%), rgb(245 245 245 / 92%)),
+      repeating-linear-gradient(45deg, #eeeeee 0 8px, #f8f8f8 8px 16px);
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview::before {
+    content: "";
+    position: absolute;
+    inset: 7% 18%;
+    border: 10px solid #111;
+    border-radius: 42px;
+    box-shadow: 0 28px 45px rgb(0 0 0 / 12%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview::after {
+    content: "";
+    position: absolute;
+    top: 11%;
+    left: 23%;
+    width: 74px;
+    height: 74px;
+    border: 6px solid #111;
+    border-radius: 22px;
+    background: #f7f7f7;
+    box-shadow:
+      14px 14px 0 -6px #111,
+      38px 14px 0 -9px #111,
+      14px 40px 0 -9px #111;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview__image {
+    position: absolute;
+    inset: 7% 18%;
+    width: 64%;
+    height: 86%;
+    object-fit: cover;
+    border-radius: 38px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview__fallback {
+    position: absolute;
+    inset: 7% 18%;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    border-radius: 38px;
+    background: linear-gradient(160deg, #fbfbfb, #e8e8e8);
+    color: #777;
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview.has-image .custom-case-preview__fallback {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config__copy {
+    display: grid;
+    gap: 18px;
+    align-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__step-title {
+    margin: 0;
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: clamp(30px, 4vw, 56px);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__step-text {
+    max-width: 52ch;
+    margin: 0;
+    color: var(--custom-case-muted);
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-selected {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid var(--custom-case-border);
+    border-radius: 18px;
+    background: #f8f8f7;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-selected__row {
+    display: grid;
+    grid-template-columns: minmax(88px, auto) minmax(0, 1fr);
+    gap: 10px;
+    color: #111;
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-selected__label {
+    color: #777;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-panel {
+    position: sticky;
+    top: 96px;
+    display: grid;
+    gap: 18px;
+    padding: 22px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__product-title {
+    margin: 0;
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: 0;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__price .price-list {
+    gap: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__price sale-price,
+  #shopify-section-{{ section.id }} .custom-case-page__price compare-at-price {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__divider {
+    height: 1px;
+    background: #e8e8e8;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker .variant-picker {
+    gap: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__action-button,
+  #shopify-section-{{ section.id }} .custom-case-page__buy-buttons .button {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #303030 0%, #0b0b0b 100%) !important;
+    color: #fff !important;
+    border: 1px solid #000;
+    box-shadow: inset 0 2px 10px rgb(255 255 255 / 12%);
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__action-button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__error {
+    display: none;
+    margin: -6px 0 0;
+    color: #9b1c1c;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.has-selection-error .custom-case-page__error {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__customize-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid #d7d7d7;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+    gap: clamp(14px, 2vw, 24px);
+    align-items: start;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__studio,
+  #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+    padding: clamp(14px, 1.6vw, 22px);
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+    position: sticky;
+    top: 96px;
+    display: grid;
+    gap: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__buy-buttons .buy-buttons {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__trust {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__trust li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__trust li::before {
+    content: "";
+    flex: 0 0 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #111;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__quantity {
+    display: grid;
+    gap: 8px;
+  }
+
+  @media screen and (max-width: 1099px) {
+    #shopify-section-{{ section.id }} .custom-case-config,
+    #shopify-section-{{ section.id }} .custom-case-page__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-panel,
+    #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+      position: static;
+    }
+  }
+
+  @media screen and (max-width: 899px) {
+    #shopify-section-{{ section.id }} .custom-case-config__preview-card {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: auto;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-preview {
+      max-width: 360px;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .custom-case-page__top {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__inner {
+      padding: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-config__preview-card,
+    #shopify-section-{{ section.id }} .custom-case-panel,
+    #shopify-section-{{ section.id }} .custom-case-page__studio,
+    #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+      padding: 16px;
+      border-radius: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__product-title {
+      font-size: 25px;
+    }
+  }
+
+  /*
+    Studio layout inspired by CASETiFY: compact product header, step rail on the side,
+    and a large neutral preview stage. Kept here so the dedicated template stays self-contained.
+  */
+  #shopify-section-{{ section.id }} .custom-case-page {
+    background: #f2f2f2;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__inner {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__top {
+    position: sticky;
+    top: 0;
+    z-index: 12;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    min-height: 74px;
+    margin: 0;
+    padding: 12px clamp(16px, 2vw, 28px);
+    border-bottom: 1px solid #dedede;
+    background: rgb(255 255 255 / 96%);
+    backdrop-filter: blur(12px);
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__eyebrow {
+    margin: 0 0 4px;
+    color: #747474;
+    font-size: 11px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__title {
+    max-width: none;
+    font-size: 22px;
+    line-height: 1.1;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__subtitle {
+    max-width: 680px;
+    margin-top: 4px;
+    color: #6b6b6b;
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__badge {
+    min-height: 34px;
+    padding-inline: 14px;
+    background: #111;
+    font-size: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config {
+    display: grid;
+    grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
+    gap: 0;
+    min-height: calc(100vh - 74px);
+    align-items: stretch;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config > product-rerender {
+    order: 1;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config__preview-card {
+    order: 2;
+    position: sticky;
+    top: 74px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    justify-items: center;
+    min-height: calc(100vh - 74px);
+    padding: 34px;
+    border-left: 1px solid #dedede;
+    border-radius: 0;
+    background:
+      radial-gradient(circle at 50% 18%, #ffffff 0 0, transparent 280px),
+      linear-gradient(180deg, #f7f7f7 0%, #eeeeee 100%);
+    box-shadow: none;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config__preview-card::after {
+    content: "01/02";
+    position: absolute;
+    right: 26px;
+    bottom: 22px;
+    min-width: 54px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 12px;
+    line-height: 1;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview {
+    width: min(48vh, 390px);
+    min-width: 280px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview::before {
+    inset: 5% 16%;
+    border-width: 11px;
+    border-radius: 48px;
+    box-shadow: 0 30px 60px rgb(0 0 0 / 18%);
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview::after {
+    top: 9%;
+    left: 21%;
+    width: 82px;
+    height: 82px;
+    border-width: 7px;
+    border-radius: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-preview__image,
+  #shopify-section-{{ section.id }} .custom-case-preview__fallback {
+    inset: 5% 16%;
+    width: 68%;
+    height: 90%;
+    border-radius: 44px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-config__copy {
+    position: absolute;
+    left: 26px;
+    bottom: 22px;
+    max-width: min(360px, calc(100% - 120px));
+    gap: 8px;
+    padding: 14px 16px;
+    border: 1px solid rgb(255 255 255 / 70%);
+    border-radius: 18px;
+    background: rgb(255 255 255 / 82%);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 14px 28px rgb(0 0 0 / 8%);
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__step-eyebrow {
+    margin: 0;
+    color: #777;
+    font-size: 11px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__step-title {
+    font-size: 24px;
+    line-height: 1.05;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__step-text {
+    max-width: none;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-panel,
+  #shopify-section-{{ section.id }} .custom-case-page__studio,
+  #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+    border-radius: 0;
+    background: #fff;
+    box-shadow: none;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-panel {
+    position: sticky;
+    top: 74px;
+    align-content: start;
+    min-height: calc(100vh - 74px);
+    max-height: calc(100vh - 74px);
+    overflow-y: auto;
+    padding: 24px;
+    border-right: 1px solid #dedede;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__product-title {
+    font-size: 22px;
+    line-height: 1.14;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__price sale-price,
+  #shopify-section-{{ section.id }} .custom-case-page__price compare-at-price {
+    font-size: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker .variant-picker {
+    counter-reset: custom-case-option 2;
+    gap: 0;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-presteps {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-prestep {
+    display: grid;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-prestep__heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #111;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 14px;
+    line-height: 1.1;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-prestep__heading span {
+    color: #777;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-prestep__chips {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-prestep__chips button {
+    min-height: 42px;
+    padding: 0 12px;
+    border: 1px solid #dedede;
+    border-radius: 16px;
+    background: #fafafa;
+    color: #111;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 12px;
+    line-height: 1.1;
+    text-align: left;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-prestep__chips button.is-selected {
+    border-color: #111;
+    box-shadow: inset 0 0 0 1px #111;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker .variant-picker__option {
+    counter-increment: custom-case-option;
+    display: grid;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker .variant-picker__option-info {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #111;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 14px;
+    line-height: 1.1;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker legend::before {
+    content: counter(custom-case-option, decimal-leading-zero) ".";
+    color: #777;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker .variant-picker__current-value--compact,
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker [data-required-device-current-value],
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker [data-required-device-selected-value] {
+    color: #6f6f6f;
+    font-size: 13px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker .block-swatch,
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker .option-image-swatch {
+    border-radius: 16px;
+    border-color: #dedede;
+    background: #fafafa;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker input:checked + .block-swatch,
+  #shopify-section-{{ section.id }} .custom-case-page__variant-picker input:checked + .option-image-swatch {
+    border-color: #111;
+    box-shadow: inset 0 0 0 1px #111;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__action-button,
+  #shopify-section-{{ section.id }} .custom-case-page__buy-buttons .button {
+    min-height: 50px;
+    border-radius: 999px;
+    background: #111 !important;
+    box-shadow: none;
+    font-size: 15px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-selected {
+    padding: 12px;
+    border-color: #e2e2e2;
+    border-radius: 16px;
+    background: #f7f7f7;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-selected:empty {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__customize-top {
+    position: sticky;
+    top: 74px;
+    z-index: 8;
+    margin: 0;
+    padding: 14px 24px;
+    border-bottom: 1px solid #dedede;
+    background: rgb(255 255 255 / 95%);
+    backdrop-filter: blur(12px);
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__customize-top .custom-case-page__step-title {
+    font-size: 22px;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 390px);
+    gap: 0;
+    min-height: calc(100vh - 148px);
+    align-items: stretch;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__studio {
+    display: grid;
+    align-items: stretch;
+    min-width: 0;
+    padding: 0;
+    background: #f2f2f2;
+  }
+
+  #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+    position: sticky;
+    top: 148px;
+    align-content: start;
+    min-height: calc(100vh - 148px);
+    max-height: calc(100vh - 148px);
+    overflow-y: auto;
+    padding: 24px;
+    border-left: 1px solid #dedede;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__customize-top {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "summary"
+      "studio";
+    min-height: calc(100vh - 74px);
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__summary {
+    grid-area: summary;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__studio {
+    grid-area: studio;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__summary-card {
+    position: sticky;
+    top: 74px;
+    z-index: 9;
+    grid-template-columns: minmax(220px, 1fr) auto minmax(230px, 300px);
+    align-items: center;
+    min-height: 72px;
+    max-height: none;
+    padding: 12px 24px;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid #dedede;
+    border-left: 0;
+    background: rgb(255 255 255 / 96%);
+    backdrop-filter: blur(12px);
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__summary-card .custom-case-page__divider,
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__summary-card .custom-case-page__trust {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-selected {
+    min-width: min(38vw, 430px);
+    padding: 8px 10px;
+    gap: 4px;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-selected__row {
+    grid-template-columns: auto minmax(0, 1fr);
+    font-size: 11px;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__buy-buttons {
+    min-width: 230px;
+  }
+
+  #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__buy-buttons .button {
+    min-height: 46px;
+  }
+
+  @media screen and (min-width: 1100px) {
+    #shopify-section-{{ section.id }} .custom-case-page__grid .case-customizer {
+      min-height: calc(100vh - 148px);
+    }
+  }
+
+  @media screen and (max-width: 1099px) {
+    #shopify-section-{{ section.id }} .custom-case-config {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-config > product-rerender {
+      order: 2;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-config__preview-card {
+      position: relative;
+      top: auto;
+      order: 1;
+      min-height: 560px;
+      border-left: 0;
+      border-bottom: 1px solid #dedede;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-panel {
+      position: static;
+      min-height: 0;
+      max-height: none;
+      border-right: 0;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__grid {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: 0;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+      position: static;
+      min-height: 0;
+      max-height: none;
+      border-left: 0;
+      border-top: 1px solid #dedede;
+    }
+
+    #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__summary-card {
+      position: sticky;
+      top: 74px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px 16px;
+    }
+
+    #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-selected {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .custom-case-page__top {
+      top: 0;
+      min-height: 64px;
+      padding: 10px 14px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__title {
+      font-size: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__subtitle,
+    #shopify-section-{{ section.id }} .custom-case-page__eyebrow {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__badge {
+      min-height: 30px;
+      padding-inline: 11px;
+      font-size: 11px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-config__preview-card {
+      min-height: 470px;
+      padding: 20px 12px 76px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-preview {
+      width: min(78vw, 310px);
+      min-width: 0;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-config__copy {
+      right: 12px;
+      bottom: 12px;
+      left: 12px;
+      max-width: none;
+      padding: 12px;
+      border-radius: 16px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-config__preview-card::after {
+      right: 16px;
+      top: 14px;
+      bottom: auto;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__step-title,
+    #shopify-section-{{ section.id }} .custom-case-page__customize-top .custom-case-page__step-title {
+      font-size: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__step-text {
+      font-size: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-panel,
+    #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+      padding: 18px 14px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__product-title {
+      font-size: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__customize-top {
+      top: 64px;
+      padding: 12px 14px;
+    }
+
+    #shopify-section-{{ section.id }} .custom-case-page__back-button {
+      min-height: 34px;
+      padding-inline: 12px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__summary-card {
+      top: 64px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: 10px 14px;
+    }
+
+    #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__product-title {
+      font-size: 16px;
+    }
+
+    #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__price {
+      justify-self: end;
+    }
+
+    #shopify-section-{{ section.id }} custom-case-flow.is-customizing .custom-case-page__buy-buttons {
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page {
+    min-height: 100svh;
+    overflow: hidden;
+    background: #eeeeee;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__top {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 40;
+    display: block;
+    min-height: 96px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    backdrop-filter: none;
+    pointer-events: none;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__top-copy,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__badge {
+    display: none;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__close {
+    position: fixed;
+    top: 28px;
+    left: 28px;
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 3px solid #111;
+    border-radius: 999px;
+    background: #eeeeee;
+    color: #111;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    pointer-events: auto;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__close:hover {
+    background: #111;
+    color: #fff;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__brand {
+    position: fixed;
+    top: 31px;
+    left: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 16px;
+    transform: translateX(-50%) rotate(-5deg);
+    background: #111;
+    color: #fff;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 19px;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    pointer-events: none;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: none;
+    min-height: 100svh;
+    background: #eeeeee;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__studio {
+    grid-area: auto;
+    min-height: 100svh;
+    padding: 0;
+    background: #eeeeee;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary {
+    position: fixed;
+    top: 28px;
+    right: 28px;
+    z-index: 42;
+    grid-area: auto;
+    width: min(582px, calc(100vw - 220px));
+    pointer-events: auto;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+    position: static;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title buy"
+      "price buy";
+    gap: 2px 18px;
+    align-items: center;
+    min-height: 80px;
+    max-height: none;
+    padding: 10px 14px 10px 22px;
+    border: 0;
+    border-radius: 28px;
+    background: #ffe75d;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-selected,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__divider,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__trust,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__quantity {
+    display: none;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__title-wrap {
+    grid-area: title;
+    min-width: 0;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__product-title {
+    max-width: 310px;
+    margin: 0;
+    color: #111;
+    font-size: 16px;
+    line-height: 1.05;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__price {
+    grid-area: price;
+    color: #111;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__price .price-list {
+    gap: 6px;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__price sale-price,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__price compare-at-price {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__buy-buttons {
+    grid-area: buy;
+    min-width: 138px;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__buy-buttons .v-stack,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__buy-buttons .buy-buttons {
+    display: block;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__buy-buttons .button {
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: 999px;
+    background: #050505 !important;
+    color: #fff !important;
+    box-shadow: none;
+    font-size: 18px;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer {
+    min-height: 100svh;
+    background: #eeeeee;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__header {
+    display: none;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 582px);
+    gap: 0;
+    min-height: 100svh;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__preview-panel {
+    order: 1;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    place-items: center;
+    min-height: 100svh;
+    padding: 96px clamp(18px, 4vw, 72px) 28px;
+    background: #eeeeee;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__canvas-frame {
+    width: min(58vh, 460px);
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__canvas {
+    width: 100%;
+    max-width: 100%;
+    filter: drop-shadow(0 24px 34px rgb(0 0 0 / 22%));
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__empty-state {
+    color: #555;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__selection {
+    display: none;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__preview-note {
+    justify-self: center;
+    width: min(100%, 560px);
+    margin: 18px 0 0;
+    color: #555;
+    text-align: center;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__controls {
+    order: 2;
+    align-self: start;
+    width: calc(100% - 56px);
+    max-height: calc(100svh - 158px);
+    margin: 130px 28px 28px 0;
+    padding: 34px;
+    overflow-y: auto;
+    border: 0;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 18px 38px rgb(0 0 0 / 10%);
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-card,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__upload-row,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__tool-grid,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__button-row,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__text-tool,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__sticker-tool,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__status {
+    padding: 22px 0;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__controls > :first-child {
+    padding-top: 0;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-heading {
+    justify-content: space-between;
+    color: #111;
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-heading span {
+    order: -1;
+    color: #111;
+    font-size: inherit;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__template-list,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__device-type-list,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__sticker-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__template-list button,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__device-type-list button,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__sticker-options button,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__button-row button,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__text-options span {
+    min-height: 52px;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 15px;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__template-list button.is-selected,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__device-type-list button.is-selected,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__sticker-options button.is-selected {
+    border-color: #111;
+    box-shadow: inset 0 0 0 1px #111;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__button-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__status {
+    border-bottom: 0;
+  }
+
+  @media screen and (max-width: 1099px) {
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page {
+      overflow: visible;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary {
+      top: 18px;
+      right: 18px;
+      width: min(520px, calc(100vw - 112px));
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+      min-height: 66px;
+      border-radius: 22px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__workspace {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__preview-panel {
+      min-height: 64svh;
+      padding-top: 96px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__canvas-frame {
+      width: min(64vw, 390px);
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__controls {
+      width: auto;
+      max-height: none;
+      margin: 0 18px 18px;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__top {
+      min-height: 70px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__close {
+      top: 16px;
+      left: 16px;
+      width: 42px;
+      height: 42px;
+      border-width: 2px;
+      font-size: 28px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__brand {
+      top: 21px;
+      font-size: 15px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary {
+      position: static;
+      width: auto;
+      padding: 72px 14px 0;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card {
+      grid-template-columns: minmax(0, 1fr) auto;
+      min-height: 62px;
+      padding: 9px 10px 9px 14px;
+      border-radius: 22px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__product-title {
+      max-width: 180px;
+      font-size: 13px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__price sale-price,
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__summary-card .custom-case-page__price compare-at-price {
+      font-size: 13px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__buy-buttons {
+      min-width: 104px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .custom-case-page__buy-buttons .button {
+      min-height: 44px;
+      font-size: 15px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__preview-panel {
+      min-height: 58svh;
+      padding: 20px 14px 14px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__canvas-frame {
+      width: min(78vw, 310px);
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__controls {
+      margin: 0 12px 12px;
+      padding: 24px 22px;
+      border-radius: 22px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-heading {
+      font-size: 20px;
+    }
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__controls {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-steps {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 34px 34px 18px;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-card {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-card:last-child {
+    border-bottom: 0;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-height: 78px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #111;
+    cursor: pointer;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.1;
+    text-align: left;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-heading > span:first-child {
+    order: 0;
+    color: #111;
+    font-size: inherit;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-heading strong {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-weight: 400;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-icon {
+    order: 0;
+    flex: 0 0 auto;
+    margin-left: auto;
+    color: #111;
+    font-family: Arial, sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-content {
+    display: grid;
+    gap: 18px;
+    padding: 0 0 30px;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-content[hidden] {
+    display: none !important;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__upload-row,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__tool-grid,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__button-row,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__text-tool,
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__status {
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-summary {
+    margin: 0;
+    color: #111;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.3;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-helper {
+    margin: -8px 0 0;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-nav {
+    display: grid;
+    grid-template-columns: minmax(96px, 1fr) auto minmax(96px, 1fr);
+    gap: 20px;
+    align-items: center;
+    padding: 26px 34px 28px;
+    border-top: 1px solid #e5e5e5;
+    background: #fff;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-button {
+    display: inline-grid;
+    place-items: center;
+    width: 100%;
+    min-height: 68px;
+    border: 2px solid #111;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 46px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-button:disabled {
+    border-color: #e9e9e9;
+    color: #d8d8d8;
+    cursor: default;
+  }
+
+  html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-progress {
+    color: #111;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 699px) {
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__preview-panel {
+      padding-bottom: 236px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__controls {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      left: 12px;
+      z-index: 45;
+      width: auto;
+      max-height: min(38svh, 290px);
+      margin: 0;
+      border-radius: 22px;
+      box-shadow: 0 18px 38px rgb(0 0 0 / 16%);
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-steps {
+      padding: 18px 18px 8px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-heading {
+      min-height: 48px;
+      font-size: 16px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-icon {
+      font-size: 24px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__step-content {
+      gap: 12px;
+      padding-bottom: 14px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__template-list,
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__device-type-list,
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__sticker-options {
+      gap: 8px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 2px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__template-list button,
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__device-type-list button,
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__sticker-options button,
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__button-row button,
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__text-options span {
+      min-height: 38px;
+      padding-inline: 12px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-nav {
+      grid-template-columns: minmax(72px, 1fr) auto minmax(72px, 1fr);
+      gap: 12px;
+      padding: 10px 18px 14px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-button {
+      min-height: 44px;
+      border-width: 1px;
+      font-size: 31px;
+    }
+
+    html.custom-case-customizing #shopify-section-{{ section.id }} .case-customizer__wizard-progress {
+      font-size: 15px;
+    }
+  }
+</style>
+
+{{- 'case-customizer.css' | asset_url | stylesheet_tag -}}
+<script src="{{ 'case-customizer.js' | asset_url }}" defer="defer"></script>
+
+<script id="{{ preview_map_id }}" type="application/json" data-custom-case-preview-map>
+[
+  {%- assign preview_blocks = section.blocks | where: 'type', 'case_preview_base' -%}
+  {%- for preview_block in preview_blocks -%}
+    {
+      "option1Name": {{ preview_block.settings.option_name_1 | json }},
+      "option1Value": {{ preview_block.settings.option_value_1 | json }},
+      "option2Name": {{ preview_block.settings.option_name_2 | json }},
+      "option2Value": {{ preview_block.settings.option_value_2 | json }},
+      "label": {{ preview_block.settings.label | json }},
+      "image": {%- if preview_block.settings.image != blank -%}{{ preview_block.settings.image | image_url: width: 1400 | json }}{%- else -%}""{%- endif -%}
+    }{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+]
+</script>
+
+<section class="custom-case-page">
+  <div class="custom-case-page__inner">
+    <custom-case-flow
+      data-form-id="{{ product_form_id | escape }}"
+      data-product-url="{{ product.url | escape }}"
+      data-preview-map-id="{{ preview_map_id | escape }}"
+      data-default-base-image="{{ default_base_image_url | escape }}"
+      data-default-base-label="{{ section.settings.default_base_label | escape }}"
+      data-selection-error="{{ section.settings.selection_error_text | escape }}"
+    >
+      <div class="custom-case-page__top">
+        <button type="button" class="custom-case-page__close" data-custom-case-exit aria-label="Back to product">×</button>
+        <div class="custom-case-page__brand" aria-hidden="true">CASEEASE</div>
+        <div class="custom-case-page__top-copy">
+          {%- if section.settings.page_eyebrow != blank -%}
+            <p class="custom-case-page__eyebrow">{{ section.settings.page_eyebrow | escape }}</p>
+          {%- endif -%}
+          <h1 class="custom-case-page__title">{{ section.settings.page_heading | default: product.title | escape }}</h1>
+          {%- if section.settings.page_subheading != blank -%}
+            <p class="custom-case-page__subtitle">{{ section.settings.page_subheading | escape }}</p>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.page_badge != blank -%}
+          <span class="custom-case-page__badge">{{ section.settings.page_badge | escape }}</span>
+        {%- endif -%}
+      </div>
+
+      <div data-custom-case-view="configure">
+        <div class="custom-case-config">
+          <div class="custom-case-config__preview-card">
+            <div class="custom-case-preview" data-custom-case-preview>
+              <img class="custom-case-preview__image" data-custom-case-preview-image width="860" height="1200" alt="{{ section.settings.preview_alt | escape }}" hidden>
+              <div class="custom-case-preview__fallback">{{ section.settings.preview_empty_text | escape }}</div>
+            </div>
+
+            <div class="custom-case-config__copy">
+              {%- if section.settings.configure_eyebrow != blank -%}
+                <p class="custom-case-page__step-eyebrow">{{ section.settings.configure_eyebrow | escape }}</p>
+              {%- endif -%}
+              <h2 class="custom-case-page__step-title">{{ section.settings.configure_heading | escape }}</h2>
+              {%- if section.settings.configure_text != blank -%}
+                <p class="custom-case-page__step-text">{{ section.settings.configure_text | escape }}</p>
+              {%- endif -%}
+              <div class="custom-case-selected" data-custom-case-selected-summary aria-live="polite"></div>
+            </div>
+          </div>
+
+          <product-rerender id="custom-case-config-info-{{ product.id }}-{{ section.id }}" observe-form="{{ product_form_id }}" allow-partial-rerender>
+            <aside class="custom-case-panel">
+              <div class="custom-case-page__title-wrap" data-block-type="title" data-block-id="custom-case-config-title">
+                <h2 class="custom-case-page__product-title">{{ product.title }}</h2>
+              </div>
+
+              <div class="custom-case-page__price" data-block-type="price" data-block-id="custom-case-config-price">
+                {%- render 'price-list', product: product, variant: selected_variant, size: 'lg' -%}
+              </div>
+
+              <div class="custom-case-page__divider"></div>
+
+              <div class="custom-case-presteps">
+                <div class="custom-case-prestep">
+                  <div class="custom-case-prestep__heading">
+                    <span>01.</span>
+                    <strong>Templates</strong>
+                  </div>
+                  <div class="custom-case-prestep__chips">
+                    <button type="button" class="is-selected">Sticker Studio</button>
+                    <button type="button">Collage</button>
+                    <button type="button">Cutouts</button>
+                  </div>
+                </div>
+
+                <div class="custom-case-prestep">
+                  <div class="custom-case-prestep__heading">
+                    <span>02.</span>
+                    <strong>Device Type</strong>
+                  </div>
+                  <div class="custom-case-prestep__chips">
+                    <button type="button" class="is-selected">Phone Case</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="custom-case-page__variant-picker" data-block-type="variant-picker" data-block-id="custom-case-config-variant-picker">
+                {%- render 'variant-picker',
+                  product: product,
+                  form_id: product_form_id,
+                  update_url: true,
+                  hide_sold_out_variants: section.settings.hide_sold_out_variants,
+                  hide_size_chart: true,
+                  force_color_variant_image: true,
+                  context: 'main_product',
+                  block: section
+                -%}
+              </div>
+
+              <div data-block-type="liquid" data-block-id="custom-case-config-action">
+                <button
+                  type="button"
+                  class="button custom-case-page__action-button"
+                  data-custom-case-continue
+                  {% unless selected_variant.available %}disabled{% endunless %}
+                >
+                  {%- if selected_variant.available -%}
+                    {{ section.settings.continue_button_text | escape }}
+                  {%- else -%}
+                    {{ 'product.general.sold_out_button' | t }}
+                  {%- endif -%}
+                </button>
+                <p class="custom-case-page__error" data-custom-case-error>{{ section.settings.selection_error_text | escape }}</p>
+              </div>
+            </aside>
+          </product-rerender>
+        </div>
+      </div>
+
+      <div data-custom-case-view="customize">
+        <div class="custom-case-page__customize-top">
+          <div>
+            {%- if section.settings.customize_eyebrow != blank -%}
+              <p class="custom-case-page__step-eyebrow">{{ section.settings.customize_eyebrow | escape }}</p>
+            {%- endif -%}
+            <h2 class="custom-case-page__step-title">{{ section.settings.customize_heading | escape }}</h2>
+          </div>
+          <button type="button" class="custom-case-page__back-button" data-custom-case-back>
+            {{ section.settings.back_button_text | escape }}
+          </button>
+        </div>
+
+        <div class="custom-case-page__grid">
+          <div class="custom-case-page__studio">
+            {%- render 'case-customizer',
+              product: product,
+              product_form_id: product_form_id,
+              preview_map_id: preview_map_id,
+              default_base_image: default_base_image_url,
+              default_base_label: section.settings.default_base_label
+            -%}
+          </div>
+
+          <product-rerender id="custom-case-customize-info-{{ product.id }}-{{ section.id }}" observe-form="{{ product_form_id }}" allow-partial-rerender class="custom-case-page__summary">
+            <aside class="custom-case-page__summary-card">
+              <div class="custom-case-page__title-wrap" data-block-type="title" data-block-id="custom-case-customize-title">
+                <h2 class="custom-case-page__product-title">{{ product.title }}</h2>
+              </div>
+
+              <div class="custom-case-selected" data-custom-case-selected-summary aria-live="polite"></div>
+
+              <div class="custom-case-page__price" data-block-type="price" data-block-id="custom-case-customize-price">
+                {%- render 'price-list', product: product, variant: selected_variant, size: 'lg' -%}
+              </div>
+
+              <div class="custom-case-page__divider"></div>
+
+              {%- if section.settings.show_quantity_selector and product.available -%}
+                <div class="custom-case-page__quantity" data-block-type="quantity-selector" data-block-id="custom-case-quantity">
+                  <label for="{{ product_form_id }}-quantity" class="block-label text-subdued">{{- 'product.quantity.label' | t -}}:</label>
+                  <quantity-selector class="quantity-selector">
+                    <button type="button" tabindex="-1" class="quantity-selector__button" aria-label="{{ 'product.quantity.decrease_quantity' | t }}">{% render 'icon' with 'minus', width: 10, height: 2 %}</button>
+                    <input id="{{ product_form_id }}-quantity" type="number" is="quantity-input" inputmode="numeric" class="quantity-selector__input" name="quantity" form="{{ product_form_id }}" value="{{ selected_variant.quantity_rule.min | default: 1 }}" step="{{ selected_variant.quantity_rule.increment }}" min="{{ selected_variant.quantity_rule.min }}" {% if selected_variant.quantity_rule.max != nil %}max="{{ selected_variant.quantity_rule.max }}"{% endif %} autocomplete="off">
+                    <button type="button" tabindex="-1" class="quantity-selector__button" aria-label="{{ 'product.quantity.increase_quantity' | t }}">{% render 'icon' with 'plus', width: 10, height: 10 %}</button>
+                  </quantity-selector>
+                </div>
+              {%- endif -%}
+
+              <div class="custom-case-page__buy-buttons" data-block-type="buy-buttons" data-block-id="custom-case-buy-buttons">
+                {%- render 'buy-buttons',
+                  product: product,
+                  form_id: product_form_id,
+                  custom_case_add_to_cart: true,
+                  custom_case_button_label: 'Add to cart',
+                  show_payment_button: section.settings.show_payment_button,
+                  show_gift_card_recipient: false,
+                  atc_button_background: section.settings.atc_button_background,
+                  atc_button_text_color: section.settings.atc_button_text_color,
+                  payment_button_background: section.settings.payment_button_background,
+                  payment_button_text_color: section.settings.payment_button_text_color,
+                  show_payment_icons: section.settings.show_payment_icons
+                -%}
+              </div>
+
+              {%- if section.settings.trust_text_1 != blank or section.settings.trust_text_2 != blank or section.settings.trust_text_3 != blank -%}
+                <ul class="custom-case-page__trust">
+                  {%- if section.settings.trust_text_1 != blank -%}
+                    <li>{{ section.settings.trust_text_1 | escape }}</li>
+                  {%- endif -%}
+                  {%- if section.settings.trust_text_2 != blank -%}
+                    <li>{{ section.settings.trust_text_2 | escape }}</li>
+                  {%- endif -%}
+                  {%- if section.settings.trust_text_3 != blank -%}
+                    <li>{{ section.settings.trust_text_3 | escape }}</li>
+                  {%- endif -%}
+                </ul>
+              {%- endif -%}
+            </aside>
+          </product-rerender>
+        </div>
+      </div>
+    </custom-case-flow>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Phone case customizer",
+  "class": "shopify-section--case-customizer-product",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page header"
+    },
+    {
+      "type": "text",
+      "id": "page_eyebrow",
+      "label": "Eyebrow",
+      "default": "CASEEASE CUSTOM"
+    },
+    {
+      "type": "text",
+      "id": "page_heading",
+      "label": "Page heading",
+      "default": "Design your custom phone case"
+    },
+    {
+      "type": "text",
+      "id": "page_subheading",
+      "label": "Page subheading",
+      "default": "Choose your phone model and case type first, then personalize the design."
+    },
+    {
+      "type": "text",
+      "id": "page_badge",
+      "label": "Badge",
+      "default": "Made to order"
+    },
+    {
+      "type": "header",
+      "content": "Step 1: Select options"
+    },
+    {
+      "type": "text",
+      "id": "configure_eyebrow",
+      "label": "Configure eyebrow",
+      "default": "Step 1"
+    },
+    {
+      "type": "text",
+      "id": "configure_heading",
+      "label": "Configure heading",
+      "default": "Choose your fit"
+    },
+    {
+      "type": "text",
+      "id": "configure_text",
+      "label": "Configure text",
+      "default": "Pick your phone model and case type. The preview base updates instantly to match your selection."
+    },
+    {
+      "type": "text",
+      "id": "continue_button_text",
+      "label": "Customize button text",
+      "default": "Customize now"
+    },
+    {
+      "type": "text",
+      "id": "selection_error_text",
+      "label": "Missing selection message",
+      "default": "Please select your phone model and case type before customizing."
+    },
+    {
+      "type": "image_picker",
+      "id": "default_base_image",
+      "label": "Default preview base image"
+    },
+    {
+      "type": "text",
+      "id": "default_base_label",
+      "label": "Default base label",
+      "default": "Default case preview"
+    },
+    {
+      "type": "text",
+      "id": "preview_empty_text",
+      "label": "Empty base message",
+      "default": "Select a phone model and case type to preview the base."
+    },
+    {
+      "type": "text",
+      "id": "preview_alt",
+      "label": "Preview image alt text",
+      "default": "Custom phone case base preview"
+    },
+    {
+      "type": "header",
+      "content": "Step 2: Customize"
+    },
+    {
+      "type": "text",
+      "id": "customize_eyebrow",
+      "label": "Customize eyebrow",
+      "default": "Step 2"
+    },
+    {
+      "type": "text",
+      "id": "customize_heading",
+      "label": "Customize heading",
+      "default": "Customize your artwork"
+    },
+    {
+      "type": "text",
+      "id": "back_button_text",
+      "label": "Back button text",
+      "default": "Change choices"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Customizer eyebrow",
+      "default": "Custom Studio"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Customizer heading",
+      "default": "Upload your design"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Customizer description",
+      "default": "Upload your artwork and position it live on the selected case base."
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Customizer badge",
+      "default": "Live preview"
+    },
+    {
+      "type": "text",
+      "id": "upload_label",
+      "label": "Upload button text",
+      "default": "Upload artwork"
+    },
+    {
+      "type": "text",
+      "id": "helper_text",
+      "label": "Upload helper text",
+      "default": "PNG, JPG or WEBP. Transparent PNG works best."
+    },
+    {
+      "type": "text",
+      "id": "empty_state_text",
+      "label": "Empty state text",
+      "default": "Upload artwork to preview your case"
+    },
+    {
+      "type": "text",
+      "id": "preview_note",
+      "label": "Preview note",
+      "default": "Drag the artwork directly on the case to adjust placement."
+    },
+    {
+      "type": "text",
+      "id": "ready_text",
+      "label": "Initial status text",
+      "default": "Choose an image to begin."
+    },
+    {
+      "type": "checkbox",
+      "id": "required_upload",
+      "label": "Require upload before add to cart",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_tool",
+      "label": "Show text tool",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_dynamic_checkout",
+      "label": "Hide dynamic checkout button",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "recommended_width",
+      "label": "Recommended image width",
+      "default": 1800
+    },
+    {
+      "type": "number",
+      "id": "recommended_height",
+      "label": "Recommended image height",
+      "default": 2600
+    },
+    {
+      "type": "text",
+      "id": "text_placeholder",
+      "label": "Text tool placeholder",
+      "default": "Add initials or a short phrase"
+    },
+    {
+      "type": "text",
+      "id": "upload_endpoint",
+      "label": "Advanced upload endpoint (optional)",
+      "info": "Leave blank to use Shopify line item file properties. After connecting an App Proxy or external file service, enter the upload endpoint URL here."
+    },
+    {
+      "type": "header",
+      "content": "Product options"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_sold_out_variants",
+      "label": "Hide sold-out variants",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_blocks",
+      "label": "Stack options",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "selector_style",
+      "label": "Selector style",
+      "options": [
+        {
+          "value": "block",
+          "label": "Block"
+        },
+        {
+          "value": "dropdown",
+          "label": "Dropdown"
+        },
+        {
+          "value": "swatch",
+          "label": "Swatch"
+        },
+        {
+          "value": "block_swatch",
+          "label": "Block with swatch"
+        },
+        {
+          "value": "variant_image",
+          "label": "Variant image"
+        }
+      ],
+      "default": "block"
+    },
+    {
+      "type": "select",
+      "id": "swatch_selector_style",
+      "label": "Swatch style",
+      "options": [
+        {
+          "value": "swatch",
+          "label": "Swatch"
+        },
+        {
+          "value": "block_swatch",
+          "label": "Block with swatch"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "swatch"
+    },
+    {
+      "type": "text",
+      "id": "variant_image_options",
+      "label": "Show variant images for options",
+      "info": "Comma-separated option names, for example Color, Case type"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity_selector",
+      "label": "Show quantity selector",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Buy buttons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_button",
+      "label": "Show dynamic checkout button",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "atc_button_background",
+      "label": "Add to cart background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "atc_button_text_color",
+      "label": "Add to cart text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "payment_button_background",
+      "label": "Dynamic checkout button background"
+    },
+    {
+      "type": "color",
+      "id": "payment_button_text_color",
+      "label": "Dynamic checkout button text"
+    },
+    {
+      "type": "header",
+      "content": "Side notes"
+    },
+    {
+      "type": "text",
+      "id": "trust_text_1",
+      "label": "Note 1",
+      "default": "Design details are saved with your order."
+    },
+    {
+      "type": "text",
+      "id": "trust_text_2",
+      "label": "Note 2",
+      "default": "We review artwork before production."
+    },
+    {
+      "type": "text",
+      "id": "trust_text_3",
+      "label": "Note 3",
+      "default": "10% Off 2 Items, 20% Off 3+ Items!"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#f4f4f2"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#111111"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "case_preview_base",
+      "name": "Preview base image",
+      "limit": 40,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Match a base image by two variant option values. Recommended: set Option Name to the phone model option name and Case Type option name, and set Option Value to the matching option value."
+        },
+        {
+          "type": "text",
+          "id": "option_name_1",
+          "label": "Option Name 1",
+          "default": "Phone Model"
+        },
+        {
+          "type": "text",
+          "id": "option_value_1",
+          "label": "Option Value 1"
+        },
+        {
+          "type": "text",
+          "id": "option_name_2",
+          "label": "Option Name 2",
+          "default": "Case Type"
+        },
+        {
+          "type": "text",
+          "id": "option_value_2",
+          "label": "Option Value 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Base image"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Base image label",
+          "default": "Case base"
+        }
+      ]
+    },
+    {
+      "type": "variant_option_image",
+      "name": "Variant Option Image",
+      "limit": 16,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Configure a custom image for a variant option value. Option Name and Option Value must match the option name and value in the product admin."
+        },
+        {
+          "type": "text",
+          "id": "option_name",
+          "label": "Option Name",
+          "info": "For example: Color, Case type"
+        },
+        {
+          "type": "text",
+          "id": "option_value",
+          "label": "Option Value",
+          "info": "For example: Matte MagSafe Shockproof"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_bubble_label",
+          "label": "Enable Bubble Label",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "bubble_text",
+          "label": "Bubble Text",
+          "default": "Hot"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Phone case customizer"
+    }
+  ]
+}
+{% endschema %}

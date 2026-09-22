@@ -1,0 +1,646 @@
+{%- comment -%}
+IMPORTANT: This section has been deprecated and should no longer be used. Instead, merchants should use the new "specification table"
+or "comparison table" sections, which offer a simpler setup. The section is still here for compatibility reason, for merchants who
+are upgrading their theme, but it no longer has the "presets" part in the schema, which means it can't be added anymore.
+{%- endcomment -%}
+
+{%- render 'section-spacing-collapsing' -%}
+
+{%- assign text_position = section.settings.text_position -%}
+{%- assign values_column_count = section.blocks | where: 'type', 'values' | size -%}
+
+{%- comment -%}
+------------------------------------------------------------------------------------------------------------------------
+CSS
+------------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --feature-chart-values-columns-count: {{ values_column_count }};
+  }
+
+  @media screen and (min-width: 700px) {
+    {%- if text_position == 'center' -%}
+      #shopify-section-{{ section.id }} .section-stack__main {
+        width: {% if values_column_count == 1 %}680px{% elsif values_column_count == 2 %}900px{% else %}auto{% endif %};
+        min-width: 680px;
+      }
+    {%- else -%}
+      #shopify-section-{{ section.id }} .section-stack {
+        flex-wrap: wrap;
+        justify-content: start;
+      }
+
+      #shopify-section-{{ section.id }} .section-stack__intro {
+        flex: 1 0 350px; /* Allow to grow and shrink with a range from 350px to 750px */
+        max-width: 750px;
+        width: auto;
+      }
+
+      #shopify-section-{{ section.id }} .section-stack__main {
+        flex: 1 1 {% if values_column_count == 1 %}600px{% elsif values_column_count == 2 %}900px{% else %}auto{% endif %};
+        min-width: 450px;
+        width: auto;
+      }
+    {%- endif -%}
+  }
+</style>
+
+{%- comment -%}
+------------------------------------------------------------------------------------------------------------------------
+LIQUID
+------------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<div {% render 'section-properties' %}>
+  <div class="section-stack {% if text_position != 'center' %}section-stack--horizontal{% else %}section-stack--center{% endif %} {% if text_position == 'end' %}section-stack--reverse{% endif %}">
+    {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.content != blank or section.settings.button_text != blank -%}
+      <div class="section-stack__intro">
+        <div class="prose {% if text_position == 'center' %}text-center{% endif %}">
+          {%- if section.settings.subheading != blank -%}
+            <p class="subheading">{{ section.settings.subheading | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h2 class="h2">
+              {%- render 'styled-text', content: section.settings.title, text_color: section.settings.heading_color, gradient: section.settings.heading_gradient -%}
+            </h2>
+          {%- endif -%}
+
+          {{- section.settings.content -}}
+
+          {%- if section.settings.button_text != blank -%}
+            {%- render 'button', size: 'lg', href: section.settings.button_url, content: section.settings.button_text, background: section.settings.button_background, text_color: section.settings.button_text_color -%}
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div class="section-stack__main">
+      {%- assign text_color = section.settings.chart_text_color | default: settings.text_color -%}
+      {%- assign background_color = section.settings.chart_background -%}
+
+      {%- if background_color == blank or background_color == 'rgba(0,0,0,0)' -%}
+        {%- assign background_color = settings.background | color_mix: text_color, 95 -%}
+      {%- endif -%}
+
+      <feature-chart max-rows="{{ section.settings.max_rows }}" {% render 'surface', class: 'feature-chart', background: background_color, text_color: text_color %}>
+        {%- assign has_product = false -%}
+
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'values' and block.settings.product != blank -%}
+            {%- assign has_product = true -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        <div class="feature-chart__table {% if values_column_count > 1 %}feature-chart__table--multi-columns{% endif %} {% if has_product %}feature-chart__table--product{% endif %} divide-y scroll-area">
+          {%- assign headings_block = section.blocks | where: 'type', 'headings' | first -%}
+          {%- assign values_blocks = section.blocks | where: 'type', 'values' -%}
+          {%- assign outputted_count = 0 -%}
+          {%- assign total_rows_count = 0 -%}
+
+          {%- for i in (1..20) -%}
+            {%- assign heading_key = 'heading_' | append: i -%}
+            {%- assign value_key = 'value_' | append: i -%}
+
+            {%- assign heading_value = headings_block.settings[heading_key] -%}
+
+            {%- comment -%}We only output the line if at least one value is defined{%- endcomment -%}
+            {%- if heading_value != blank and values_blocks[0].settings[value_key] != blank or values_blocks[1].settings[value_key] != blank or values_blocks[2].settings[value_key] != blank -%}
+              {%- assign total_rows_count = total_rows_count | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- comment -%}We need to create a first row for the products if any{%- endcomment -%}
+          {%- if has_product -%}
+            {%- capture product_row -%}
+              {%- for i in (0..2) -%}
+                {%- if values_blocks[i].settings.product != blank -%}
+                  {%- assign chart_product = values_blocks[i].settings.product -%}
+
+                  <div class="feature-chart__product">
+                    {%- if section.settings.viewing_product != blank and request.page_type == 'product' and product == chart_product -%}
+                      <span class="badge">{{ section.settings.viewing_product }}</span>
+                    {%- endif -%}
+
+                    {%- if chart_product.featured_media -%}
+                      <a href="{{ chart_product.url }}">
+                        {{- chart_product.featured_image | image_url: width: chart_product.featured_image.width | image_tag: sizes: '(max-width: 699px) 80px, 150px', widths: '80,150,160,300' -}}
+                      </a>
+                    {%- endif -%}
+
+                    {%- capture color_swatch -%}
+                      {%- if section.settings.show_product_swatch -%}
+                        {%- assign color_label_list = 'general.label.color' | t | replace: ', ', ',' | downcase | split: ',' -%}
+
+                        {%- for color_label in color_label_list -%}
+                          {%- if chart_product.options_by_name[color_label] != blank -%}
+                            <div class="h-stack gap-2 sm:gap-2-5">
+                              {%- for color_name in chart_product.options_by_name[color_label].values -%}
+                                {%- assign product_option = chart_product.options_by_name[color_label] -%}
+                                {%- assign product_option_name = 'option' | append: product_option.position -%}
+                                {%- assign first_variant = chart_product.variants | where: product_option_name, color_name | first -%}
+
+                                {%- render 'option-value', type: 'swatch', value: color_name, url: first_variant.url, size: 'sm' -%}
+                              {%- endfor -%}
+                            </div>
+
+                            {%- break -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                      {%- endif -%}
+                    {%- endcapture -%}
+
+                    <div class="v-stack {% if color_swatch != blank %}gap-6{% else %}gap-5{% endif %}">
+                      <div class="v-stack gap-2">
+                        <div class="v-stack sm:gap-0.5">
+                          <a href="{{ chart_product.url }}" class="bold line-clamp">{{ chart_product.title }}</a>
+                          {%- render 'price-list', product: chart_product, hide_unit_price: true -%}
+                        </div>
+
+                        {{- color_swatch -}}
+                      </div>
+
+                      {%- if section.settings.view_product != blank -%}
+                        <div class="feature-chart__view-button-container hidden justify-self-start md:block">
+                          {%- render 'button', href: chart_product.url, content: section.settings.view_product, background: values_blocks[i].settings.view_button_background, text_color: values_blocks[i].settings.view_button_text_color, subdued: true -%}
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endcapture -%}
+
+            <div class="feature-chart__table-row feature-chart__table-row--product">
+              {{- product_row -}}
+            </div>
+
+            {%- if total_rows_count > 6 -%}
+              <div class="feature-chart__table-row feature-chart__table-row--product feature-chart__table-row--sticky">
+                {{- product_row -}}
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- for i in (1..20) -%}
+            {%- assign heading_key = 'heading_' | append: i -%}
+            {%- assign value_key = 'value_' | append: i -%}
+
+            {%- assign heading_value = headings_block.settings[heading_key] -%}
+
+            {%- comment -%}We only output the line if at least one value is defined{%- endcomment -%}
+            {%- if heading_value != blank and values_blocks[0].settings[value_key] != blank or values_blocks[1].settings[value_key] != blank or values_blocks[2].settings[value_key] != blank -%}
+              {%- assign outputted_count = outputted_count | plus: 1 -%}
+
+              <div class="feature-chart__table-row" {% if outputted_count > section.settings.max_rows %}hidden{% endif %}>
+                {%- if heading_value != blank -%}
+                  <div class="feature-chart__heading bold" {% if outputted_count == 0 %}{{ headings_block.shopify_attributes }}{% endif %}>{{ heading_value }}</div>
+                {%- endif -%}
+
+                {%- for i in (0..2) -%}
+                  {%- if values_blocks[i] != blank -%}
+                    {%- assign value = values_blocks[i].settings[value_key] -%}
+                    {%- assign stripped_value = value | strip_html | strip -%}
+
+                    <div class="feature-chart__value prose text-subdued" {% if outputted_count == 0 %}{{ values_blocks[i].shopify_attributes }}{% endif %}>
+                      {%- if stripped_value == 'FALSE' -%}
+                        <svg fill="none" class="icon offset-icon" width="16" height="16" viewBox="0 0 16 16" style="--icon-height: 16px">
+                          <path d="m.94 3.06 12 12 2.12-2.12-12-12L.94 3.06Zm2.12 12 12-12L12.94.94l-12 12 2.12 2.12Z" fill="{{ section.settings.chart_true_false_color | default: section.settings.chart_text_color | default: settings.text_color }}"></path>
+                        </svg>
+                      {%- elsif stripped_value == 'TRUE' -%}
+                        <svg fill="none" class="icon offset-icon" width="20" height="16" viewBox="0 0 20 16" style="--icon-height: 16px">
+                          <path d="m2 7.6 5.259 5.6L18 2" stroke="{{ section.settings.chart_true_false_color | default: section.settings.chart_text_color | default: settings.text_color }}" stroke-width="3"></path>
+                        </svg>
+                      {%- else -%}
+                        {{- value | default: '—' -}}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if outputted_count > section.settings.max_rows -%}
+          <div class="feature-chart__toggle">
+            <button data-action="toggle-rows" data-view-more="{{ section.settings.view_all_text | escape }}" data-view-less="{{ section.settings.view_less_text | escape }}" class="text-with-icon group">
+              <span class="feature-chart__toggle-text reversed-link">{{- section.settings.view_all_text | escape -}}</span>
+              <span class="circle-chevron group-hover:colors">{%- render 'icon' with 'chevron-bottom-small' -%}</span>
+            </button>
+          </div>
+        {%- endif -%}
+      </feature-chart>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "卖点图表",
+  "class": "shopify-section--feature-chart",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "内容"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "副标题",
+      "default": "Compare"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Product specification"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "内容",
+      "default": "<p>Give your customers useful information about your products and showcase differences between them.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文本"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "按钮网址"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "文本位置",
+      "options": [
+        {
+          "value": "start",
+          "label": "左侧"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "header",
+      "content": "图表"
+    },
+    {
+      "type": "range",
+      "id": "max_rows",
+      "min": 1,
+      "max": 20,
+      "label": "默认显示行数",
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "查看全部文本",
+      "default": "View all"
+    },
+    {
+      "type": "text",
+      "id": "view_less_text",
+      "label": "收起文本",
+      "default": "View less"
+    },
+    {
+      "type": "text",
+      "id": "view_product",
+      "label": "查看商品按钮文本",
+      "default": "View"
+    },
+    {
+      "type": "text",
+      "id": "viewing_product",
+      "label": "当前查看商品标签",
+      "info": "添加到产品页主商品上的徽章。"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_swatch",
+      "label": "显示商品色样",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "按钮背景"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "按钮文本"
+    },
+    {
+      "type": "color",
+      "id": "chart_background",
+      "label": "图表背景"
+    },
+    {
+      "type": "color",
+      "id": "chart_text_color",
+      "label": "图表文本"
+    },
+    {
+      "type": "color",
+      "id": "chart_true_false_color",
+      "label": "是/否颜色"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "标题列",
+      "type": "headings",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "没有数值的标题会自动隐藏。"
+        },
+        {
+          "type": "text",
+          "id": "heading_1",
+          "label": "标题 1"
+        },
+        {
+          "type": "text",
+          "id": "heading_2",
+          "label": "标题 2"
+        },
+        {
+          "type": "text",
+          "id": "heading_3",
+          "label": "标题 3"
+        },
+        {
+          "type": "text",
+          "id": "heading_4",
+          "label": "标题 4"
+        },
+        {
+          "type": "text",
+          "id": "heading_5",
+          "label": "标题 5"
+        },
+        {
+          "type": "text",
+          "id": "heading_6",
+          "label": "标题 6"
+        },
+        {
+          "type": "text",
+          "id": "heading_7",
+          "label": "标题 7"
+        },
+        {
+          "type": "text",
+          "id": "heading_8",
+          "label": "标题 8"
+        },
+        {
+          "type": "text",
+          "id": "heading_9",
+          "label": "标题 9"
+        },
+        {
+          "type": "text",
+          "id": "heading_10",
+          "label": "标题 10"
+        },
+        {
+          "type": "text",
+          "id": "heading_11",
+          "label": "标题 11"
+        },
+        {
+          "type": "text",
+          "id": "heading_12",
+          "label": "标题 12"
+        },
+        {
+          "type": "text",
+          "id": "heading_13",
+          "label": "标题 13"
+        },
+        {
+          "type": "text",
+          "id": "heading_14",
+          "label": "标题 14"
+        },
+        {
+          "type": "text",
+          "id": "heading_15",
+          "label": "标题 15"
+        },
+        {
+          "type": "text",
+          "id": "heading_16",
+          "label": "标题 16"
+        },
+        {
+          "type": "text",
+          "id": "heading_17",
+          "label": "标题 17"
+        },
+        {
+          "type": "text",
+          "id": "heading_18",
+          "label": "标题 18"
+        },
+        {
+          "type": "text",
+          "id": "heading_19",
+          "label": "标题 19"
+        },
+        {
+          "type": "text",
+          "id": "heading_20",
+          "label": "标题 20"
+        }
+      ]
+    },
+    {
+      "name": "数值列",
+      "type": "values",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "商品",
+          "info": "可选择一个商品以连接元字段或显示商品信息。"
+        },
+        {
+          "type": "richtext",
+          "id": "value_1",
+          "label": "数值 1"
+        },
+        {
+          "type": "richtext",
+          "id": "value_2",
+          "label": "数值 2"
+        },
+        {
+          "type": "richtext",
+          "id": "value_3",
+          "label": "数值 3"
+        },
+        {
+          "type": "richtext",
+          "id": "value_4",
+          "label": "数值 4"
+        },
+        {
+          "type": "richtext",
+          "id": "value_5",
+          "label": "数值 5"
+        },
+        {
+          "type": "richtext",
+          "id": "value_6",
+          "label": "数值 6"
+        },
+        {
+          "type": "richtext",
+          "id": "value_7",
+          "label": "数值 7"
+        },
+        {
+          "type": "richtext",
+          "id": "value_8",
+          "label": "数值 8"
+        },
+        {
+          "type": "richtext",
+          "id": "value_9",
+          "label": "数值 9"
+        },
+        {
+          "type": "richtext",
+          "id": "value_10",
+          "label": "数值 10"
+        },
+        {
+          "type": "richtext",
+          "id": "value_11",
+          "label": "数值 11"
+        },
+        {
+          "type": "richtext",
+          "id": "value_12",
+          "label": "数值 12"
+        },
+        {
+          "type": "richtext",
+          "id": "value_13",
+          "label": "数值 13"
+        },
+        {
+          "type": "richtext",
+          "id": "value_14",
+          "label": "数值 14"
+        },
+        {
+          "type": "richtext",
+          "id": "value_15",
+          "label": "数值 15"
+        },
+        {
+          "type": "richtext",
+          "id": "value_16",
+          "label": "数值 16"
+        },
+        {
+          "type": "richtext",
+          "id": "value_17",
+          "label": "数值 17"
+        },
+        {
+          "type": "richtext",
+          "id": "value_18",
+          "label": "数值 18"
+        },
+        {
+          "type": "richtext",
+          "id": "value_19",
+          "label": "数值 19"
+        },
+        {
+          "type": "richtext",
+          "id": "value_20",
+          "label": "数值 20"
+        },
+        {
+          "type": "header",
+          "content": "颜色"
+        },
+        {
+          "type": "color",
+          "id": "view_button_background",
+          "label": "查看商品按钮背景"
+        },
+        {
+          "type": "color",
+          "id": "view_button_text_color",
+          "label": "查看商品按钮文本"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

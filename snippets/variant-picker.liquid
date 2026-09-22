@@ -1,0 +1,240 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+VARIANT PICKER
+----------------------------------------------------------------------------------------------------------------------
+
+Render the variant picker option selectors.
+
+********************************************
+Supported variables
+********************************************
+
+* product: the product for which to render the selector (required)
+* form_id: the ID of the form to which the variant picker belongs (required)
+* update_url: if set to true, the URL is updated when the variant changes (usually used for product page)
+* hide_sold_out_variants: if set to true, the sold out or unavailable variants are hidden
+* hide_size_chart: if set to true, size chart is always hidden
+* force_dropdown_as_block: if set to true, the dropdown selectors are replaced by blocks, which is useful for quick buy where dropdown are not convenient to use
+* force_dropdown: if set to true, all selectors are rendered as dropdowns
+* force_color_variant_image: if set to true, color options use variant images even when dropdowns are forced
+* context: the context where the picker is rendered
+* block: the block itself, for theme-specific options (such as selector types)
+{%- endcomment -%}
+
+{%- assign color_label_list = 'general.label.color' | t | append: ',Color,Colour,颜色,顏色' | replace: ', ', ',' | downcase | split: ',' -%}
+{%- assign device_label_list = 'Device,Devices,Device Model,Device Models,Phone Model,Phone Models,iPhone Model,iPhone Models,Compatible Device,Compatible Devices,Model,Models,Phone,Phones,手机型号,手機型號,设备,設備,适用设备,適用設備,机型,機型,型号,型號' | downcase | split: ',' -%}
+{%- assign size_label_list = 'general.label.size' | t | replace: ', ', ',' | downcase | split: ',' -%}
+{%- assign variant_image_options = block.settings.variant_image_options | replace: ', ', ',' | downcase | split: ',' -%}
+
+{%- unless product.has_only_default_variant -%}
+  <variant-picker class="variant-picker" section-id="{{ section.id }}" handle="{{ product.handle }}" form-id="{{ form_id }}" {% if context %}context="{{ context | escape }}"{% endif %} {% if update_url %}update-url{% endif %}>
+    {%- comment -%}
+    The variant data is outputted as a JSON, which allows the theme to emit an event with the data when the variant changes. This must not be removed.
+    {%- endcomment -%}
+    <script data-variant type="application/json">
+      {{- product.selected_or_first_available_variant | json -}}
+    </script>
+
+    {%- for option in product.options_with_values -%}
+      {% liquid
+        assign option_downcase = option.name | downcase | strip
+        assign resolved_option_selector_style = block.settings.selector_style
+        assign is_device_option = false
+        assign device_placeholder = 'Select ' | append: option.name
+        assign device_error_message = 'Please select your phone model.'
+        assign option_image_count = 0
+
+        if device_label_list contains option_downcase
+          assign is_device_option = true
+        endif
+
+        for option_image_block in section.blocks
+          if option_image_block.type == 'variant_option_image'
+            assign configured_option_name = option_image_block.settings.option_name | downcase | strip
+
+            if configured_option_name == option_downcase
+              assign option_image_count = option_image_count | plus: 1
+            endif
+          endif
+        endfor
+
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+
+        if swatch_count > 0 and block.settings.swatch_selector_style != 'none'
+          # Use the swatch selector type only if we have at least one swatch and a supported swatch selector type
+          assign resolved_option_selector_style = block.settings.swatch_selector_style
+        endif
+
+        # Implementation note: if the option value has no native swatch, BUT that the option name matches a hardcoded list of color names,
+        # we fallback to the legacy config-based system. This allows to keep compatibility with stores that were using the config-based, and
+        # allow those merchants to upgrade to the new system at their own pace.
+        if swatch_count == 0 and color_label_list contains option_downcase and block.settings.swatch_selector_style != 'none'
+          assign resolved_option_selector_style = block.settings.swatch_selector_style
+        endif
+
+        if resolved_option_selector_style == 'dropdown' and force_dropdown_as_block
+          assign resolved_option_selector_style = 'block'
+        endif
+
+        if variant_image_options contains option_downcase
+          assign resolved_option_selector_style = 'variant_image'
+        endif
+
+        if force_dropdown
+          assign resolved_option_selector_style = 'dropdown'
+        endif
+
+        if is_device_option
+          assign resolved_option_selector_style = 'dropdown'
+        endif
+
+        if option_image_count > 0 and is_device_option == false
+          assign resolved_option_selector_style = 'option_image'
+        endif
+
+        assign use_color_variant_image = false
+        assign is_color_option = false
+
+        if color_label_list contains option_downcase
+          assign is_color_option = true
+        endif
+
+        if resolved_option_selector_style == 'option_image'
+          assign use_color_variant_image = false
+        elsif is_color_option and force_dropdown != true
+          assign resolved_option_selector_style = 'variant_image'
+          assign use_color_variant_image = true
+        elsif is_color_option and force_color_variant_image
+          assign resolved_option_selector_style = 'variant_image'
+          assign use_color_variant_image = true
+        endif
+      %}
+
+      <fieldset class="variant-picker__option" {% if is_device_option %}data-required-device-option-group data-form-id="{{ form_id | escape }}" data-required-device-option-position="{{ option.position }}" data-required-device-placeholder="{{ device_placeholder | escape }}" data-required-device-error="{{ device_error_message | escape }}"{% endif %}>
+        <div class="variant-picker__option-info">
+          <div class="h-stack gap-2">
+            <legend class="text-subdued">{{ option.name }}:</legend>
+            <span class="{% if option.selected_value.size > 24 %}variant-picker__current-value--compact{% endif %}" {% if is_device_option %}data-required-device-current-value{% endif %}>
+              {%- if is_device_option -%}
+                {{- device_placeholder -}}
+              {%- else -%}
+                {{- option.selected_value -}}
+              {%- endif -%}
+            </span>
+          </div>
+
+          {%- if hide_size_chart != true and block.settings.size_chart_page != blank and size_label_list contains option_downcase -%}
+            {%- capture drawer_id -%}size-chart-{{ option.position }}-{{ form_id }}{%- endcapture -%}
+
+            <button type="button" class="text-sm text-subdued" aria-controls="{{ drawer_id | escape }}" aria-expanded="false">
+              <span class="link">{{ 'product.general.size_chart' | t }}</span>
+            </button>
+
+            <x-drawer id="{{ drawer_id }}" class="drawer drawer--lg">
+              <span class="h5" slot="header">{{ block.settings.size_chart_page.title }}</span>
+
+              <div class="prose">
+                {{- block.settings.size_chart_page.content -}}
+              </div>
+            </x-drawer>
+          {%- endif -%}
+        </div>
+
+        {%- if resolved_option_selector_style == 'dropdown' -%}
+          {%- capture popover_id -%}popover-variant-picker-{{ section.id }}-{{ product.id }}-{{ form_id }}-{{ option.position }}{%- endcapture -%}
+
+          <div class="relative">
+            <button type="button" class="select" aria-controls="{{ popover_id }}" aria-expanded="false">
+              <span id="{{ popover_id }}-selected-value" {% if is_device_option %}data-required-device-selected-value{% endif %}>
+                {%- if is_device_option -%}
+                  {{- device_placeholder -}}
+                {%- else -%}
+                  {{- option.selected_value -}}
+                {%- endif -%}
+              </span>
+              {%- render 'icon' with 'chevron-bottom', class: 'select-chevron' -%}
+            </button>
+
+            <x-popover id="{{ popover_id }}" class="popover{% if is_device_option and device_bottom_sheet %} popover--device-bottom-sheet{% endif %}" initial-focus="[aria-selected='true']" close-on-listbox-select anchor-horizontal="start" anchor-vertical="end" {% if is_device_option and device_bottom_sheet %}device-bottom-sheet{% endif %}>
+              <p class="h5" slot="title">{{ option.name }}</p>
+
+              {%- assign param_name = form_id | append: '-option' | append: option.position -%}
+
+              <div data-option-selector class="popover-listbox">
+                {%- for option_value in option.values -%}
+                  {%- if hide_sold_out_variants == false or option_value.available or option_value.selected -%}
+                    {%- if update_url and option_value.product_url != blank -%}
+                      {%- if option_value.selected -%}
+                        <input class="sr-only" type="radio" id="{{ param_name }}-{{ option_value.id }}" form="{{ form_id }}" name="{{ param_name }}" data-option-position="{{ option.position }}" data-option-name="{{ option.name | escape }}" data-option-label="{{ option_value.name | escape }}" value="{{ option_value.id }}" {% if is_device_option %}data-required-device-option{% endif %} checked>
+                      {%- endif -%}
+
+                      <a href="{{ option_value.variant.url | default: option_value.product_url }}" class="popover-listbox__option {% unless option_value.available %}is-disabled{% endunless %}">
+                        {{- option_value.name -}}
+                      </a>
+                    {%- else -%}
+                      <label class="popover-listbox__option {% unless option_value.available %}is-disabled{% endunless %}" for="{{ param_name }}-{{ option_value.id }}">
+                        <input class="sr-only" form="{{ form_id }}" type="radio" id="{{ param_name }}-{{ option_value.id }}" name="{{ param_name }}" {% if option_value.product_url != blank %}data-product-url="{{ option_value.product_url | escape }}"{% endif %} data-option-position="{{ option.position }}" data-option-name="{{ option.name | escape }}" data-option-label="{{ option_value.name | escape }}" value="{{ option_value.id }}" {% if is_device_option %}data-required-device-option{% endif %} {% if option_value.selected %}checked{% endif %}>
+
+                        {{- option_value.name -}}
+                      </label>
+                    {%- endif -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </x-popover>
+          </div>
+          {%- if is_device_option -%}
+            <p class="variant-picker__required-message text-sm text-subdued" data-required-device-message>{{ device_error_message }}</p>
+          {%- endif -%}
+        {%- else -%}
+          <div {% unless block.settings.stack_blocks or resolved_option_selector_style == 'option_image' %}class="scroll-area bleed sm:unbleed"{% endunless %}>
+            <div class="variant-picker__option-values {% if block.settings.stack_blocks %}wrap{% else %}scroll-area bleed sm:unbleed{% endif %} {% if resolved_option_selector_style == 'option_image' %}variant-picker__option-values--option-image{% elsif resolved_option_selector_style == 'swatch' and settings.color_swatch_style == 'rectangle' %}variant-picker__option-values--color gap-4{% else %}gap-2{% endif %}">
+              {% liquid
+                assign name = form_id | append: '-option' | append: option.position
+
+                for option_value in option.values
+                  assign custom_option_image = blank
+                  assign custom_option_bubble_label = false
+                  assign custom_option_bubble_text = blank
+                  assign custom_option_block_attributes = blank
+
+                  if resolved_option_selector_style == 'option_image'
+                    assign option_value_downcase = option_value.name | downcase | strip
+
+                    for option_image_block in section.blocks
+                      if option_image_block.type == 'variant_option_image'
+                        assign configured_option_name = option_image_block.settings.option_name | downcase | strip
+                        assign configured_option_value = option_image_block.settings.option_value | downcase | strip
+
+                        if configured_option_name == option_downcase and configured_option_value == option_value_downcase
+                          assign custom_option_image = option_image_block.settings.image
+                          assign custom_option_bubble_label = option_image_block.settings.enable_bubble_label
+                          assign custom_option_bubble_text = option_image_block.settings.bubble_text
+                          assign custom_option_block_attributes = option_image_block.shopify_attributes
+                          break
+                        endif
+                      endif
+                    endfor
+                  endif
+
+                  case resolved_option_selector_style
+                    when 'option_image'
+                      render 'option-value', type: 'option_image', form: form_id, option_value: option_value, param_name: name, option_position: option.position, option_name: option.name, image: custom_option_image, bubble_label: custom_option_bubble_label, bubble_text: custom_option_bubble_text, block_attributes: custom_option_block_attributes, hide_if_disabled: hide_sold_out_variants, reload_page_for_combined_products: update_url, id_prefix: forloop.index
+                    when 'variant_image'
+                      render 'option-value', type: 'thumbnail', form: form_id, option_value: option_value, param_name: name, option_position: option.position, option_name: option.name, hide_if_disabled: hide_sold_out_variants, reload_page_for_combined_products: update_url, id_prefix: forloop.index, bordered: true, rectangle: use_color_variant_image
+                    when 'swatch'
+                      render 'option-value', type: 'swatch', form: form_id, option_value: option_value, param_name: name, option_position: option.position, option_name: option.name, hide_if_disabled: hide_sold_out_variants, reload_page_for_combined_products: update_url, id_prefix: forloop.index
+                    when 'block'
+                      render 'option-value', type: 'block', form: form_id, option_value: option_value, param_name: name, option_position: option.position, option_name: option.name, hide_if_disabled: hide_sold_out_variants, reload_page_for_combined_products: update_url, id_prefix: forloop.index
+                    when 'block_swatch'
+                      render 'option-value', type: 'block', form: form_id, option_value: option_value, param_name: name, option_position: option.position, option_name: option.name, show_swatch: true, hide_if_disabled: hide_sold_out_variants, reload_page_for_combined_products: update_url, id_prefix: forloop.index
+                  endcase
+                endfor
+              %}
+            </div>
+          </div>
+        {%- endif -%}
+      </fieldset>
+    {%- endfor -%}
+  </variant-picker>
+{%- endunless -%}

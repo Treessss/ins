@@ -1,0 +1,230 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "content_width": "80ch"
+      }
+    },
+    "slideshow_8cVKPW": {
+      "type": "slideshow",
+      "blocks": {
+        "image_yrtH3k": {
+          "type": "image",
+          "settings": {
+            "content_max_width": 780,
+            "mobile_text_position": "place-self-start text-start",
+            "desktop_text_position": "sm:place-self-start sm:text-start",
+            "subheading": "Supporting text",
+            "title": "Title",
+            "heading_tag": "h2",
+            "button_text": "",
+            "button_link": "",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#000000",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30,
+            "background": "",
+            "background_gradient": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_yrtH3k"
+      ],
+      "disabled": true,
+      "name": "Slideshow",
+      "settings": {
+        "full_width": true,
+        "allow_transparent_header": false,
+        "show_initial_transition": false,
+        "image_size": "auto",
+        "controls_type": "none",
+        "transition_type": "fade_with_text",
+        "autoplay": false,
+        "cycle_speed": 6,
+        "background": "#f2f2f2",
+        "background_gradient": ""
+      }
+    },
+    "banner_overlay_text_jEh8V8": {
+      "type": "banner-overlay-text",
+      "name": "Banner overlay text",
+      "settings": {
+        "full_width": true,
+        "image": "",
+        "title": "",
+        "desc_1": "",
+        "desc_2": "",
+        "image_size": "medium",
+        "text_position_horizontal": "left",
+        "text_position_vertical": "center",
+        "content_max_width": 560,
+        "heading_tag": "h2",
+        "title_size": 44,
+        "desc_size": 18,
+        "title_size_mobile": 24,
+        "desc_size_mobile": 12,
+        "overlay_opacity": 0,
+        "overlay_color": "#000000",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "#ffffff"
+      }
+    },
+    "promo_code_cards_wXMqKt": {
+      "type": "promo-code-cards",
+      "blocks": {
+        "card_X4nxM7": {
+          "type": "card",
+          "settings": {
+            "image": "",
+            "title": "",
+            "code": "",
+            "fineprint": "",
+            "button_text": "Button",
+            "button_link": ""
+          }
+        },
+        "card_xYfaXx": {
+          "type": "card",
+          "settings": {
+            "image": "",
+            "title": "",
+            "code": "",
+            "fineprint": "",
+            "button_text": "Button",
+            "button_link": ""
+          }
+        },
+        "card_L9zkt3": {
+          "type": "card",
+          "settings": {
+            "image": "",
+            "title": "",
+            "code": "",
+            "fineprint": "",
+            "button_text": "Button",
+            "button_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "card_X4nxM7",
+        "card_xYfaXx",
+        "card_L9zkt3"
+      ],
+      "name": "Promo code cards",
+      "settings": {
+        "full_width": true,
+        "subheading": "",
+        "heading": "Heading",
+        "content": "",
+        "gap": "medium",
+        "columns_desktop": 3,
+        "columns_tablet": 2,
+        "columns_mobile": "1",
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    },
+    "collection_load_more_6pRJmC": {
+      "type": "collection-load-more",
+      "name": "Collection - Load more",
+      "settings": {
+        "full_width": true,
+        "collection": "",
+        "subheading": "",
+        "heading": "Heading",
+        "content": "",
+        "text_alignment": "center",
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "page_size": 8,
+        "initial_count": 8,
+        "show_quick_add": true,
+        "load_more_label": "Show more",
+        "loading_label": "Loading..."
+      }
+    },
+    "collection_load_more_maPiXk": {
+      "type": "collection-load-more",
+      "name": "Collection - Load more",
+      "settings": {
+        "full_width": true,
+        "collection": "",
+        "subheading": "",
+        "heading": "Heading",
+        "content": "",
+        "text_alignment": "center",
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "page_size": 8,
+        "initial_count": 8,
+        "show_quick_add": true,
+        "load_more_label": "Show more",
+        "loading_label": "Loading..."
+      }
+    },
+    "collection_load_more_GfNrCR": {
+      "type": "collection-load-more",
+      "name": "Collection - Load more",
+      "settings": {
+        "full_width": true,
+        "collection": "",
+        "subheading": "",
+        "heading": "Heading",
+        "content": "",
+        "text_alignment": "center",
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "page_size": 8,
+        "initial_count": 8,
+        "show_quick_add": true,
+        "load_more_label": "Show more",
+        "loading_label": "Loading..."
+      }
+    },
+    "collection_load_more_8bik3E": {
+      "type": "collection-load-more",
+      "name": "Collection - Load more",
+      "settings": {
+        "full_width": true,
+        "collection": "",
+        "subheading": "",
+        "heading": "Heading",
+        "content": "",
+        "text_alignment": "center",
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "page_size": 8,
+        "initial_count": 8,
+        "show_quick_add": true,
+        "load_more_label": "Show more",
+        "loading_label": "Loading..."
+      }
+    }
+  },
+  "order": [
+    "main",
+    "slideshow_8cVKPW",
+    "banner_overlay_text_jEh8V8",
+    "promo_code_cards_wXMqKt",
+    "collection_load_more_6pRJmC",
+    "collection_load_more_maPiXk",
+    "collection_load_more_GfNrCR",
+    "collection_load_more_8bik3E"
+  ]
+}

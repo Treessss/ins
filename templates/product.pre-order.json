@@ -1,0 +1,222 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "badges": {
+          "type": "badges",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {}
+        },
+        "payment_terms": {
+          "type": "payment_terms",
+          "settings": {}
+        },
+        "separator": {
+          "type": "separator",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {}
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "disabled": true,
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_payment_button": true,
+            "show_payment_icons": true,
+            "show_gift_card_recipient": true,
+            "atc_button_background": "#111111",
+            "atc_button_text_color": "#ffffff",
+            "payment_button_background": "rgba(0,0,0,0)",
+            "payment_button_text_color": ""
+          }
+        },
+        "pickup_availability": {
+          "type": "pickup_availability",
+          "settings": {}
+        },
+        "detail_where_ship": {
+          "type": "description_detail_item",
+          "settings": {
+            "title": "Title",
+            "content": "<p>Add your content here.</p>",
+            "product_metafield_key": "",
+            "open_by_default": false,
+            "icon": "picto-plane",
+            "custom_icon": ""
+          }
+        },
+        "detail_watch_note": {
+          "type": "description_detail_item",
+          "settings": {
+            "title": "Title",
+            "content": "<p>Add your content here.</p>",
+            "product_metafield_key": "",
+            "open_by_default": false,
+            "icon": "picto-smart-watch",
+            "custom_icon": ""
+          }
+        },
+        "detail_material": {
+          "type": "description_detail_item",
+          "settings": {
+            "title": "Title",
+            "content": "<p>Add your content here.</p>",
+            "product_metafield_key": "",
+            "open_by_default": false,
+            "icon": "picto-shield",
+            "custom_icon": ""
+          }
+        },
+        "detail_shipping": {
+          "type": "description_detail_item",
+          "settings": {
+            "title": "Title",
+            "content": "<p>Add your content here.</p>",
+            "product_metafield_key": "",
+            "open_by_default": false,
+            "icon": "picto-truck",
+            "custom_icon": ""
+          }
+        },
+        "detail_returns": {
+          "type": "description_detail_item",
+          "settings": {
+            "title": "Title",
+            "content": "<p>Add your content here.</p>",
+            "product_metafield_key": "",
+            "open_by_default": false,
+            "icon": "picto-return",
+            "custom_icon": ""
+          }
+        },
+        "detail_description": {
+          "type": "description_detail_item",
+          "settings": {
+            "title": "Title",
+            "content": "<p>Add your content here.</p>",
+            "product_metafield_key": "",
+            "open_by_default": false,
+            "icon": "picto-document",
+            "custom_icon": ""
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "badges",
+        "price",
+        "rating",
+        "payment_terms",
+        "separator",
+        "description",
+        "detail_where_ship",
+        "detail_watch_note",
+        "detail_material",
+        "detail_shipping",
+        "detail_returns",
+        "detail_description",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons"
+      ],
+      "settings": {
+        "full_width": true,
+        "show_fixed_add_to_cart": false,
+        "desktop_media_width": 55,
+        "desktop_media_layout": "carousel_thumbnails_left",
+        "mobile_media_size": "contained",
+        "mobile_carousel_control": "thumbnails",
+        "enable_video_autoplay": false,
+        "enable_video_looping": true,
+        "enable_image_zoom": true,
+        "max_image_zoom_level": 3,
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "input_background": "rgba(0,0,0,0)",
+        "input_text_color": ""
+      }
+    },
+    "service-highlights-row": {
+      "type": "service-highlights-row",
+      "blocks": {
+        "item-1": {
+          "type": "item",
+          "settings": {
+            "icon_image": "",
+            "title": "Title",
+            "text": "Add your text here."
+          }
+        },
+        "item-2": {
+          "type": "item",
+          "settings": {
+            "icon_image": "",
+            "title": "Title",
+            "text": "Add your text here."
+          }
+        },
+        "item-3": {
+          "type": "item",
+          "settings": {
+            "icon_image": "",
+            "title": "Title",
+            "text": "Add your text here."
+          }
+        }
+      },
+      "block_order": [
+        "item-1",
+        "item-2",
+        "item-3"
+      ],
+      "settings": {
+        "full_width": true,
+        "icon_size": 24,
+        "background": "",
+        "background_gradient": "",
+        "text_color": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "service-highlights-row"
+  ]
+}

@@ -1,0 +1,160 @@
+{%- liquid
+  assign reminder_item_count = cart.item_count | plus: 0
+  assign reminder_first_quantity = first_quantity | default: 2 | plus: 0
+  assign reminder_second_quantity = second_quantity | default: 3 | plus: 0
+  assign reminder_first_percent = first_percent | default: 10 | plus: 0
+  assign reminder_second_percent = second_percent | default: 20 | plus: 0
+
+  if reminder_first_quantity < 1
+    assign reminder_first_quantity = 1
+  endif
+
+  if reminder_second_quantity <= reminder_first_quantity
+    assign reminder_second_quantity = reminder_first_quantity | plus: 1
+  endif
+
+  assign reminder_title = title_template | default: '[first_percent]% Off [first_quantity] Items, [second_percent]% Off [second_quantity]+ Items!'
+  assign reminder_title = reminder_title | replace: '[first_percent]', reminder_first_percent
+  assign reminder_title = reminder_title | replace: '[first_quantity]', reminder_first_quantity
+  assign reminder_title = reminder_title | replace: '[second_percent]', reminder_second_percent
+  assign reminder_title = reminder_title | replace: '[second_quantity]', reminder_second_quantity
+
+  if reminder_item_count >= reminder_second_quantity
+    assign reminder_state = 'complete'
+    assign reminder_message = complete_message | default: '[percent]% off unlocked.'
+    assign reminder_message = reminder_message | replace: '[percent]', reminder_second_percent
+    assign reminder_remaining = 0
+  elsif reminder_item_count >= reminder_first_quantity
+    assign reminder_state = 'partial'
+    assign reminder_remaining = reminder_second_quantity | minus: reminder_item_count
+    assign reminder_message = between_message | default: '[percent]% off unlocked. Add [count] more item(s) to unlock [next_percent]% off.'
+    assign reminder_message = reminder_message | replace: '[percent]', reminder_first_percent
+    assign reminder_message = reminder_message | replace: '[next_percent]', reminder_second_percent
+    assign reminder_message = reminder_message | replace: '[count]', reminder_remaining
+  else
+    assign reminder_state = 'pending'
+    assign reminder_remaining = reminder_first_quantity | minus: reminder_item_count
+    assign reminder_message = before_first_message | default: 'Add [count] more item(s) to unlock [percent]% off.'
+    assign reminder_message = reminder_message | replace: '[percent]', reminder_first_percent
+    assign reminder_message = reminder_message | replace: '[count]', reminder_remaining
+  endif
+
+  assign reminder_progress_value = reminder_item_count
+  if reminder_progress_value > reminder_second_quantity
+    assign reminder_progress_value = reminder_second_quantity
+  endif
+  assign reminder_progress = reminder_progress_value | times: 100 | divided_by: reminder_second_quantity
+-%}
+
+<style>
+  .cart-volume-discount-reminder {
+    --cart-volume-progress: 0%;
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 6px 12px;
+    width: 100%;
+    min-height: 32px;
+    padding-block: 8px 0;
+    overflow: hidden;
+    border-block-start: 1px solid rgb(var(--text-color) / .12);
+    background: transparent;
+    color: rgb(var(--text-color));
+  }
+
+  .cart-volume-discount-reminder__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding-block-start: 1px;
+    color: rgb(var(--text-color) / .58);
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  .cart-volume-discount-reminder__title {
+    min-width: 0;
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .cart-volume-discount-reminder__message {
+    min-width: 0;
+    color: rgb(var(--text-color) / .64);
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: end;
+  }
+
+  .cart-volume-discount-reminder__track {
+    position: relative;
+    grid-column: 1 / -1;
+    height: 3px;
+    margin-block-start: 1px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgb(var(--text-color) / .1);
+  }
+
+  .cart-volume-discount-reminder__track::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: var(--cart-volume-progress);
+    border-radius: inherit;
+    background: rgb(var(--text-color));
+    transition: width 0.2s ease;
+  }
+
+  .cart-volume-discount-reminder__copy {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  @media screen and (max-width: 699px) {
+    .cart-volume-discount-reminder {
+      grid-template-columns: 1fr;
+      gap: 4px;
+      min-height: 0;
+      padding-block-start: 8px;
+    }
+
+    .cart-volume-discount-reminder__title {
+      font-size: 12px;
+    }
+
+    .cart-volume-discount-reminder__message {
+      font-size: 11px;
+      text-align: start;
+    }
+
+    .cart-volume-discount-reminder__copy {
+      display: grid;
+      gap: 2px;
+    }
+  }
+</style>
+
+<div
+  class="cart-volume-discount-reminder"
+  data-cart-volume-discount-reminder
+  data-state="{{ reminder_state }}"
+  data-item-count="{{ reminder_item_count }}"
+  style="--cart-volume-progress: {{ reminder_progress }}%;"
+>
+  <span class="cart-volume-discount-reminder__eyebrow">Bundle offer</span>
+  <div class="cart-volume-discount-reminder__copy">
+    <strong class="cart-volume-discount-reminder__title">{{ reminder_title | escape }}</strong>
+    <span class="cart-volume-discount-reminder__message">{{ reminder_message | escape }}</span>
+  </div>
+  <div class="cart-volume-discount-reminder__track" aria-hidden="true"></div>
+</div>

@@ -1,0 +1,356 @@
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --feature-card-grid-columns: 2;
+  }
+
+  #shopify-section-{{ section.id }} .feature-card-grid__list {
+    display: grid;
+    grid-template-columns: repeat(var(--feature-card-grid-columns), minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .feature-card-grid__item {
+    position: relative;
+    min-height: 28rem;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 12px 16px 0 #6b6f7314;
+    background: #FFF;
+
+    background-position: right top;
+    background-repeat: no-repeat;
+    background-size: contain;
+    
+  }
+
+  #shopify-section-{{ section.id }} .feature-card-grid__surface {
+    height: 100%;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    /* Surface wrapper can fallback to bg-secondary (light gray). Keep it transparent so the parent card stays white
+       and the corner background image remains visible. */
+    background: transparent !important;
+  }
+
+  #shopify-section-{{ section.id }} .feature-card-grid__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 40rem;
+    padding: 3.5rem;
+    overflow: hidden;
+  }
+
+
+
+  #shopify-section-{{ section.id }} .feature-card-grid__content {
+    position: relative;
+    z-index: 1;
+    max-width: 80%;
+  }
+
+  #shopify-section-{{ section.id }} .feature-card-grid__button-wrapper {
+    position: relative;
+    z-index: 1;
+    margin-top: 1.5rem;
+  }
+
+  #shopify-section-{{ section.id }} .feature-card-grid__media {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    width: 72%;
+    max-width: 26rem;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .feature-card-grid__media img,
+  #shopify-section-{{ section.id }} .feature-card-grid__placeholder {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  #shopify-section-{{ section.id }} .feature-card-grid__description {
+    color: rgb(var(--text-color) / 0.72);
+  }
+
+
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} {
+      --feature-card-grid-columns: 1;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__item,
+    #shopify-section-{{ section.id }} .feature-card-grid__card {
+      min-height: 24rem;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__card {
+      padding: 1.5rem;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__media {
+      width: 68%;
+      max-width: 20rem;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .feature-card-grid__item,
+    #shopify-section-{{ section.id }} .feature-card-grid__card {
+      min-height: 22rem;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__item {
+      background-size: cover;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__card {
+      justify-content: flex-start;
+      align-items: center;
+      text-align: center;
+      gap: 1.25rem;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__content {
+      max-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__media {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      max-width: none;
+      order: -1;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__media img,
+    #shopify-section-{{ section.id }} .feature-card-grid__placeholder {
+      max-width: 100%;
+      margin-inline: auto;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__button-wrapper {
+      margin-top: 0;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* Match button size with the split card button on phone */
+    #shopify-section-{{ section.id }} .feature-card-grid__button-wrapper .button {
+      min-width: 160px;
+      padding-block-start: var(--spacing-4);
+      padding-block-end: var(--spacing-4);
+      padding-inline-start: var(--spacing-8);
+      padding-inline-end: var(--spacing-8);
+      font-size: var(--text-base);
+      line-height: 1.6;
+    }
+
+    #shopify-section-{{ section.id }} .feature-card-grid__content .prose {
+      padding: 0;
+      max-width: 22rem;
+      margin-inline: auto;
+    }
+  }
+</style>
+
+<div {% render 'section-properties' %}>
+  <div class="feature-card-grid">
+    <div class="feature-card-grid__list">
+      {%- for block in section.blocks -%}
+
+
+          <div
+          class="feature-card-grid__item"
+          style="
+            {%- if block.settings.item_background_image != blank -%}
+              background-image: url('{{ block.settings.item_background_image | image_url: width: 1200 }}');
+            {%- endif -%}
+          "
+          {{ block.shopify_attributes }}
+        >
+          <div
+            {% render 'surface',
+              class: 'feature-card-grid__surface',
+              background: block.settings.card_background,
+              text_color: block.settings.text_color,
+              background_fallback: 'bg-secondary'
+            %}
+          >
+            <div class="feature-card-grid__card">
+              <div class="feature-card-grid__content">
+                <div class="prose">
+              {%- if block.settings.title != blank -%}
+  <h3 class="feature-card-grid__heading h2">{{ block.settings.title }}</h3>
+{%- endif -%}
+
+                  {%- if block.settings.content != blank -%}
+                    <div class="feature-card-grid__description">
+                      {{ block.settings.content }}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+
+              <div class="feature-card-grid__button-wrapper">
+                {%- if block.settings.button_text != blank -%}
+                  {% render 'button',
+                    content: block.settings.button_text,
+                    href: block.settings.button_url,
+                    size: 'xl',
+                    background: block.settings.button_background,
+                    text_color: block.settings.button_text_color
+                  %}
+                {%- endif -%}
+              </div>
+
+              <div class="feature-card-grid__media">
+                {%- if block.settings.image != blank -%}
+                  {%- capture sizes -%}(max-width: 999px) 70vw, 32vw{%- endcapture -%}
+                  {%- capture widths -%}300,400,500,600,700,800,900,1000{%- endcapture -%}
+                  {{
+                    block.settings.image
+                    | image_url: width: 1000
+                    | image_tag: loading: 'lazy', sizes: sizes, widths: widths
+                  }}
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag: 'feature-card-grid__placeholder' }}
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "卖点卡片网格 2",
+  "class": "shopify-section--feature-card-grid-2",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "max_blocks": 2,
+  "blocks": [
+    {
+      "type": "card",
+      "name": "卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Featured Item Cigarette Lighter Featured Product"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Use Featured Item anytime, anywhere</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "item_background_image",
+          "label": "项目背景图片（右上）"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "按钮文本",
+          "default": "Learn More"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "按钮链接"
+        },
+        {
+          "type": "header",
+          "content": "颜色",
+          "info": "设置渐变后会替代纯色。"
+        },
+        {
+          "type": "color",
+          "id": "card_background",
+          "label": "卡片背景"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本"
+        },
+        {
+          "type": "color",
+          "id": "heading_color",
+          "label": "标题颜色"
+        },
+        {
+          "type": "color_background",
+          "id": "heading_gradient",
+          "label": "标题渐变"
+        },
+        {
+          "type": "color",
+          "id": "button_background",
+          "label": "按钮背景"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "按钮文本"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "分区背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "分区背景渐变"
+    }
+  ],
+  "presets": [
+    {
+      "name": "卖点卡片网格 2",
+      "blocks": [
+        {
+          "type": "card"
+        },
+        {
+          "type": "card"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

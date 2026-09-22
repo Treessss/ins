@@ -1,0 +1,418 @@
+{%- comment -%}
+Banner overlay text (slideshow-aligned)
+Uses the same `content-over-media` pattern as `sections/slideshow.liquid`.
+{%- endcomment -%}
+
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --banner-title-size: {{ section.settings.title_size }}px;
+    --banner-desc-size: {{ section.settings.desc_size }}px;
+    --banner-title-size-mobile: {{ section.settings.title_size_mobile }}px;
+    --banner-desc-size-mobile: {{ section.settings.desc_size_mobile }}px;
+    --banner-text-padding: {{ section.settings.text_padding }}px;
+    --banner-text-padding-mobile: {{ section.settings.text_padding_mobile }}px;
+  }
+
+  #shopify-section-{{ section.id }} .banner-overlay-text__title {
+    font-size: var(--banner-title-size);
+    line-height: 1.1;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .banner-overlay-text__desc {
+    font-size: var(--banner-desc-size);
+    line-height: 1.5;
+    white-space: normal;
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .banner-overlay-text__title {
+      font-size: var(--banner-title-size-mobile);
+      line-height: 1.15;
+    }
+
+    #shopify-section-{{ section.id }} .banner-overlay-text__desc {
+      font-size: var(--banner-desc-size-mobile);
+      line-height: 1.45;
+    }
+
+    #shopify-section-{{ section.id }} .banner-overlay-text__content .prose {
+      max-width: min(520px, 100%);
+    }
+
+    #shopify-section-{{ section.id }} :is(.banner-overlay-text__title, .banner-overlay-text__desc) {
+      text-wrap: balance;
+      overflow-wrap: anywhere;
+      text-shadow: 0 2px 10px rgb(0 0 0 / 0.35);
+    }
+  }
+
+  /* Let the text container be positioned over the whole banner */
+  #shopify-section-{{ section.id }} .banner-overlay-text__content {
+    grid-area: 1 / 1 / span 3 / span 3;
+    padding: var(--banner-text-padding);
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .banner-overlay-text__content {
+      padding: var(--banner-text-padding-mobile);
+    }
+  }
+</style>
+
+{%- liquid
+  assign h = section.settings.text_position_horizontal | default: 'center'
+  assign v = section.settings.text_position_vertical | default: 'center'
+
+  assign place_mobile = 'place-self-center'
+  assign place_desktop = 'sm:place-self-center'
+  assign align_mobile = 'text-center'
+  assign align_desktop = 'sm:text-center'
+
+  if v == 'top' and h == 'left'
+    assign place_mobile = 'place-self-start'
+    assign place_desktop = 'sm:place-self-start'
+    assign align_mobile = 'text-start'
+    assign align_desktop = 'sm:text-start'
+  elsif v == 'top' and h == 'center'
+    assign place_mobile = 'place-self-start-center'
+    assign place_desktop = 'sm:place-self-start-center'
+  elsif v == 'top' and h == 'right'
+    assign place_mobile = 'place-self-start-end'
+    assign place_desktop = 'sm:place-self-start-end'
+    assign align_mobile = 'text-end'
+    assign align_desktop = 'sm:text-end'
+
+  elsif v == 'center' and h == 'left'
+    assign place_mobile = 'place-self-center-start'
+    assign place_desktop = 'sm:place-self-center-start'
+    assign align_mobile = 'text-start'
+    assign align_desktop = 'sm:text-start'
+  elsif v == 'center' and h == 'center'
+    assign place_mobile = 'place-self-center'
+    assign place_desktop = 'sm:place-self-center'
+  elsif v == 'center' and h == 'right'
+    assign place_mobile = 'place-self-center-end'
+    assign place_desktop = 'sm:place-self-center-end'
+    assign align_mobile = 'text-end'
+    assign align_desktop = 'sm:text-end'
+
+  elsif v == 'bottom' and h == 'left'
+    assign place_mobile = 'place-self-end-start'
+    assign place_desktop = 'sm:place-self-end-start'
+    assign align_mobile = 'text-start'
+    assign align_desktop = 'sm:text-start'
+  elsif v == 'bottom' and h == 'center'
+    assign place_mobile = 'place-self-end-center'
+    assign place_desktop = 'sm:place-self-end-center'
+  elsif v == 'bottom' and h == 'right'
+    assign place_mobile = 'place-self-end-end'
+    assign place_desktop = 'sm:place-self-end-end'
+    assign align_mobile = 'text-end'
+    assign align_desktop = 'sm:text-end'
+  endif
+
+  assign content_class = place_mobile | append: ' ' | append: align_mobile | append: ' ' | append: place_desktop | append: ' ' | append: align_desktop
+  assign content_class = 'container banner-overlay-text__content ' | append: content_class
+-%}
+
+{%- assign section_style_override = '' -%}
+{%- if section.settings.full_width -%}
+  {%- assign section_style_override = 'padding-inline-start: 0; padding-inline-end: 0;' -%}
+{%- endif -%}
+{%- assign section_style_override = section_style_override | append: ' --section-spacing-block-start: 0px; padding-block-start: 0;' -%}
+
+<div {% render 'section-properties', style_attributes: section_style_override %}>
+  {%- unless section.settings.full_width -%}
+    <div class="container">
+  {%- endunless -%}
+
+  <div class="content-over-media content-over-media--{{ section.settings.image_size }} {% unless section.settings.full_width %}rounded{% endunless %}" style="--content-over-media-content-max-width: {{ section.settings.content_max_width }}px; --content-over-media-overlay: {{ section.settings.overlay_color.rgb }} / {{ section.settings.overlay_opacity | divided_by: 100.0 }}">
+    {%- capture sizes -%}{% if section.settings.full_width %}100vw{% else %}min({{ settings.page_width }}px, 100vw){% endif %}{%- endcapture -%}
+
+    <picture>
+      {%- if section.settings.mobile_image != blank -%}
+        <source
+          media="(max-width: 699px)"
+          srcset="{{ section.settings.mobile_image | image_url: width: 400 }} 400w, {{ section.settings.mobile_image | image_url: width: 600 }} 600w, {{ section.settings.mobile_image | image_url: width: 800 }} 800w, {{ section.settings.mobile_image | image_url: width: 1000 }} 1000w, {{ section.settings.mobile_image | image_url: width: 1200 }} 1200w"
+          width="{{ section.settings.mobile_image.width }}"
+          height="{{ section.settings.mobile_image.height }}"
+        >
+      {%- endif -%}
+
+      {%- if section.settings.image != blank -%}
+        {{- section.settings.image | image_url: width: section.settings.image.width | image_tag: loading: 'lazy', sizes: sizes, widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200' -}}
+      {%- else -%}
+        {{- 'lifestyle-1' | placeholder_svg_tag: 'placeholder' | replace: '<svg', '<svg preserveAspectRatio="xMinYMin slice"' -}}
+      {%- endif -%}
+    </picture>
+
+    <div {% render 'surface', class: content_class, text_color: section.settings.text_color %}>
+      <div class="prose">
+        {%- if section.settings.title != blank -%}
+          <p class="{{ section.settings.heading_tag }}">
+            <span class="banner-overlay-text__title">{{ section.settings.title | escape }}</span>
+          </p>
+        {%- endif -%}
+
+        {%- if section.settings.desc_1 != blank -%}
+          <p class="banner-overlay-text__desc">{{ section.settings.desc_1 | escape | newline_to_br }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.desc_2 != blank -%}
+          <p class="banner-overlay-text__desc">{{ section.settings.desc_2 | escape | newline_to_br }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- unless section.settings.full_width -%}
+    </div>
+  {%- endunless -%}
+</div>
+
+{% schema %}
+{
+  "name": "横幅叠加文字",
+  "class": "shopify-section--banner-overlay-text",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "图片"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "移动端图片"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Your banner title"
+    },
+    {
+      "type": "textarea",
+      "id": "desc_1",
+      "label": "描述 1（支持换行）",
+      "default": "Line 1\nLine 2"
+    },
+    {
+      "type": "textarea",
+      "id": "desc_2",
+      "label": "描述 2（支持换行）"
+    },
+    {
+      "type": "header",
+      "content": "布局"
+    },
+    {
+      "type": "select",
+      "id": "image_size",
+      "label": "媒体尺寸",
+      "options": [
+        {
+          "value": "auto",
+          "label": "适应图片"
+        },
+        {
+          "value": "small",
+          "label": "小"
+        },
+        {
+          "value": "medium",
+          "label": "中"
+        },
+        {
+          "value": "large",
+          "label": "大"
+        },
+        {
+          "value": "fill",
+          "label": "填满屏幕"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "select",
+      "id": "text_position_horizontal",
+      "label": "文本位置（水平）",
+      "options": [
+        {
+          "value": "left",
+          "label": "左侧"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "right",
+          "label": "右侧"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_position_vertical",
+      "label": "文本位置（垂直）",
+      "options": [
+        {
+          "value": "top",
+          "label": "顶部"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "bottom",
+          "label": "底部"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "内容最大宽度",
+      "min": 240,
+      "max": 1200,
+      "step": 20,
+      "default": 560
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "标题标签",
+      "options": [
+        {
+          "value": "h0",
+          "label": "H0"
+        },
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "header",
+      "content": "排版"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "标题大小（桌面端）",
+      "min": 18,
+      "max": 80,
+      "step": 1,
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "desc_size",
+      "label": "描述字号（桌面端）",
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "标题大小（移动端）",
+      "min": 16,
+      "max": 56,
+      "step": 1,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "desc_size_mobile",
+      "label": "描述字号（移动端）",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "叠加层不透明度",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 35
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "叠加层颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置后会使用分区颜色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "分区背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "分区背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "横幅叠加文字"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,260 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+LOCALIZATION SELECTOR COMPONENT
+----------------------------------------------------------------------------------------------------------------------
+
+This component renders a selector for a localization component (either country or locale).
+
+********************************************
+Supported variables
+********************************************
+
+* type: can be either "country" or "locale" (required)
+* show_country_name: for type "country" if set to true the country/currency name are shown
+* show_country_flag: for type "country" if set to true the country flags are shown
+* popover_horizontal_position: an optional vertical position
+* popover_vertical_position: an optional horizontal position (start if none is passed)
+{%- endcomment -%}
+
+{%- capture localization_form_id -%}localization-form-{{ type }}-{{ popover_vertical_position }}-{{ section.id }}{%- endcapture -%}
+{%- capture localization_popover_id -%}popover-localization-form-{{ type }}-{{ popover_vertical_position }}-{{ section.id }}{%- endcapture -%}
+{%- assign popover_vertical_position = popover_vertical_position | default: 'start' -%}
+{%- assign popover_horizontal_position = popover_horizontal_position | default: 'end' -%}
+{%- assign country_flags_stylesheet_url = 'localization-country-flags.css' | asset_url -%}
+
+<script>
+  (() => {
+    if (window.__caseeaseCountryFlagsLoader) return;
+    window.__caseeaseCountryFlagsLoader = true;
+
+    const stylesheetUrl = {{ country_flags_stylesheet_url | json }};
+    const loadCountryFlags = () => {
+      if (document.querySelector('link[data-country-flags-css]')) return;
+
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = stylesheetUrl;
+      link.dataset.countryFlagsCss = 'true';
+      document.head.append(link);
+    };
+
+    document.addEventListener('pointerdown', (event) => {
+      if (event.target.closest('[data-country-flags-load]')) loadCountryFlags();
+    }, { passive: true });
+
+    document.addEventListener('focusin', (event) => {
+      if (event.target.closest('[data-country-flags-load]')) loadCountryFlags();
+    });
+  })();
+</script>
+
+{%- case type -%}
+  {%- when 'country' -%}
+    {%- comment -%}
+    ----------------------------------------------------------------------------------------------
+    COUNTRY SELECTOR
+    ----------------------------------------------------------------------------------------------
+    {%- endcomment -%}
+
+    <div class="relative" data-country-flags-load>
+      <button type="button" class="text-with-icon gap-2.5 group" aria-label="{{ 'general.localization.change_country_accessibility_text' | t | escape }}" aria-controls="{{ localization_popover_id }}" aria-expanded="false">
+        <div class="h-stack gap-2">
+          {%- if show_country_flag -%}
+            <span class="country-flag-chip" aria-hidden="true">{{ localization.country.iso_code }}</span>
+          {%- endif -%}
+
+          <span class="bold text-sm">
+            {%- if show_country_name -%}
+              {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {% if localization.country.currency.symbol %}{{ localization.country.currency.symbol }}){%- endif -%}
+            {%- else -%}
+              {{ localization.country.currency.iso_code }} {% if localization.country.currency.symbol %}{{ localization.country.currency.symbol }}{%- endif -%}
+            {%- endif -%}
+          </span>
+        </div>
+
+        {%- render 'icon' with 'chevron-bottom' -%}
+      </button>
+
+      <x-popover id="{{ localization_popover_id }}" initial-focus="[aria-selected='true']" anchor-horizontal="{{ popover_horizontal_position }}" anchor-vertical="{{ popover_vertical_position }}" class="popover">
+        <p class="h5" slot="title">{{ 'general.localization.country' | t }}</p>
+
+        {%- form 'localization', id: localization_form_id -%}
+          <x-listbox class="popover-listbox popover-listbox--sm" role="listbox">
+            {%- for country in localization.available_countries -%}
+              <button type="submit" class="popover-listbox__option" name="country_code" role="option" value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}aria-selected="true"{% endif %}>
+                <span class="country-flags country-flags--{{ country.iso_code }}"></span>
+                <span>{{- country.name }} ({{ country.currency.iso_code }} {% if country.currency.symbol %}{{ country.currency.symbol }}{%- endif -%})</span>
+              </button>
+            {%- endfor -%}
+          </x-listbox>
+        {%- endform -%}
+      </x-popover>
+    </div>
+
+  {%- when 'locale' -%}
+    {%- comment -%}
+    ----------------------------------------------------------------------------------------------
+    LOCALE SELECTOR
+    ----------------------------------------------------------------------------------------------
+    {%- endcomment -%}
+
+    {%- liquid
+      assign _current_lang = localization.language.iso_code | downcase
+      assign _current_lang_short = _current_lang | split: '-' | first
+
+      case _current_lang_short
+        when 'en'
+          assign _current_flag = 'US'
+        when 'de'
+          assign _current_flag = 'DE'
+        when 'fr'
+          assign _current_flag = 'FR'
+        when 'es'
+          assign _current_flag = 'ES'
+        when 'it'
+          assign _current_flag = 'IT'
+        when 'nl'
+          assign _current_flag = 'NL'
+        when 'uk'
+          assign _current_flag = 'UA'
+        when 'el'
+          assign _current_flag = 'GR'
+        when 'cs'
+          assign _current_flag = 'CZ'
+        when 'fi'
+          assign _current_flag = 'FI'
+        when 'hu'
+          assign _current_flag = 'HU'
+        when 'no', 'nb', 'nn'
+          assign _current_flag = 'NO'
+        when 'pl'
+          assign _current_flag = 'PL'
+        when 'sv'
+          assign _current_flag = 'SE'
+        when 'da'
+          assign _current_flag = 'DK'
+        when 'ro'
+          assign _current_flag = 'RO'
+        when 'sk'
+          assign _current_flag = 'SK'
+        when 'sl'
+          assign _current_flag = 'SI'
+        when 'hr'
+          assign _current_flag = 'HR'
+        when 'bg'
+          assign _current_flag = 'BG'
+        when 'et'
+          assign _current_flag = 'EE'
+        when 'lt'
+          assign _current_flag = 'LT'
+        when 'lv'
+          assign _current_flag = 'LV'
+        when 'is'
+          assign _current_flag = 'IS'
+        when 'ja'
+          assign _current_flag = 'JP'
+        when 'ko'
+          assign _current_flag = 'KR'
+        when 'pt'
+          assign _current_flag = 'PT'
+        when 'tr'
+          assign _current_flag = 'TR'
+        when 'zh'
+          assign _current_flag = 'CN'
+        else
+          assign _current_flag = localization.country.iso_code
+      endcase
+    -%}
+
+    <div class="relative" data-country-flags-load>
+      <button type="button" class="text-with-icon gap-2.5 group" aria-label="{{ 'general.localization.change_language_accessibility_text' | t | escape }}" aria-controls="{{ localization_popover_id }}" aria-expanded="false">
+        <div class="h-stack gap-2">
+          <span class="country-flag-chip" aria-hidden="true">{{ _current_flag }}</span>
+          <span class="bold text-sm">{{- localization.language.endonym_name | capitalize -}}</span>
+        </div>
+        {%- render 'icon' with 'chevron-bottom' -%}
+      </button>
+
+      <x-popover id="{{ localization_popover_id }}" initial-focus="[aria-selected='true']" anchor-horizontal="{{ popover_horizontal_position }}" anchor-vertical="{{ popover_vertical_position }}" class="popover">
+        <p class="h5" slot="title">{{ 'general.localization.language' | t }}</p>
+
+        {%- form 'localization', id: localization_form_id -%}
+          <x-listbox class="popover-listbox popover-listbox--sm" role="listbox">
+            {%- for language in localization.available_languages -%}
+              {%- liquid
+                assign _lang = language.iso_code | downcase
+                assign _lang_short = _lang | split: '-' | first
+
+                case _lang_short
+                  when 'en'
+                    assign _flag = 'US'
+                  when 'de'
+                    assign _flag = 'DE'
+                  when 'fr'
+                    assign _flag = 'FR'
+                  when 'es'
+                    assign _flag = 'ES'
+                  when 'it'
+                    assign _flag = 'IT'
+                  when 'nl'
+                    assign _flag = 'NL'
+                  when 'uk'
+                    assign _flag = 'UA'
+                  when 'el'
+                    assign _flag = 'GR'
+                  when 'cs'
+                    assign _flag = 'CZ'
+                  when 'fi'
+                    assign _flag = 'FI'
+                  when 'hu'
+                    assign _flag = 'HU'
+                  when 'no', 'nb', 'nn'
+                    assign _flag = 'NO'
+                  when 'pl'
+                    assign _flag = 'PL'
+                  when 'sv'
+                    assign _flag = 'SE'
+                  when 'da'
+                    assign _flag = 'DK'
+                  when 'ro'
+                    assign _flag = 'RO'
+                  when 'sk'
+                    assign _flag = 'SK'
+                  when 'sl'
+                    assign _flag = 'SI'
+                  when 'hr'
+                    assign _flag = 'HR'
+                  when 'bg'
+                    assign _flag = 'BG'
+                  when 'et'
+                    assign _flag = 'EE'
+                  when 'lt'
+                    assign _flag = 'LT'
+                  when 'lv'
+                    assign _flag = 'LV'
+                  when 'is'
+                    assign _flag = 'IS'
+                  when 'ja'
+                    assign _flag = 'JP'
+                  when 'ko'
+                    assign _flag = 'KR'
+                  when 'pt'
+                    assign _flag = 'PT'
+                  when 'tr'
+                    assign _flag = 'TR'
+                  when 'zh'
+                    assign _flag = 'CN'
+                  else
+                    assign _flag = localization.country.iso_code
+                endcase
+              -%}
+              <button type="submit" class="popover-listbox__option" name="locale_code" role="option" value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}aria-selected="true"{% endif %}>
+                <span class="country-flags country-flags--{{ _flag }}"></span>
+                <span>{{- language.endonym_name | capitalize -}}</span>
+              </button>
+            {%- endfor -%}
+          </x-listbox>
+        {%- endform -%}
+      </x-popover>
+    </div>
+{%- endcase -%}

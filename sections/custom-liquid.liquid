@@ -1,0 +1,80 @@
+{%- if section.settings.liquid != blank -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      {% if section.settings.remove_vertical_spacing %}--section-spacing-block: 0px;{% endif %}
+      {% if section.settings.remove_horizontal_spacing %}--section-spacing-inline: 0px;{% endif %}
+    }
+  </style>
+
+  <div {% render 'section-properties' %}>
+    {{ section.settings.liquid }}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "自定义 Liquid 代码",
+  "class": "shopify-section--custom-liquid",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_vertical_spacing",
+      "label": "移除垂直间距",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_horizontal_spacing",
+      "label": "移除水平间距",
+      "default": false
+    },
+    {
+      "type": "liquid",
+      "id": "liquid",
+      "label": "Liquid 代码",
+      "info": "添加应用片段或其他 Liquid 代码来创建高级自定义。",
+      "default": "<p style=\"text-align: center\">Write or copy/paste Liquid code</p>"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "自定义 Liquid 代码",
+      "category": "Layout"
+    }
+  ]
+}
+{% endschema %}

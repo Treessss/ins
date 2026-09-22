@@ -1,0 +1,354 @@
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --best-sellers-columns-desktop: 3;
+    --best-sellers-columns-mobile: 2;
+    {%- if section.settings.background_image != blank -%}
+      background-image: url('{{ section.settings.background_image | image_url: width: 2400 }}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    {%- endif -%}
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs {
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__title {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__tab {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: rgb(var(--text-color) / 0.7);
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  }
+  
+
+   @media (hover: hover) and (pointer: fine) {
+    #shopify-section-{{ section.id }} .best-sellers-tabs__tab:not(.is-active):hover {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__tab.is-active {
+    background: rgb(var(--text-color));
+    color: rgb(var(--background));
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__panel {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__panel.is-active {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__products {
+    display: grid;
+    grid-template-columns: repeat(var(--best-sellers-columns-desktop), minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  #shopify-section-{{ section.id }} .best-sellers-tabs__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .best-sellers-tabs__products {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+   
+      #shopify-section-{{ section.id }} .best-sellers-tabs__products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.25rem;
+  }
+
+    #shopify-section-{{ section.id }} .best-sellers-tabs__header {
+      margin-bottom: 1.5rem;
+    }
+  }
+</style>
+
+<div {% render 'section-properties' %}>
+  <div class="best-sellers-tabs" data-best-sellers-tabs>
+    <div class="best-sellers-tabs__header">
+      {%- if section.settings.title != blank -%}
+        <div class="prose text-center">
+          <h2 class="h2 best-sellers-tabs__title">
+            {%- render 'styled-text',
+              content: section.settings.title,
+              text_color: section.settings.heading_color,
+              gradient: section.settings.heading_gradient
+            -%}
+          </h2>
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="best-sellers-tabs__nav" role="tablist" aria-label="{{ section.settings.title | escape }}">
+          {%- for block in section.blocks -%}
+            <button
+              type="button"
+              class="best-sellers-tabs__tab {% if forloop.first %}is-active{% endif %}"
+              data-tab-trigger
+              data-tab-target="tab-{{ section.id }}-{{ block.id }}"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.tab_label | default: block.settings.collection.title | escape }}
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- assign collection = block.settings.collection -%}
+
+      <div
+        id="tab-{{ section.id }}-{{ block.id }}"
+        class="best-sellers-tabs__panel {% if forloop.first %}is-active{% endif %}"
+        data-tab-panel
+        role="tabpanel"
+      >
+        {%- if collection != blank and collection.products_count > 0 -%}
+          <div class="best-sellers-tabs__products">
+            {%- for product in collection.products limit: block.settings.products_to_show -%}
+              {%- render 'product-card',
+                product: product,
+                show_quick_add: true,
+                show_badges: true
+              -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if block.settings.shop_more_text != blank and block.settings.shop_more_url != blank -%}
+            <div class="best-sellers-tabs__footer">
+              {% render 'button',
+                content: block.settings.shop_more_text,
+                href: block.settings.shop_more_url,
+                size: 'lg',
+                background: section.settings.button_background,
+                text_color: section.settings.button_text_color
+              %}
+            </div>
+          {%- endif -%}
+        {%- else -%}
+          <div class="prose text-center">
+            <p>请先为这个分类选择一个 collection。</p>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  (() => {
+    const root = document.querySelector('#shopify-section-{{ section.id }} [data-best-sellers-tabs]');
+    if (!root) return;
+
+    const triggers = root.querySelectorAll('[data-tab-trigger]');
+    const panels = root.querySelectorAll('[data-tab-panel]');
+
+    const activateTab = (targetId) => {
+      triggers.forEach((trigger) => {
+        const isActive = trigger.getAttribute('data-tab-target') === targetId;
+        trigger.classList.toggle('is-active', isActive);
+        trigger.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      panels.forEach((panel) => {
+        panel.classList.toggle('is-active', panel.id === targetId);
+      });
+    };
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        activateTab(trigger.getAttribute('data-tab-target'));
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "畅销商品标签页",
+  "class": "shopify-section--best-sellers-tabs",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "标签页",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_label",
+          "label": "标签页标签",
+          "default": "Mini"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "系列"
+        },
+        {
+          "type": "range",
+          "id": "products_to_show",
+          "label": "显示商品数",
+          "min": 3,
+          "max": 12,
+          "step": 1,
+          "default": 6
+        },
+        {
+          "type": "header",
+          "content": "查看更多按钮"
+        },
+        {
+          "type": "text",
+          "id": "shop_more_text",
+          "label": "按钮文本",
+          "default": "Shop More"
+        },
+        {
+          "type": "url",
+          "id": "shop_more_url",
+          "label": "按钮链接"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "分区背景图片"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "分区背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "分区背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "按钮背景"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "按钮文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "畅销商品标签页",
+      "blocks": [
+        {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Mini"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Gen3"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Gen2"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Gen3P"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,191 @@
+{%- assign root_id = 'pm-app-blocks-' | append: section.id -%}
+
+<style>
+  #shopify-section-{{ section.id }} .pm-app-blocks {
+    border-radius: 32px;
+    background: #fff;
+    box-shadow: 0 12px 16px 0 #6b6f7314;
+    padding: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-app-blocks__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-app-blocks__title {
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .pm-app-blocks__toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    position: relative;
+    /* Default (expanded): show X by rotating the + */
+    transform: rotate(45deg);
+    transition: transform 0.5s ease;
+  }
+
+  #shopify-section-{{ section.id }} .pm-app-blocks.is-collapsed .pm-app-blocks__toggle {
+    /* Collapsed: show + */
+    transform: rotate(0deg);
+  }
+
+  #shopify-section-{{ section.id }} .pm-app-blocks__toggle::before,
+  #shopify-section-{{ section.id }} .pm-app-blocks__toggle::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 2px;
+    background: #111;
+    border-radius: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-app-blocks__toggle::after {
+    transform: rotate(90deg);
+  }
+
+  #shopify-section-{{ section.id }} .pm-app-blocks__content-wrap {
+    overflow: hidden;
+    max-height: 2000px; /* overridden inline by JS */
+    transition: max-height 0.5s ease;
+  }
+
+  #shopify-section-{{ section.id }} .pm-app-blocks.is-collapsed .pm-app-blocks__content-wrap {
+    max-height: 0 !important;
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .pm-app-blocks {
+      border-radius: 24px;
+      padding: 12px;
+    }
+   
+
+    #shopify-section-{{ section.id }} .pm-app-blocks__title {
+      font-size: 22px;
+    }
+  }
+</style>
+
+{%- assign default_collapsed = section.settings.default_collapsed | default: false -%}
+
+<div {% render 'section-properties' %}>
+  <div class="pm-app-blocks{% if default_collapsed %} is-collapsed{% endif %}" id="{{ root_id }}">
+    <div class="pm-app-blocks__header">
+      <div class="pm-app-blocks__title">{{ section.settings.title }}</div>
+      <button
+        class="pm-app-blocks__toggle"
+        type="button"
+        aria-expanded="{% if default_collapsed %}false{% else %}true{% endif %}"
+        aria-controls="{{ root_id }}-content"
+      ></button>
+    </div>
+
+    <div class="pm-app-blocks__content-wrap" {% if default_collapsed %}style="max-height: 0px;"{% endif %}>
+      <div class="pm-app-blocks__content" id="{{ root_id }}-content">
+        {%- for block in section.blocks -%}
+          <div {{ block.shopify_attributes }}>
+            {%- render block -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const rootId = {{ root_id | json }};
+    const root = document.getElementById(rootId);
+    if (!root) return;
+
+    const toggleBtn = root.querySelector('.pm-app-blocks__toggle');
+    const contentWrap = root.querySelector('.pm-app-blocks__content-wrap');
+    const contentEl = root.querySelector('.pm-app-blocks__content');
+    if (!toggleBtn || !contentWrap || !contentEl) return;
+
+    const syncHeight = () => {
+      if (root.classList.contains('is-collapsed')) {
+        contentWrap.style.maxHeight = '0px';
+      } else {
+        // Use inner content height so async app rendering is measured correctly.
+        contentWrap.style.maxHeight = `${contentEl.scrollHeight}px`;
+      }
+    };
+
+    // Ensure initial height matches the desired default state.
+    syncHeight();
+    // Apps like Loox may render after initial paint; re-sync a few times.
+    requestAnimationFrame(syncHeight);
+    setTimeout(syncHeight, 250);
+    setTimeout(syncHeight, 1000);
+
+    let raf = 0;
+    const scheduleSync = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(syncHeight);
+    };
+
+    window.addEventListener('resize', scheduleSync, { passive: true });
+
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(scheduleSync);
+      ro.observe(contentEl);
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const collapsed = root.classList.toggle('is-collapsed');
+      toggleBtn.setAttribute('aria-expanded', String(!collapsed));
+      syncHeight();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "商品应用块",
+  "tag": "section",
+  "class": "shopify-section--product-app-blocks",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "default_collapsed",
+      "label": "默认折叠",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "App blocks"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "商品应用块"
+    }
+  ]
+}
+{% endschema %}
+

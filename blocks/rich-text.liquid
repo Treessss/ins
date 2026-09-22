@@ -1,0 +1,57 @@
+{%- if block.settings.text != blank -%}
+  {%- assign text_alignment = block.settings.text_alignment | replace: 'left', 'start' | replace: 'right', 'end' -%}
+
+  <div class="rich-text justify-{{ text_alignment }}">
+    <div class="rich-text__wrapper" style="--rich-text-max-width: {% if block.settings.content_width == 'small' %}650px{% elsif block.settings.content_width == 'medium' %}780px{% else %}100%{% endif %}" {{ block.shopify_attributes }}>
+      <div class="prose justify-items-{{ text_alignment }} text-{{ text_alignment }}">
+        {{- block.settings.text -}}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "富文本",
+  "tag": null,
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "内容",
+      "default": "<p>Write some text about your products or your brand.</p>"
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "内容宽度",
+      "options": [
+        {
+          "value": "small",
+          "label": "小"
+        },
+        {
+          "value": "medium",
+          "label": "中"
+        },
+        {
+          "value": "large",
+          "label": "大"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "label": "文本对齐方式",
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "富文本"
+    }
+  ]
+}
+{% endschema %}

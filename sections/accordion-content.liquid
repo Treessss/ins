@@ -1,0 +1,514 @@
+{%- render 'section-spacing-collapsing' -%}
+
+{%- assign text_position = section.settings.text_position -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --section-stack-intro: {% if text_position == 'center' %}66.6667%{% else %}50%{% endif %};
+    --section-stack-main: 50%;
+  }
+</style>
+
+<div {% render 'section-properties' %}>
+  <div class="section-stack {% if text_position != 'center' %}section-stack--horizontal{% else %}section-stack--center{% endif %} {% if text_position == 'end' %}section-stack--reverse{% endif %}">
+    {%- capture content -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="subheading">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.title != blank -%}
+        <h2 class="h2">
+          {%- render 'styled-text', content: section.settings.title, text_color: section.settings.heading_color, gradient: section.settings.heading_gradient -%}
+        </h2>
+      {%- endif -%}
+
+      {{- section.settings.content -}}
+
+      {%- if section.settings.button_text != blank -%}
+        {% render 'button', content: section.settings.button_text, href: section.settings.button_url, size: 'xl', background: section.settings.button_background, text_color: section.settings.button_text_color %}
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {%- if content != blank -%}
+      <div class="section-stack__intro">
+        <div class="prose {% if text_position == 'center' %}text-center{% endif %}">
+          {{- content -}}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="section-stack__main">
+        <div {% render 'surface', class: 'accordion-box rounded', background: section.settings.accordion_background, text_color: section.settings.accordion_text_color, background_fallback: 'bg-secondary' %}>
+          {%- for block in section.blocks -%}
+            {%- if block.settings.title != blank and block.settings.content != blank -%}
+              {%- capture accordion_content -%}
+                <div class="prose">{{ block.settings.page.content | default: block.settings.content }}</div>
+              {%- endcapture -%}
+
+              {%- assign icon = block.settings.custom_icon | default: block.settings.icon -%}
+              {%- render 'accordion', title: block.settings.title, content: accordion_content, icon: icon, icon_width: block.settings.icon_width, block: block -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "折叠内容",
+  "class": "shopify-section--accordion-content",
+  "tag": "section",
+  "disabled_on": {
+    "templates": [
+      "password"
+    ],
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "blocks": [
+    {
+      "name": "项目",
+      "type": "item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "picto-coupon",
+              "label": "优惠券",
+              "group": "购物"
+            },
+            {
+              "value": "picto-percent",
+              "label": "百分比",
+              "group": "购物"
+            },
+            {
+              "value": "picto-gift",
+              "label": "礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-star",
+              "label": "星星",
+              "group": "购物"
+            },
+            {
+              "value": "picto-like",
+              "label": "点赞",
+              "group": "购物"
+            },
+            {
+              "value": "picto-building",
+              "label": "建筑",
+              "group": "购物"
+            },
+            {
+              "value": "picto-love",
+              "label": "爱心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-award-gift",
+              "label": "获奖礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-happy",
+              "label": "开心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子",
+              "group": "配送"
+            },
+            {
+              "value": "picto-pin",
+              "label": "图钉",
+              "group": "配送"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器",
+              "group": "配送"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证",
+              "group": "配送"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车",
+              "group": "配送"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货",
+              "group": "配送"
+            },
+            {
+              "value": "picto-earth",
+              "label": "地球",
+              "group": "配送"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机",
+              "group": "配送"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "信用卡",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "安全资料",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-money",
+              "label": "金钱",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "回收",
+              "group": "环保"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "叶子",
+              "group": "环保"
+            },
+            {
+              "value": "picto-tree",
+              "label": "树",
+              "group": "环保"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "手机",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-phone",
+              "label": "电话",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-chat",
+              "label": "聊天",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "客户支持",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-operator",
+              "label": "客服",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "邮箱箱",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-envelope",
+              "label": "信封",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-comment",
+              "label": "评论",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-send",
+              "label": "发送",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "@ 符号",
+              "group": "科技"
+            },
+            {
+              "value": "picto-camera",
+              "label": "相机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "WiFi",
+              "group": "科技"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "蓝牙",
+              "group": "科技"
+            },
+            {
+              "value": "picto-printer",
+              "label": "打印机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表",
+              "group": "科技"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "咖啡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-burger",
+              "label": "汉堡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-beer",
+              "label": "啤酒",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-target",
+              "label": "目标",
+              "group": "其他"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档",
+              "group": "其他"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "珠宝",
+              "group": "其他"
+            },
+            {
+              "value": "picto-music",
+              "label": "音乐",
+              "group": "其他"
+            },
+            {
+              "value": "picto-file",
+              "label": "文件",
+              "group": "其他"
+            },
+            {
+              "value": "picto-mask",
+              "label": "遮罩",
+              "group": "其他"
+            },
+            {
+              "value": "picto-stop",
+              "label": "停止",
+              "group": "其他"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标",
+          "info": "建议使用 96 x 96px .png 或 .svg"
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 16,
+          "max": 48,
+          "step": 2,
+          "unit": "px",
+          "label": "图标宽度",
+          "default": 20
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Write content to help your customers to better understand your products or policies.</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "页面",
+          "info": "指定后会替代内联内容。"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "副标题"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "内容",
+      "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文本"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "按钮链接"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "文本位置",
+      "options": [
+        {
+          "value": "start",
+          "label": "左侧"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "end",
+          "label": "右侧"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "按钮背景"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "按钮文本"
+    },
+    {
+      "type": "color",
+      "id": "accordion_background",
+      "label": "折叠面板背景"
+    },
+    {
+      "type": "color",
+      "id": "accordion_text_color",
+      "label": "折叠面板文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "折叠内容",
+      "category": "Content",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "Question 1"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Question 2"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Question 3"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

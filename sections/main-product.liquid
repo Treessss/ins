@@ -1,0 +1,4783 @@
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --product-grid: auto / minmax(0, 1fr);
+    --product-gallery-media-list-grid: auto / auto-flow {% if section.settings.mobile_carousel_control == 'free_scroll' %}{% if section.settings.mobile_media_size == 'expanded' %}84vw{% else %}73vw{% endif %}{% else %}100%{% endif %};
+    --product-gallery-media-list-gap: {% if section.settings.mobile_media_size == 'expanded' %}var(--spacing-0-5){% else %}var(--grid-gutter){% endif %};
+  }
+   
+    @media screen and (max-width: 1024px) {
+ #shopify-section-{{ section.id }} .section {
+      padding-block-end:24px
+    }
+    }
+
+  /* Right-side info panel background (scoped to this product section) */
+  #shopify-section-{{ section.id }} .product-info-panel {
+    background: #fff;
+    border-radius: var(--rounded-xs, 8px);
+    padding: var(--container-gutter, 16px);
+    border-radius: 24px;
+background: #FFF;
+box-shadow: 0 12px 16px 0 #6b6f7314;
+  }
+
+  /* PM OVER VIEW: lay out like product-info-panel */
+  #shopify-section-{{ section.id }} .product-info-column {
+    display: grid;
+    align-content: start;
+    gap: var(--container-gutter, 16px);
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_banner {
+    border-radius: 32px;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_banner img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* Overviews content items (left image + right text) */
+  #shopify-section-{{ section.id }} .Overviews_content_item {
+    margin-top: var(--container-gutter, 16px);
+  border-radius: 32px;
+background: #FFF;
+box-shadow: 0 12px 16px 0 #6b6f7314;
+padding:10px;
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_content_item--lr {
+    display: grid;
+    gap: 20px;
+    align-items: center;
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_content_item--rl {
+    display: grid;
+    gap: 20px;
+    align-items: center;
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} .Overviews_content_item--lr {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item--rl {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item--rl .Overviews_content_item-text {
+      order: 1;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item--rl .Overviews_content_item-media {
+      order: 2;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_content_item-media {
+    border-radius: 32px;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_content_item-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_content_item-title {
+    color: #191919;
+    font-size: 3rem;
+    font-style: normal;
+    font-weight: 700;
+     line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_content_item-content {
+    margin-top: 20px;
+   color: #666666;
+ font-size: 1.3rem;
+ font-style: normal;
+ font-weight: 400;
+ line-height: 1.4;
+  }
+
+  #shopify-section-{{ section.id }} .Overviews_content_item-text {
+    padding-inline: 16px;
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} .Overviews_content_item-text {
+      padding-inline: 24px;
+    }
+  }
+
+  /* Right column recommended products panel (app mounts into slot) */
+  #shopify-section-{{ section.id }} .pm-side-reco__content {
+    margin-top: 12px;
+  }
+
+  /* Description below (align under right column on desktop) */
+  #shopify-section-{{ section.id }} .product-description-below {
+    margin-top: var(--spacing-8, 32px);
+    border-radius: var(--rounded-xs, 8px);
+ 
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} .product-description-below {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} .product-info-panel {
+      padding: calc(var(--container-gutter, 16px) * 1.25);
+    }
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} {
+      --section-spacing-block-start: {% if section.settings.mobile_media_size == 'expanded' %}0px{% else %}var(--container-gutter){% endif %};
+    }
+
+    /* Mobile: always stack image on top, text below */
+    #shopify-section-{{ section.id }} .Overviews_content_item--lr,
+    #shopify-section-{{ section.id }} .Overviews_content_item--rl {
+      grid-template-columns: 1fr;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item--rl .Overviews_content_item-media {
+      order: 1;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item--rl .Overviews_content_item-text {
+      order: 2;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_banner {
+      border-radius: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item {
+      margin-top: 24px;
+      padding: 12px;
+      border-radius: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item-media {
+      border-radius: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item-text {
+      padding-inline: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item-title {
+      font-size: 1.5rem;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    #shopify-section-{{ section.id }} .Overviews_content_item-content {
+      margin-top: 14px;
+      font-size: 1rem;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} {
+      {%- assign media_ratio = section.settings.desktop_media_width | divided_by: 50.0 -%}
+      --product-grid: auto / minmax(0, {{ media_ratio }}fr) minmax(0, {{ 2.0 | minus: media_ratio }}fr);
+      --product-gallery-media-list-grid: {% if section.settings.desktop_media_layout contains 'grid' %}auto-flow dense / repeat({% if section.settings.desktop_media_layout == 'grid_one' %}1{% else %}2{% endif %}, minmax(0, 1fr)){% else %}auto / auto-flow 100%{% endif %};
+      --product-gallery-media-list-gap: calc(var(--grid-gutter) / 2);
+    }
+
+    {%- if section.settings.desktop_media_layout == 'grid_highlight' -%}
+      #shopify-section-{{ section.id }} .product-gallery__media-list > :not([hidden]) {
+        grid-column: span 2;
+      }
+
+      #shopify-section-{{ section.id }} .product-gallery__media-list > :not([hidden]) ~ *:not(.product-gallery__media--expand) {
+        grid-column: span 1;
+      }
+    {%- endif -%}
+  }
+
+  @media screen and (min-width: 1400px) {
+    #shopify-section-{{ section.id }} {
+      --product-gallery-media-list-gap: var(--grid-gutter);
+    }
+  }
+
+  /* Product videos tabs */
+  #shopify-section-{{ section.id }} .fivestopsproduct_ProductVideos {
+    margin-top: 32px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-videos {
+    display: grid;
+    gap: 30px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-videos__title {
+    text-align: center;
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .pm-videos__tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  #shopify-section-{{ section.id }} .pm-videos__tab {
+    border: 1px solid rgb(0 0 0 / 10%);
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .pm-videos__tab[aria-selected="true"] {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+
+  #shopify-section-{{ section.id }} .pm-videos__panel {
+    border-radius: 32px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 12px 16px 0 #6b6f7314;
+  }
+
+  #shopify-section-{{ section.id }} .pm-videos__panel iframe,
+  #shopify-section-{{ section.id }} .pm-videos__panel video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+
+  /* More info (JSON -> tables) */
+  #shopify-section-{{ section.id }} .pm-more-info {
+    margin-top: 52px;
+    border-radius: 32px;
+    background: #fff;
+    box-shadow: 0 12px 16px 0 #6b6f7314;
+    padding: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__title {
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+  #shopify-section-{{ section.id }}  .prose {
+    margin-top:16px
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    /* Default (expanded): show X by rotating the + */
+    transform: rotate(45deg);
+    transition: transform 0.5s ease;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info.is-collapsed .pm-more-info__toggle {
+    /* Collapsed: show + */
+    transform: rotate(0deg);
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__toggle::before,
+  #shopify-section-{{ section.id }} .pm-more-info__toggle::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 2px;
+    background: #111;
+    border-radius: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__toggle::after {
+    transform: rotate(90deg);
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__toggle {
+    position: relative;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__content-wrap {
+    overflow: hidden;
+    max-height: 2000px; /* will be overridden inline by JS */
+    transition: max-height 0.5s ease;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info.is-collapsed .pm-more-info__content-wrap {
+    max-height: 0 !important;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__section-title {
+    font-weight: 700;
+    margin: 8px 0 10px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description {
+    padding: 18px 34px 22px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__details {
+    margin-top: 24px;
+    border-top: 1px solid #d9d9d9;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description > .pm-product-description__details:first-child {
+    margin-top: 0;
+    border-top: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__detail {
+    display: block;
+    border-bottom: 1px solid #d9d9d9;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__detail:last-child {
+    border-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__summary {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) 16px;
+    align-items: center;
+    gap: 18px;
+    min-height: 77px;
+    padding: 0;
+    color: #000;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__icon {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    color: #000;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__icon svg {
+    display: block;
+    width: 28px;
+    height: 28px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__title {
+    color: inherit;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.11;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    transition: transform 0.18s ease;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__detail[open] .pm-product-description__chevron {
+    transform: rotate(180deg);
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__content {
+    max-width: 760px;
+    padding: 0 0 25px 48px;
+    color: #000;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__content .prose {
+    margin-top: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__content p,
+  #shopify-section-{{ section.id }} .pm-product-description__content ul {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__content p + p,
+  #shopify-section-{{ section.id }} .pm-product-description__content p + ul,
+  #shopify-section-{{ section.id }} .pm-product-description__content ul + p {
+    margin-top: 0.8em;
+  }
+
+  #shopify-section-{{ section.id }} .pm-product-description__content ul {
+    padding-left: 1.15em;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e6e6e6;
+    background: #fff;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__table th,
+  #shopify-section-{{ section.id }} .pm-more-info__table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e6e6e6;
+    border-right: 1px solid #e6e6e6;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+@media (max-width: 699px) {
+  .pm-product-description .prose iframe {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9 !important;
+  }
+}
+  #shopify-section-{{ section.id }} .pm-more-info__table tr > :last-child {
+    border-right: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__table tr:last-child td,
+  #shopify-section-{{ section.id }} .pm-more-info__table tr:last-child th {
+    border-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__table th {
+    width: 38%;
+    background: #f5f5f5;
+    font-weight: 600;
+  }
+
+  /* Package includes table: 4 columns (List/Value/List/Value) */
+  #shopify-section-{{ section.id }} .pm-more-info__table--pkg th {
+    width: 18%;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__table--pkg td {
+    width: 32%;
+  }
+
+  /* Specification table: 4 columns (Label/Value/Label/Value) on desktop */
+  #shopify-section-{{ section.id }} .pm-more-info__table--spec th {
+    width: 18%;
+   
+  }
+
+  #shopify-section-{{ section.id }} .pm-more-info__table--spec td {
+    width: 32%;
+  }
+
+  /* FAQ (JSON -> accordion) */
+  #shopify-section-{{ section.id }} .pm-faq {
+    margin-top: 52px;
+    border-radius: 32px;
+    background: #fff;
+    box-shadow: 0 12px 16px 0 #6b6f7314;
+    padding: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__title {
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    position: relative;
+    /* Default (expanded): show X by rotating the + */
+    transform: rotate(45deg);
+    transition: transform 0.5s ease;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq.is-collapsed .pm-faq__toggle {
+    /* Collapsed: show + */
+    transform: rotate(0deg);
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__toggle::before,
+  #shopify-section-{{ section.id }} .pm-faq__toggle::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 2px;
+    background: #111;
+    border-radius: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__toggle::after {
+    transform: rotate(90deg);
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__list {
+    overflow: hidden;
+  }
+
+  
+
+  #shopify-section-{{ section.id }} .pm-faq__content-wrap {
+    overflow: hidden;
+    max-height: 2000px; /* overridden inline by JS */
+    transition: max-height 0.5s ease;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq.is-collapsed .pm-faq__content-wrap {
+    max-height: 0 !important;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__a-wrap {
+    padding: 14px 16px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__a {
+    color: #666666;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  #shopify-section-{{ section.id }} .pm-faq__q-text {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.35;
+    margin-bottom: 6px;
+    color: #111;
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .pm-more-info,
+    #shopify-section-{{ section.id }} .pm-faq {
+      margin-top: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-faq {
+      border-radius: 24px;
+      padding: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-faq__title {
+      font-size: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-product-description__details {
+      margin-top: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-product-description {
+      padding: 14px 22px 16px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-product-description > .pm-product-description__details:first-child {
+      margin-top: 0;
+    }
+
+    #shopify-section-{{ section.id }} .pm-product-description__summary {
+      grid-template-columns: 26px minmax(0, 1fr) 14px;
+      gap: 14px;
+      min-height: 62px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-product-description__icon {
+      width: 26px;
+      height: 26px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-product-description__icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-product-description__title {
+      font-size: 18px;
+      line-height: 1.16;
+      word-break: break-word;
+    }
+
+    #shopify-section-{{ section.id }} .pm-product-description__content {
+      padding: 0 0 18px 40px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .pm-more-info {
+      border-radius: 24px;
+      padding: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-more-info__title {
+      font-size: 22px;
+    }
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .pm-videos__title {
+      font-size: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .pm-videos__panel {
+      border-radius: 24px;
+    }
+  }
+
+  #shopify-section-{{ section.id }} {
+    background: #f3f3f3;
+  }
+
+  #shopify-section-{{ section.id }} .section {
+    padding-block-start: 30px;
+    padding-block-end: 56px;
+  }
+
+  #shopify-section-{{ section.id }} .product {
+    width: min(1480px, calc(100vw - 40px));
+    margin-inline: auto;
+    display: block;
+    column-gap: 0;
+    align-items: start;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .product__main-grid {
+    display: grid;
+    grid: var(--product-grid);
+    column-gap: 20px;
+    row-gap: 20px;
+    align-items: start;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .product-info-column {
+    gap: 20px;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .product-info-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 0;
+    border-radius: 25px;
+    background: #fff;
+    box-shadow: none;
+    padding: 30px 35px 15px;
+  }
+
+  #shopify-section-{{ section.id }} .pm-side-reco:has(.pm-side-reco__content:empty) {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info {
+    --product-info-block-spacing: 0px;
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .product-info > * + * {
+    margin-block-start: 0 !important;
+    margin-block-end: 0 !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="title"] {
+    order: 10;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="price"] {
+    align-self: start;
+    order: 20;
+    padding-top: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="badges"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="rating"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="sku"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="variant-picker"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="product-variations"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="line-item-property"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="inventory"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="buy-buttons"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="pickup-availability"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="text"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="liquid"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="custom-block"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="offer"] {
+    order: 50;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="badges"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="rating"] {
+    align-self: start;
+    margin-top: 0 !important;
+    margin-bottom: 8px !important;
+    order: 0;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="badges"] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="variant-picker"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="product-variations"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="line-item-property"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="inventory"] {
+    order: 30;
+    margin-top: 24px !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="buy-buttons"] {
+    order: 40;
+    margin-top: 16px !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="quantity-selector"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="separator"],
+  #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="payment-terms"] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__title {
+    display: -webkit-box;
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 36px !important;
+    font-weight: 400;
+    line-height: 1.06;
+    letter-spacing: 0;
+    max-width: 100%;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__title > a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__volume-savings {
+    margin: 7px 0 0;
+    color: #c58b00;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__nomad-subtitle {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__price .rating-with-text {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__rating .rating,
+  #shopify-section-{{ section.id }} .product-info__price .rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #000;
+    font-family: "Gotham-Book", var(--text-font-family), sans-serif;
+    font-size: 13px;
+    line-height: 16px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__rating .rating__stars,
+  #shopify-section-{{ section.id }} .product-info__price .rating__stars {
+    display: inline-flex;
+    gap: 0;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__rating .rating__star,
+  #shopify-section-{{ section.id }} .product-info__price .rating__star {
+    color: #000;
+    fill: #000;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__rating .rating__count,
+  #shopify-section-{{ section.id }} .product-info__price .rating__count {
+    margin-inline-start: 0;
+    color: #000;
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .price-list--lg sale-price,
+  #shopify-section-{{ section.id }} .price-list--lg compare-at-price {
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 0.95;
+  }
+
+  #shopify-section-{{ section.id }} .variant-picker {
+    display: grid;
+    gap: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .variant-picker__option-info {
+    margin-bottom: 8px;
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .variant-picker__option-info .text-subdued {
+    color: #000;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .variant-picker__option-values {
+    gap: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .block-swatch {
+    min-height: 42px;
+    height: auto;
+    border: 2px solid #000;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    justify-content: center;
+    padding-inline: 22px;
+    padding-block: 9px;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .block-swatch--option-image-fallback {
+    --case-type-pill-width: min(100%, 320px);
+    width: var(--case-type-pill-width);
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    flex: 0 0 var(--case-type-pill-width);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #shopify-section-{{ section.id }} :checked + .block-swatch,
+  #shopify-section-{{ section.id }} .block-swatch.is-selected {
+    background: #111;
+    border-color: #111;
+    color: #fff;
+    box-shadow: 0 8px 18px rgb(0 0 0 / 12%);
+  }
+
+  #shopify-section-{{ section.id }} :checked + .block-swatch:before,
+  #shopify-section-{{ section.id }} .block-swatch.is-selected:before {
+    box-shadow: none;
+  }
+
+  #shopify-section-{{ section.id }} .color-swatch {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgb(0 0 0 / 16%);
+    border-radius: 999px;
+  }
+
+  #shopify-section-{{ section.id }} :checked + .color-swatch:before,
+  #shopify-section-{{ section.id }} .color-swatch.is-selected:before {
+    inset: -5px;
+    border-radius: inherit;
+    box-shadow: 0 0 0 2px #000;
+  }
+
+  #shopify-section-{{ section.id }} .thumbnail-swatch {
+    width: 85px;
+    height: 85px;
+    border-radius: 12px;
+    background: #f3f3f3;
+  }
+
+  #shopify-section-{{ section.id }} .thumbnail-swatch--rectangle {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+  }
+
+  #shopify-section-{{ section.id }} :checked + .thumbnail-swatch:before,
+  #shopify-section-{{ section.id }} .thumbnail-swatch.is-selected:before {
+    box-shadow: 0 0 0 2px #000;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-selector {
+    margin-top: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__variant-picker:not(:empty) + .product-info__series-selector {
+    margin-top: 20px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-heading {
+    margin-bottom: 9px;
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-list {
+    --series-tile-size: 85px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-tile {
+    display: block;
+    width: var(--series-tile-size);
+    min-width: 0;
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.08;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-image {
+    display: block;
+    width: var(--series-tile-size);
+    height: var(--series-tile-size);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: #f3f3f3;
+    overflow: hidden;
+    transition: border-color 0.16s ease, transform 0.16s ease;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-label {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-tile--hidden {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-expand {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    padding: 0 18px;
+    border: 1px solid #d7d7d7;
+    border-radius: 999px;
+    background: #fff;
+    color: #000;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 8%);
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-expand:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgb(0 0 0 / 12%);
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-tile:hover .product-info__series-image {
+    transform: translateY(-1px);
+  }
+
+  #shopify-section-{{ section.id }} .product-info__series-tile.is-selected .product-info__series-image {
+    border-color: #111;
+    box-shadow: 0 0 0 2px #fff inset;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__buy-buttons .buy-buttons {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__buy-buttons .button {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #303030 0%, #0b0b0b 100%) !important;
+    color: #fff !important;
+    border: 1px solid #000;
+    box-shadow: inset 0 2px 10px rgb(255 255 255 / 12%);
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 20px;
+    padding: 0 24px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__buy-buttons .shopify-payment-button {
+    margin-top: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__buy-buttons .shopify-payment-button__button {
+    min-height: 48px !important;
+    border-radius: 999px !important;
+    overflow: hidden;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 400 !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__buy-buttons .shopify-payment-button__button--unbranded {
+    border: 1px solid #d7d7d7 !important;
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 8%) !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__payment-icons {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__payment-icons svg {
+    display: block;
+    width: auto;
+    height: 22px;
+    max-width: 44px;
+    border-radius: 4px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__nomad-trust {
+    margin-top: 8px;
+    color: #000;
+    font-family: "Gotham-Book", var(--text-font-family), sans-serif;
+    text-align: center;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__media-list-wrapper {
+    aspect-ratio: 1 / 1;
+    border: 0;
+    border-radius: 30px;
+    background: #fff;
+    box-shadow: 0 10px 26px rgb(0 0 0 / 12%);
+    box-sizing: border-box;
+    padding: 4px;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__media-list {
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__media {
+    aspect-ratio: 1 / 1;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 26px !important;
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__media > *,
+  #shopify-section-{{ section.id }} .product-gallery__media img {
+    overflow: hidden;
+    border-radius: 26px !important;
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__media img {
+    object-fit: cover;
+    object-position: 50% 50%;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__thumbnail {
+    overflow: hidden;
+    border: 1px solid rgb(0 0 0 / 8%);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 8%);
+    box-sizing: border-box;
+    padding: 5px;
+    opacity: 0.35;
+    transition: border-color 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__thumbnail[aria-current="true"],
+  #shopify-section-{{ section.id }} .product-gallery__thumbnail:hover {
+    border-color: rgb(0 0 0 / 22%);
+    opacity: 1;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 12%);
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__thumbnail:after {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-gallery__thumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    background: transparent;
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} {
+      --xstrape-product-sticky-top: calc(max(var(--sticky-area-height, 0px), var(--header-height, 0px)) + 18px);
+      --xstrape-product-media-max-size: calc(100svh - var(--xstrape-product-sticky-top) - 28px);
+    }
+
+    #shopify-section-{{ section.id }} .product-info-column {
+      position: static !important;
+      top: auto !important;
+      align-self: start;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery {
+      position: sticky;
+      top: var(--xstrape-product-sticky-top);
+      align-self: start;
+      z-index: 1;
+      max-height: calc(100svh - var(--xstrape-product-sticky-top) - 20px);
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left {
+      display: grid !important;
+      grid-template-columns: 90px minmax(0, 1fr);
+      grid-template-rows: auto;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__ar-wrapper {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list-wrapper {
+      grid-column: 1;
+      grid-row: 1;
+      order: initial;
+      position: static;
+      top: auto;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      width: 90px;
+      height: min(402px, var(--xstrape-product-media-max-size));
+      max-height: min(402px, var(--xstrape-product-media-max-size));
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list {
+      display: grid !important;
+      grid-auto-flow: row !important;
+      grid-auto-columns: initial !important;
+      grid-template-columns: 90px !important;
+      gap: 14px;
+      align-items: start;
+      align-content: start;
+      justify-content: start;
+      width: 90px;
+      flex: 1 1 auto;
+      height: min(402px, var(--xstrape-product-media-max-size));
+      max-height: min(402px, var(--xstrape-product-media-max-size));
+      min-height: 0;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain;
+      scrollbar-width: none;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list-wrapper > button {
+      display: none !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__media-list-wrapper {
+      width: 100%;
+      max-width: var(--xstrape-product-media-max-size);
+      min-width: 0;
+      min-height: 0;
+      margin-inline: auto;
+      overflow: hidden !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__media-list {
+      display: grid !important;
+      grid: auto / auto-flow 100% !important;
+      grid-auto-flow: column !important;
+      grid-auto-columns: 100% !important;
+      grid-template-columns: none !important;
+      gap: 0 !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: auto hidden !important;
+      scroll-snap-type: x mandatory;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__media {
+      width: 100% !important;
+      min-width: 100%;
+      min-height: 0;
+      height: 100%;
+      scroll-snap-align: start;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__media > * {
+      min-height: 0;
+      height: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__cursor,
+    #shopify-section-{{ section.id }} .product-gallery__zoom {
+      display: none !important;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought {
+    margin-top: 36px;
+    container-type: inline-size;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-title {
+    margin: 0 0 22px;
+    color: #000;
+    text-align: center;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.12;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-card {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: 96px minmax(0, 1fr) 58px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid rgb(0 0 0 / 10%);
+    border-radius: 24px;
+    background: #fff;
+    color: #000;
+    box-shadow: 0 8px 18px rgb(0 0 0 / 10%);
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-image {
+    width: 96px;
+    height: 96px;
+    border-radius: 18px;
+    background: #f2f2f2;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-text {
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-name {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: #000;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.12;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-price {
+    margin: 16px 0 0;
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-compare {
+    margin-right: 8px;
+    color: #999;
+    text-decoration: line-through;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-form {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .product-info__also-bought-add {
+    display: grid;
+    width: 58px;
+    height: 40px;
+    place-items: center;
+    border: 1px solid rgb(0 0 0 / 12%);
+    border-radius: 999px;
+    background: #f8f8f8;
+    color: #000;
+    box-shadow: inset 0 -2px 4px rgb(0 0 0 / 6%);
+    font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  @container (max-width: 760px) {
+    #shopify-section-{{ section.id }} .product-info__also-bought-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media screen and (min-width: 1520px) {
+    #shopify-section-{{ section.id }} .section {
+      padding-inline: 20px !important;
+    }
+
+    #shopify-section-{{ section.id }} .product__main-grid {
+      grid-template-columns: 838px 622px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info-column {
+      padding-top: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left {
+      grid-template-columns: 90px 738px;
+      gap: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__ar-wrapper {
+      width: 738px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list-wrapper,
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list {
+      height: min(402px, var(--xstrape-product-media-max-size));
+      max-height: min(402px, var(--xstrape-product-media-max-size));
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list {
+      grid-auto-rows: 90px;
+      grid-auto-columns: 90px;
+      grid-template-columns: 90px !important;
+      gap: 14px;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail {
+      width: 90px;
+      height: 90px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__media-list-wrapper {
+      width: 738px;
+      max-width: min(738px, var(--xstrape-product-media-max-size));
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__media-list {
+      grid-auto-columns: 100% !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__media,
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__media > * {
+      width: 100%;
+      min-height: 0;
+      height: 100%;
+    }
+  }
+
+  @media screen and (min-width: 1000px) and (max-width: 1319px) {
+    #shopify-section-{{ section.id }} .product {
+      width: min(1480px, calc(100vw - 96px));
+    }
+
+    #shopify-section-{{ section.id }} .product__main-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(420px, 45%);
+    }
+
+    #shopify-section-{{ section.id }} .product-info-column {
+      padding-top: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left {
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list-wrapper {
+      width: 72px;
+      height: min(416px, var(--xstrape-product-media-max-size));
+      max-height: min(416px, var(--xstrape-product-media-max-size));
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list {
+      grid-auto-rows: 72px;
+      grid-auto-columns: 72px;
+      grid-template-columns: 72px !important;
+      gap: 14px;
+      width: 72px;
+      height: min(416px, var(--xstrape-product-media-max-size));
+      max-height: min(416px, var(--xstrape-product-media-max-size));
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail {
+      width: 72px;
+      height: 72px;
+    }
+  }
+
+  @media screen and (min-width: 1320px) and (max-width: 1519px) {
+    #shopify-section-{{ section.id }} .section {
+      padding-inline: 20px !important;
+    }
+
+    #shopify-section-{{ section.id }} .product__main-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(500px, 42%);
+    }
+
+    #shopify-section-{{ section.id }} .product-info-column {
+      padding-top: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left {
+      grid-template-columns: 90px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list-wrapper,
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list {
+      height: min(402px, var(--xstrape-product-media-max-size));
+      max-height: min(402px, var(--xstrape-product-media-max-size));
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail-list {
+      grid-auto-rows: 90px;
+      grid-auto-columns: 90px;
+      grid-template-columns: 90px !important;
+      gap: 14px;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery--desktop-thumbnails-left .product-gallery__thumbnail {
+      width: 90px;
+      height: 90px;
+    }
+
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .section {
+      padding-block-start: 10px;
+      padding-block-end: 34px;
+    }
+
+    #shopify-section-{{ section.id }} .product {
+      width: min(370px, calc(100vw - 30px));
+      gap: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery {
+      width: 100%;
+      gap: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__media-list-wrapper {
+      width: min(350px, calc(100vw - 50px));
+      margin-inline: auto;
+      overflow: hidden;
+      border-radius: 24px;
+      padding: 4px;
+      aspect-ratio: 1 / 1;
+      box-sizing: border-box;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__media,
+    #shopify-section-{{ section.id }} .product-gallery__media > *,
+    #shopify-section-{{ section.id }} .product-gallery__media img {
+      border-radius: 20px !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__media-list {
+      height: 100% !important;
+      width: 100% !important;
+      margin-inline: 0 !important;
+      scroll-padding-inline: 0 !important;
+      grid-auto-columns: 100% !important;
+      gap: 3px;
+      padding-inline: 0 !important;
+      overflow: auto hidden !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__media,
+    #shopify-section-{{ section.id }} .product-gallery__media > * {
+      width: 100%;
+      min-height: 0;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__media img {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__thumbnail-list-wrapper {
+      width: min(350px, calc(100vw - 50px));
+      margin-inline: auto;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__thumbnail-list {
+      grid-auto-columns: 56px;
+      gap: 13px;
+      justify-content: start;
+    }
+
+    #shopify-section-{{ section.id }} .product-gallery__thumbnail {
+      width: 56px;
+      height: 56px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info-panel {
+      padding: 22px 20px 16px;
+      border-radius: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    #shopify-section-{{ section.id }} .product-info__title {
+      font-size: 28px !important;
+      line-height: 1.08;
+      max-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__volume-savings {
+      font-size: 16px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__nomad-subtitle {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="price"] {
+      padding-top: 8px;
+    }
+
+    #shopify-section-{{ section.id }} .price-list--lg sale-price,
+    #shopify-section-{{ section.id }} .price-list--lg compare-at-price {
+      font-size: 22px;
+      line-height: 0.95;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="variant-picker"],
+    #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="product-variations"],
+    #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="line-item-property"],
+    #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="inventory"] {
+      margin-top: 18px !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__block-item[data-block-type="buy-buttons"] {
+      margin-top: 14px !important;
+    }
+
+    #shopify-section-{{ section.id }} .variant-picker__option-info {
+      font-size: 15px;
+      line-height: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .variant-picker__option-info .h-stack {
+      min-width: 0;
+      flex-wrap: nowrap;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    #shopify-section-{{ section.id }} .variant-picker__option-info legend,
+    #shopify-section-{{ section.id }} .variant-picker__option-info span {
+      white-space: nowrap;
+    }
+
+    #shopify-section-{{ section.id }} .variant-picker__option-info span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #shopify-section-{{ section.id }} .variant-picker__current-value--compact {
+      flex: 1 1 auto;
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .variant-picker__option-values--option-image {
+      justify-items: center;
+    }
+
+    #shopify-section-{{ section.id }} .block-swatch--option-image-fallback {
+      --case-type-pill-width: min(360px, calc(100vw - 64px));
+      width: var(--case-type-pill-width);
+      max-width: 100%;
+      flex-basis: var(--case-type-pill-width);
+      min-height: 44px;
+      grid-column: 1 / -1;
+      justify-self: center;
+      padding-inline: 18px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #shopify-section-{{ section.id }} .block-swatch--option-image-fallback.block-swatch--compact-text {
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__series-selector {
+      margin-top: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__series-heading {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__series-list {
+      --series-tile-size: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__series-tile {
+      width: 100%;
+      font-size: 12px;
+      line-height: 1.08;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__series-image {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      border-radius: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__series-expand {
+      min-height: 32px;
+      margin-top: 12px;
+      padding: 0 16px;
+      font-size: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__buy-buttons .button {
+      min-height: 48px;
+      font-size: 18px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__buy-buttons .shopify-payment-button__button {
+      min-height: 48px !important;
+      font-size: 18px !important;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__nomad-trust {
+      font-size: 13px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__also-bought {
+      margin-top: 28px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__also-bought-title {
+      font-size: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .product-info__also-bought-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{%- capture product_form_id -%}product-form-{{ product.id }}-{{ section.id }}{%- endcapture -%}
+
+<div {% render 'section-properties', tight: true %}>
+  <product-rerender id="product-info-{{ product.id }}-{{ section.id }}" observe-form="{{ product_form_id }}" allow-partial-rerender>
+    <div class="product">
+      <div class="product__main-grid">
+        {%- if product.media.size > 0 -%}
+          {%- render 'product-gallery', product: product, product_form_id: product_form_id -%}
+        {%- endif -%}
+
+        <div class="product-info-column">
+          <div class="product-info-panel">
+            {%- render 'product-info',
+              product: product,
+              update_url: true,
+              product_form_id: product_form_id,
+              context: 'main_product'
+            -%}
+          </div>
+
+          {%- liquid
+            assign also_bought_products = product.metafields.custom.also_bought_products.value
+            assign also_bought_skip_current = true
+            if also_bought_products == blank
+              assign also_bought_products = section.settings.also_bought_fallback_products
+              assign also_bought_skip_current = false
+            endif
+            if also_bought_products == blank
+              assign fallback_collection = product.collections | first
+              assign also_bought_products = fallback_collection.products
+              assign also_bought_skip_current = true
+            endif
+
+            assign also_bought_count = 0
+          -%}
+
+          {%- capture also_bought_cards -%}
+            {%- for recommended_product in also_bought_products -%}
+              {%- if also_bought_skip_current and recommended_product.id == product.id -%}
+                {%- continue -%}
+              {%- endif -%}
+
+              {%- assign recommended_variant = recommended_product.selected_or_first_available_variant -%}
+              {%- assign also_bought_count = also_bought_count | plus: 1 -%}
+
+              <div class="product-info__also-bought-card">
+                <a href="{{ recommended_product.url }}" class="product-info__also-bought-image" aria-label="{{ recommended_product.title | escape }}">
+                  {%- if recommended_product.featured_media != blank -%}
+                    {{- recommended_product.featured_media | image_url: width: 260 | image_tag: loading: 'lazy', widths: '140,200,260', sizes: '96px', alt: recommended_product.title -}}
+                  {%- endif -%}
+                </a>
+
+                <a href="{{ recommended_product.url }}" class="product-info__also-bought-text">
+                  <p class="product-info__also-bought-name">{{ recommended_product.title }}</p>
+                  <p class="product-info__also-bought-price">
+                    {%- if recommended_variant.compare_at_price != blank and recommended_variant.compare_at_price > recommended_variant.price -%}
+                      <span class="product-info__also-bought-compare">{{ recommended_variant.compare_at_price | money_without_trailing_zeros }}</span>
+                    {%- endif -%}
+                    <span>{{ recommended_variant.price | money_without_trailing_zeros }}</span>
+                  </p>
+                </a>
+
+                {%- form 'product', recommended_product, class: 'product-info__also-bought-form' -%}
+                  <input type="hidden" name="id" value="{{ recommended_variant.id }}">
+                  <button type="submit" class="product-info__also-bought-add" aria-label="Add {{ recommended_product.title | escape }} to cart">+</button>
+                {%- endform -%}
+              </div>
+
+              {%- if also_bought_count == 2 -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+
+          {%- if also_bought_count > 0 -%}
+            <div class="product-info__also-bought">
+              <h2 class="product-info__also-bought-title">Others Like You Also Bought:</h2>
+              <div class="product-info__also-bought-grid">
+                {{- also_bought_cards -}}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="product-description-below">
+        {%- comment -%}Anchor tabs: only show buttons for sections that have content{%- endcomment -%}
+        {%- assign pm_pc_desc_banner = product.metafields.custom.pm_pc_desc_banner.value -%}
+        {%- assign pm_mobile_desc_banner = product.metafields.custom.pm_mobile_desc_banner.value -%}
+        {%- assign pm_desc_video_overview = product.metafields.custom.pm_desc_video_overview.value | default: product.metafields.custom.pm_desc_video_overview -%}
+        {%- assign pm_desc_video_review = product.metafields.custom.pm_desc_video_review.value | default: product.metafields.custom.pm_desc_video_review -%}
+        {%- assign pm_desc_video_installation = product.metafields.custom.pm_desc_video_installation.value | default: product.metafields.custom.pm_desc_video_installation -%}
+
+        {%- assign pm_desc_1_image = product.metafields.custom.pm_desc_1_image.value -%}
+        {%- assign pm_desc_1_title = product.metafields.custom.pm_desc_1_title.value | default: product.metafields.custom.pm_desc_1_title -%}
+        {%- assign pm_desc_1_content = product.metafields.custom.pm_desc_1_content.value | default: product.metafields.custom.pm_desc_1_content -%}
+
+        {%- assign pm_desc_2_image = product.metafields.custom.pm_desc_2_image.value -%}
+        {%- assign pm_desc_2_title = product.metafields.custom.pm_desc_2_title.value | default: product.metafields.custom.pm_desc_2_title -%}
+        {%- assign pm_desc_2_content = product.metafields.custom.pm_desc_2_content.value | default: product.metafields.custom.pm_desc_2_content -%}
+
+        {%- assign pm_desc_3_image = product.metafields.custom.pm_desc_3_image.value -%}
+        {%- assign pm_desc_3_title = product.metafields.custom.pm_desc_3_title.value | default: product.metafields.custom.pm_desc_3_title -%}
+        {%- assign pm_desc_3_content = product.metafields.custom.pm_desc_3_content.value | default: product.metafields.custom.pm_desc_3_content -%}
+
+        {%- assign pm_desc_4_image = product.metafields.custom.pm_desc_4_image.value -%}
+        {%- assign pm_desc_4_title = product.metafields.custom.pm_desc_4_title.value | default: product.metafields.custom.pm_desc_4_title -%}
+        {%- assign pm_desc_4_content = product.metafields.custom.pm_desc_4_content.value | default: product.metafields.custom.pm_desc_4_content -%}
+
+        {%- assign pm_desc_5_image = product.metafields.custom.pm_desc_5_image.value -%}
+        {%- assign pm_desc_5_title = product.metafields.custom.pm_desc_5_title.value | default: product.metafields.custom.pm_desc_5_title -%}
+        {%- assign pm_desc_5_content = product.metafields.custom.pm_desc_5_content.value | default: product.metafields.custom.pm_desc_5_content -%}
+
+        {%- assign pm_desc_6_image = product.metafields.custom.pm_desc_6_image.value -%}
+        {%- assign pm_desc_6_title = product.metafields.custom.pm_desc_6_title.value | default: product.metafields.custom.pm_desc_6_title -%}
+        {%- assign pm_desc_6_content = product.metafields.custom.pm_desc_6_content.value | default: product.metafields.custom.pm_desc_6_content -%}
+
+        {%- assign pm_more_info = product.metafields.custom.pm_more_info.value | default: product.metafields.custom.pm_more_info -%}
+        {%- assign description_detail_blocks = section.blocks | where: 'type', 'description_detail_item' -%}
+        {%- assign description_detail_count = 0 -%}
+        {%- for detail_block in description_detail_blocks -%}
+          {%- liquid
+            assign detail_metafield_key = detail_block.settings.product_metafield_key | strip
+            assign detail_metafield_value = blank
+
+            if detail_metafield_key != blank
+              assign detail_metafield_value = product.metafields.custom[detail_metafield_key].value | default: product.metafields.custom[detail_metafield_key]
+            endif
+
+            assign detail_content = detail_metafield_value | default: detail_block.settings.content
+          -%}
+          {%- if detail_block.settings.title != blank and detail_content != blank -%}
+            {%- assign description_detail_count = description_detail_count | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- assign has_overviews = false -%}
+        {%- if pm_pc_desc_banner != blank or pm_mobile_desc_banner != blank -%}{%- assign has_overviews = true -%}{%- endif -%}
+        {%- if pm_desc_1_image != blank or pm_desc_1_title != blank or pm_desc_1_content != blank -%}{%- assign has_overviews = true -%}{%- endif -%}
+        {%- if pm_desc_2_image != blank or pm_desc_2_title != blank or pm_desc_2_content != blank -%}{%- assign has_overviews = true -%}{%- endif -%}
+        {%- if pm_desc_3_image != blank or pm_desc_3_title != blank or pm_desc_3_content != blank -%}{%- assign has_overviews = true -%}{%- endif -%}
+        {%- if pm_desc_4_image != blank or pm_desc_4_title != blank or pm_desc_4_content != blank -%}{%- assign has_overviews = true -%}{%- endif -%}
+        {%- if pm_desc_5_image != blank or pm_desc_5_title != blank or pm_desc_5_content != blank -%}{%- assign has_overviews = true -%}{%- endif -%}
+        {%- if pm_desc_6_image != blank or pm_desc_6_title != blank or pm_desc_6_content != blank -%}{%- assign has_overviews = true -%}{%- endif -%}
+
+        {%- assign has_videos = false -%}
+        {%- if pm_desc_video_overview != blank or pm_desc_video_review != blank or pm_desc_video_installation != blank -%}{%- assign has_videos = true -%}{%- endif -%}
+
+        {%- assign has_description = false -%}
+        {%- if description_detail_count > 0 -%}{%- assign has_description = true -%}{%- endif -%}
+
+        <div class="fivestopsproduct-container">
+          {%- if has_description -%}
+            <div id="pm-description-anchor-{{ section.id }}" class="pm-more-info pm-product-description">
+              {%- if description_detail_count > 0 -%}
+                <div class="pm-product-description__details">
+                  {%- for detail_block in description_detail_blocks -%}
+                    {%- liquid
+                      assign detail_metafield_key = detail_block.settings.product_metafield_key | strip
+                      assign detail_metafield_value = blank
+                      assign detail_title_handle = detail_block.settings.title | handleize
+                      assign is_product_description_detail = false
+
+                      if detail_metafield_key != blank
+                        assign detail_metafield_value = product.metafields.custom[detail_metafield_key].value | default: product.metafields.custom[detail_metafield_key]
+                      endif
+
+                      if detail_metafield_key == 'detail_description'
+                        assign is_product_description_detail = true
+                      endif
+
+                      if detail_title_handle == 'product-description'
+                        assign is_product_description_detail = true
+                      endif
+
+                      assign detail_content = detail_metafield_value | default: detail_block.settings.content
+                      if product.description != blank and is_product_description_detail
+                        assign detail_content = product.description
+                      endif
+                      assign detail_icon = detail_block.settings.icon
+                    -%}
+
+                    {%- if detail_block.settings.title != blank and detail_content != blank -%}
+                      <details class="pm-product-description__detail" {% if detail_block.settings.open_by_default %}open{% endif %} {{ detail_block.shopify_attributes }}>
+                        <summary class="pm-product-description__summary">
+                          <span class="pm-product-description__icon" aria-hidden="true">
+                            {%- if detail_block.settings.custom_icon != blank -%}
+                              {{-
+                                detail_block.settings.custom_icon
+                                | image_url: width: 60
+                                | image_tag: loading: 'lazy', widths: '30,60', sizes: '30px'
+                              -}}
+                            {%- elsif detail_icon != 'none' -%}
+                              {%- render 'icon' with detail_icon, width: 28, height: 28 -%}
+                            {%- endif -%}
+                          </span>
+                          <span class="pm-product-description__title">{{ detail_block.settings.title | escape }}</span>
+                          <span class="pm-product-description__chevron" aria-hidden="true">{%- render 'icon' with 'chevron-bottom', width: 12, height: 8 -%}</span>
+                        </summary>
+                        <div class="pm-product-description__content">
+                          <div class="prose">
+                            {{- detail_content -}}
+                          </div>
+                        </div>
+                      </details>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+          <!-- Overviews -->
+          {%- if has_overviews -%}
+          <div id="pm-overviews-{{ section.id }}" class="fivestopsproduct_Overviews">
+            <!-- 5 stop product overview -->
+            <!-- banner -->
+            {%- assign pm_pc_desc_banner = product.metafields.custom.pm_pc_desc_banner.value -%}
+            {%- assign pm_mobile_desc_banner = product.metafields.custom.pm_mobile_desc_banner.value -%}
+
+            {%- if pm_pc_desc_banner != blank or pm_mobile_desc_banner != blank -%}
+              <div class="Overviews_banner">
+                <picture>
+                  {%- if pm_mobile_desc_banner != blank -%}
+                    <source
+                      media="(max-width: 999px)"
+                      srcset="
+                        {{ pm_mobile_desc_banner | image_url: width: 360 }} 360w,
+                        {{ pm_mobile_desc_banner | image_url: width: 540 }} 540w,
+                        {{ pm_mobile_desc_banner | image_url: width: 720 }} 720w,
+                        {{ pm_mobile_desc_banner | image_url: width: 900 }} 900w
+                      "
+                      sizes="100vw"
+                    >
+                  {%- endif -%}
+
+                  {%- assign banner_fallback = pm_pc_desc_banner | default: pm_mobile_desc_banner -%}
+                  {{- banner_fallback | image_url: width: 1440 | image_tag: loading: 'lazy', widths: '480,720,960,1200,1440', sizes: '100vw', class: 'Overviews_banner__img' -}}
+                </picture>
+              </div>
+            {%- endif -%}
+
+            <!-- Overviews_content_item 左图右文 -->
+            {%- assign pm_desc_1_image = product.metafields.custom.pm_desc_1_image.value -%}
+            {%- assign pm_desc_1_title = product.metafields.custom.pm_desc_1_title.value | default: product.metafields.custom.pm_desc_1_title -%}
+            {%- assign pm_desc_1_content = product.metafields.custom.pm_desc_1_content.value | default: product.metafields.custom.pm_desc_1_content -%}
+
+            {%- if pm_desc_1_image != blank or pm_desc_1_title != blank or pm_desc_1_content != blank -%}
+              <div class="Overviews_content_item Overviews_content_item--lr">
+                {%- if pm_desc_1_image != blank -%}
+                  <div class="Overviews_content_item-media">
+                    {{- pm_desc_1_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '360,540,720,900,1200', sizes: '(min-width: 1000px) 50vw, 100vw' -}}
+                  </div>
+                {%- endif -%}
+
+                <div class="Overviews_content_item-text">
+                  {%- if pm_desc_1_title != blank -%}
+                    <div class="Overviews_content_item-title">{{ pm_desc_1_title }}</div>
+                  {%- endif -%}
+
+                  {%- if pm_desc_1_content != blank -%}
+                    <div class="Overviews_content_item-content">
+                      {{ pm_desc_1_content }}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+
+            <!-- Overviews_content_item 右文左图 -->
+            {%- assign pm_desc_2_image = product.metafields.custom.pm_desc_2_image.value -%}
+            {%- assign pm_desc_2_title = product.metafields.custom.pm_desc_2_title.value | default: product.metafields.custom.pm_desc_2_title -%}
+            {%- assign pm_desc_2_content = product.metafields.custom.pm_desc_2_content.value | default: product.metafields.custom.pm_desc_2_content -%}
+
+            {%- if pm_desc_2_image != blank or pm_desc_2_title != blank or pm_desc_2_content != blank -%}
+              <div class="Overviews_content_item Overviews_content_item--rl">
+                <div class="Overviews_content_item-text">
+                  {%- if pm_desc_2_title != blank -%}
+                    <div class="Overviews_content_item-title">{{ pm_desc_2_title }}</div>
+                  {%- endif -%}
+
+                  {%- if pm_desc_2_content != blank -%}
+                    <div class="Overviews_content_item-content">
+                      {{ pm_desc_2_content }}
+                    </div>
+                  {%- endif -%}
+                </div>
+
+                {%- if pm_desc_2_image != blank -%}
+                  <div class="Overviews_content_item-media">
+                    {{- pm_desc_2_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '360,540,720,900,1200', sizes: '(min-width: 1000px) 50vw, 100vw' -}}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            <!-- Overviews_content_item 左图右文 -->
+            {%- assign pm_desc_3_image = product.metafields.custom.pm_desc_3_image.value -%}
+            {%- assign pm_desc_3_title = product.metafields.custom.pm_desc_3_title.value | default: product.metafields.custom.pm_desc_3_title -%}
+            {%- assign pm_desc_3_content = product.metafields.custom.pm_desc_3_content.value | default: product.metafields.custom.pm_desc_3_content -%}
+
+            {%- if pm_desc_3_image != blank or pm_desc_3_title != blank or pm_desc_3_content != blank -%}
+              <div class="Overviews_content_item Overviews_content_item--lr">
+                {%- if pm_desc_3_image != blank -%}
+                  <div class="Overviews_content_item-media">
+                    {{- pm_desc_3_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '360,540,720,900,1200', sizes: '(min-width: 1000px) 50vw, 100vw' -}}
+                  </div>
+                {%- endif -%}
+
+                <div class="Overviews_content_item-text">
+                  {%- if pm_desc_3_title != blank -%}
+                    <div class="Overviews_content_item-title">{{ pm_desc_3_title }}</div>
+                  {%- endif -%}
+
+                  {%- if pm_desc_3_content != blank -%}
+                    <div class="Overviews_content_item-content">
+                      {{ pm_desc_3_content }}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+
+            <!-- Overviews_content_item 右图左文 -->
+            {%- assign pm_desc_4_image = product.metafields.custom.pm_desc_4_image.value -%}
+            {%- assign pm_desc_4_title = product.metafields.custom.pm_desc_4_title.value | default: product.metafields.custom.pm_desc_4_title -%}
+            {%- assign pm_desc_4_content = product.metafields.custom.pm_desc_4_content.value | default: product.metafields.custom.pm_desc_4_content -%}
+
+            {%- if pm_desc_4_image != blank or pm_desc_4_title != blank or pm_desc_4_content != blank -%}
+              <div class="Overviews_content_item Overviews_content_item--rl">
+                <div class="Overviews_content_item-text">
+                  {%- if pm_desc_4_title != blank -%}
+                    <div class="Overviews_content_item-title">{{ pm_desc_4_title }}</div>
+                  {%- endif -%}
+
+                  {%- if pm_desc_4_content != blank -%}
+                    <div class="Overviews_content_item-content">
+                      {{ pm_desc_4_content }}
+                    </div>
+                  {%- endif -%}
+                </div>
+
+                {%- if pm_desc_4_image != blank -%}
+                  <div class="Overviews_content_item-media">
+                    {{- pm_desc_4_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '360,540,720,900,1200', sizes: '(min-width: 1000px) 50vw, 100vw' -}}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            <!-- Overviews_content_item 左图右文 -->
+            {%- assign pm_desc_5_image = product.metafields.custom.pm_desc_5_image.value -%}
+            {%- assign pm_desc_5_title = product.metafields.custom.pm_desc_5_title.value | default: product.metafields.custom.pm_desc_5_title -%}
+            {%- assign pm_desc_5_content = product.metafields.custom.pm_desc_5_content.value | default: product.metafields.custom.pm_desc_5_content -%}
+
+            {%- if pm_desc_5_image != blank or pm_desc_5_title != blank or pm_desc_5_content != blank -%}
+              <div class="Overviews_content_item Overviews_content_item--lr">
+                {%- if pm_desc_5_image != blank -%}
+                  <div class="Overviews_content_item-media">
+                    {{- pm_desc_5_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '360,540,720,900,1200', sizes: '(min-width: 1000px) 50vw, 100vw' -}}
+                  </div>
+                {%- endif -%}
+
+                <div class="Overviews_content_item-text">
+                  {%- if pm_desc_5_title != blank -%}
+                    <div class="Overviews_content_item-title">{{ pm_desc_5_title }}</div>
+                  {%- endif -%}
+
+                  {%- if pm_desc_5_content != blank -%}
+                    <div class="Overviews_content_item-content">
+                      {{ pm_desc_5_content }}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+
+            <!-- Overviews_content_item 右图左文 -->
+            {%- assign pm_desc_6_image = product.metafields.custom.pm_desc_6_image.value -%}
+            {%- assign pm_desc_6_title = product.metafields.custom.pm_desc_6_title.value | default: product.metafields.custom.pm_desc_6_title -%}
+            {%- assign pm_desc_6_content = product.metafields.custom.pm_desc_6_content.value | default: product.metafields.custom.pm_desc_6_content -%}
+
+            {%- if pm_desc_6_image != blank or pm_desc_6_title != blank or pm_desc_6_content != blank -%}
+              <div class="Overviews_content_item Overviews_content_item--rl">
+                <div class="Overviews_content_item-text">
+                  {%- if pm_desc_6_title != blank -%}
+                    <div class="Overviews_content_item-title">{{ pm_desc_6_title }}</div>
+                  {%- endif -%}
+
+                  {%- if pm_desc_6_content != blank -%}
+                    <div class="Overviews_content_item-content">
+                      {{ pm_desc_6_content }}
+                    </div>
+                  {%- endif -%}
+                </div>
+
+                {%- if pm_desc_6_image != blank -%}
+                  <div class="Overviews_content_item-media">
+                    {{- pm_desc_6_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '360,540,720,900,1200', sizes: '(min-width: 1000px) 50vw, 100vw' -}}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+          </div>
+          {%- endif -%}
+
+          <!-- Product Videos -->
+          {%- if has_videos -%}
+            {%- assign pm_video_id = 'pm-videos-' | append: section.id -%}
+
+            <div id="pm-videos-anchor-{{ section.id }}" class="fivestopsproduct_ProductVideos">
+              <div class="pm-videos" id="{{ pm_video_id }}">
+                <div class="pm-videos__title">Product Videos</div>
+
+                <div class="pm-videos__tabs" role="tablist" aria-label="Product videos">
+                  {%- if pm_desc_video_overview != blank -%}
+                    <button class="pm-videos__tab" type="button" role="tab" aria-selected="true" data-target="overview">Product Overviews</button>
+                  {%- endif -%}
+                  {%- if pm_desc_video_review != blank -%}
+                    <button class="pm-videos__tab" type="button" role="tab" aria-selected="{% if pm_desc_video_overview != blank %}false{% else %}true{% endif %}" data-target="review">Creator Reviews</button>
+                  {%- endif -%}
+                  {%- if pm_desc_video_installation != blank -%}
+                    <button class="pm-videos__tab" type="button" role="tab" aria-selected="{% if pm_desc_video_overview != blank or pm_desc_video_review != blank %}false{% else %}true{% endif %}" data-target="installation">Installation Videos</button>
+                  {%- endif -%}
+                </div>
+
+                <div class="pm-videos__panel" role="region" aria-live="polite">
+                  {%- if pm_desc_video_overview != blank -%}
+                    {%- assign v = pm_desc_video_overview | strip -%}
+                    <div class="pm-videos__item" data-video="overview">
+                      {%- if v contains '.mp4' or v contains '.webm' or v contains '.ogg' -%}
+                        <video controls playsinline preload="metadata" src="{{ v | escape }}"></video>
+                      {%- else -%}
+                        <iframe src="{{ v | escape }}" title="Product overview video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+
+                  {%- if pm_desc_video_review != blank -%}
+                    {%- assign v = pm_desc_video_review | strip -%}
+                    <div class="pm-videos__item" data-video="review" {% if pm_desc_video_overview != blank %}hidden{% endif %}>
+                      {%- if v contains '.mp4' or v contains '.webm' or v contains '.ogg' -%}
+                        <video controls playsinline preload="metadata" src="{{ v | escape }}"></video>
+                      {%- else -%}
+                        <iframe src="{{ v | escape }}" title="Creator review video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+
+                  {%- if pm_desc_video_installation != blank -%}
+                    {%- assign v = pm_desc_video_installation | strip -%}
+                    <div class="pm-videos__item" data-video="installation" {% if pm_desc_video_overview != blank or pm_desc_video_review != blank %}hidden{% endif %}>
+                      {%- if v contains '.mp4' or v contains '.webm' or v contains '.ogg' -%}
+                        <video controls playsinline preload="metadata" src="{{ v | escape }}"></video>
+                      {%- else -%}
+                        <iframe src="{{ v | escape }}" title="Installation video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+
+              <script>
+                (() => {
+                  const root = document.getElementById({{ pm_video_id | json }});
+                  if (!root) return;
+
+                  const tabs = Array.from(root.querySelectorAll('[role="tab"][data-target]'));
+                  const items = Array.from(root.querySelectorAll('.pm-videos__item[data-video]'));
+                  if (tabs.length === 0 || items.length === 0) return;
+
+                  const normalizeYoutubeEmbedUrl = (raw) => {
+                    const s = String(raw ?? '').trim();
+                    if (!s) return s;
+                    if (!/^https?:\/\//i.test(s)) return s;
+
+                    let url;
+                    try {
+                      url = new URL(s);
+                    } catch {
+                      return s;
+                    }
+
+                    const host = url.hostname.replace(/^www\./i, '').toLowerCase();
+                    const path = url.pathname || '/';
+
+                    // Already an embed URL.
+                    if (host.includes('youtube') && path.startsWith('/embed/')) return url.toString();
+
+                    // youtu.be/<id>
+                    if (host === 'youtu.be') {
+                      const id = path.split('/').filter(Boolean)[0];
+                      if (!id) return s;
+                      return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`;
+                    }
+
+                    // youtube.com/watch?v=<id>
+                    if (host.includes('youtube') && path === '/watch') {
+                      const id = url.searchParams.get('v');
+                      if (!id) return s;
+                      return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`;
+                    }
+
+                    // youtube.com/shorts/<id>
+                    if (host.includes('youtube') && path.startsWith('/shorts/')) {
+                      const id = path.split('/').filter(Boolean)[1];
+                      if (!id) return s;
+                      return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`;
+                    }
+
+                    return s;
+                  };
+
+                  // Fix common YouTube URLs that can't be framed (watch/shorts/youtu.be) by converting to /embed/.
+                  items.forEach((it) => {
+                    const iframe = it.querySelector('iframe');
+                    if (!iframe) return;
+                    const src = iframe.getAttribute('src') || '';
+                    const normalized = normalizeYoutubeEmbedUrl(src);
+                    if (normalized && normalized !== src) {
+                      iframe.setAttribute('src', normalized);
+                    }
+                  });
+
+                  const setActive = (key) => {
+                    tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.target === key)));
+                    items.forEach((it) => {
+                      const active = it.dataset.video === key;
+                      it.toggleAttribute('hidden', !active);
+
+                      if (!active) {
+                        const v = it.querySelector('video');
+                        if (v) v.pause();
+                      }
+                    });
+                  };
+
+                  const initial = tabs.find((t) => t.getAttribute('aria-selected') === 'true')?.dataset.target || tabs[0].dataset.target;
+                  setActive(initial);
+
+                  tabs.forEach((tab) => {
+                    tab.addEventListener('click', () => setActive(tab.dataset.target));
+                  });
+                })();
+              </script>
+            </div>
+          {%- endif -%}
+
+          <!-- MoreInfo -->
+          <div id="pm-more-info-anchor-{{ section.id }}" class="fivestopsproduct_MoreInfo">
+            {%- if pm_more_info != blank -%}
+              {%- assign pm_more_info_id = 'pm-more-info-' | append: section.id -%}
+
+              <div class="pm-more-info" id="{{ pm_more_info_id }}">
+                <div class="pm-more-info__header">
+                  <div class="pm-more-info__title">More Info</div>
+                  <button class="pm-more-info__toggle" type="button" aria-expanded="true" aria-controls="{{ pm_more_info_id }}-content"></button>
+                </div>
+
+                <div class="pm-more-info__content-wrap">
+                  <div class="pm-more-info__content" id="{{ pm_more_info_id }}-content"></div>
+                </div>
+              </div>
+
+              <script type="application/json" data-pm-more-info-json="{{ pm_more_info_id }}">
+                {{- pm_more_info | strip | json -}}
+              </script>
+
+              <script>
+                (() => {
+                  const rootId = {{ pm_more_info_id | json }};
+                  const root = document.getElementById(rootId);
+                  if (!root) return;
+
+                  const jsonScript = document.querySelector(`script[type="application/json"][data-pm-more-info-json="${rootId}"]`);
+                  if (!jsonScript) return;
+
+                  const container = root.querySelector('.pm-more-info__content');
+                  if (!container) return;
+
+                  const toggleBtn = root.querySelector('.pm-more-info__toggle');
+                  const contentWrap = root.querySelector('.pm-more-info__content-wrap');
+
+                  const syncHeight = () => {
+                    if (!contentWrap) return;
+                    if (root.classList.contains('is-collapsed')) {
+                      contentWrap.style.maxHeight = '0px';
+                    } else {
+                      contentWrap.style.maxHeight = `${contentWrap.scrollHeight}px`;
+                    }
+                  };
+
+                  const escapeHtml = (s) =>
+                    String(s ?? '')
+                      .replaceAll('&', '&amp;')
+                      .replaceAll('<', '&lt;')
+                      .replaceAll('>', '&gt;')
+                      .replaceAll('"', '&quot;')
+                      .replaceAll("'", '&#39;');
+
+                  const renderTable = (rows) => {
+                    const body = rows
+                      .map(([k, v]) => `<tr><th scope="row">${escapeHtml(k)}</th><td>${escapeHtml(v)}</td></tr>`)
+                      .join('');
+                    return `<table class="pm-more-info__table"><tbody>${body}</tbody></table>`;
+                  };
+
+                  let data;
+                  try {
+                    data = JSON.parse(jsonScript.textContent || 'null');
+
+                    // The metafield content is itself JSON, but we serialize it via Liquid `json`,
+                    // so the first parse may yield a string. In that case, parse one more time.
+                    if (typeof data === 'string') {
+                      data = JSON.parse(data);
+                    }
+                  } catch (e) {
+                    container.innerHTML = `<div class="prose"><pre>${escapeHtml(jsonScript.textContent)}</pre></div>`;
+                    return;
+                  }
+
+                  const specs = Array.isArray(data?.specifications) ? data.specifications : [];
+                  const packages = Array.isArray(data?.package_includes) ? data.package_includes : [];
+
+                  if (specs.length === 0 && packages.length === 0) {
+                    container.innerHTML = `<div class="prose"><pre>${escapeHtml(jsonScript.textContent)}</pre></div>`;
+                    return;
+                  }
+
+                  const pkgRows = packages.map((p, idx) => [`List${idx + 1}`, p]);
+                  const isMobile = () => window.matchMedia && window.matchMedia('(max-width: 999px)').matches;
+
+                  const renderSpecsTable = (rows, mobile) => {
+                    const body = [];
+                    if (mobile) {
+                      for (let i = 0; i < rows.length; i += 1) {
+                        const a = rows[i];
+                        body.push(
+                          `<tr>
+                            <th scope="row">${escapeHtml(a?.[0] ?? '')}</th>
+                            <td>${escapeHtml(a?.[1] ?? '')}</td>
+                          </tr>`
+                        );
+                      }
+                    } else {
+                      for (let i = 0; i < rows.length; i += 2) {
+                        const a = rows[i];
+                        const b = rows[i + 1];
+                        body.push(
+                          `<tr>
+                            <th scope="row">${escapeHtml(a?.[0] ?? '')}</th>
+                            <td>${escapeHtml(a?.[1] ?? '')}</td>
+                            <th scope="row">${escapeHtml(b?.[0] ?? '')}</th>
+                            <td>${escapeHtml(b?.[1] ?? '')}</td>
+                          </tr>`
+                        );
+                      }
+                    }
+
+                    return `<table class="pm-more-info__table pm-more-info__table--spec"><tbody>${body.join('')}</tbody></table>`;
+                  };
+
+                  const renderPackageTable = (rows, mobile) => {
+                    const body = [];
+                    if (mobile) {
+                      for (let i = 0; i < rows.length; i += 1) {
+                        const a = rows[i];
+                        body.push(
+                          `<tr>
+                            <th scope="row">${escapeHtml(a?.[0] ?? '')}</th>
+                            <td>${escapeHtml(a?.[1] ?? '')}</td>
+                          </tr>`
+                        );
+                      }
+                    } else {
+                      for (let i = 0; i < rows.length; i += 2) {
+                        const a = rows[i];
+                        const b = rows[i + 1];
+
+                        body.push(
+                          `<tr>
+                            <th scope="row">${escapeHtml(a?.[0] ?? '')}</th>
+                            <td>${escapeHtml(a?.[1] ?? '')}</td>
+                            <th scope="row">${escapeHtml(b?.[0] ?? '')}</th>
+                            <td>${escapeHtml(b?.[1] ?? '')}</td>
+                          </tr>`
+                        );
+                      }
+                    }
+
+                    return `<table class="pm-more-info__table pm-more-info__table--pkg"><tbody>${body.join('')}</tbody></table>`;
+                  };
+
+                  const renderAll = () => {
+                    const specRows = specs.map((s) => [s?.label, s?.value]);
+                    const specsHtml = specs.length
+                      ? `
+                        <div class="pm-more-info__section-title">Specification(${specs.length})</div>
+                        <div class="pm-more-info__grid">
+                          ${renderSpecsTable(specRows, isMobile())}
+                        </div>
+                      `
+                      : '';
+
+                    const pkgHtml = packages.length
+                      ? `
+                        <div class="pm-more-info__section-title">Package Includes(${packages.length})</div>
+                        <div class="pm-more-info__grid">
+                          ${renderPackageTable(pkgRows, isMobile())}
+                        </div>
+                      `
+                      : '';
+
+                    container.innerHTML = `${specsHtml}${pkgHtml}`;
+                  };
+
+                  renderAll();
+
+                  // After rendering tables, sync expanded height.
+                  syncHeight();
+
+                  // Re-render package table on breakpoint changes and sync height.
+                  let lastMobile = isMobile();
+                  window.addEventListener(
+                    'resize',
+                    () => {
+                      const nowMobile = isMobile();
+                      if (nowMobile !== lastMobile) {
+                        lastMobile = nowMobile;
+                        renderAll();
+                      }
+                      syncHeight();
+                    },
+                    { passive: true }
+                  );
+
+                  if (toggleBtn) {
+                    toggleBtn.addEventListener('click', () => {
+                      const collapsed = root.classList.toggle('is-collapsed');
+                      toggleBtn.setAttribute('aria-expanded', String(!collapsed));
+                      syncHeight();
+                    });
+                  }
+                })();
+              </script>
+            {%- endif -%}
+          </div>
+
+          <!-- faq -->
+          <div id="pm-faq-anchor-{{ section.id }}" class="fivestopsproduct_Faq">
+            {%- assign pm_faq = product.metafields.custom.pm_faq.value | default: product.metafields.custom.pm_faq -%}
+            {%- if pm_faq != blank -%}
+              {%- assign pm_faq_id = 'pm-faq-' | append: section.id -%}
+
+              <div class="pm-faq is-collapsed" id="{{ pm_faq_id }}">
+                <div class="pm-faq__header">
+                  <div class="pm-faq__title">FAQ</div>
+                  <button class="pm-faq__toggle" type="button" aria-expanded="false" aria-controls="{{ pm_faq_id }}-content"></button>
+                </div>
+
+                <div class="pm-faq__content-wrap">
+                  <div class="pm-faq__content" id="{{ pm_faq_id }}-content"></div>
+                </div>
+              </div>
+
+              <script type="application/json" data-pm-faq-json="{{ pm_faq_id }}">
+                {{- pm_faq | strip | json -}}
+              </script>
+
+              <script>
+                (() => {
+                  const rootId = {{ pm_faq_id | json }};
+                  const root = document.getElementById(rootId);
+                  if (!root) return;
+
+                  const jsonScript = document.querySelector(`script[type="application/json"][data-pm-faq-json="${rootId}"]`);
+                  if (!jsonScript) return;
+
+                  const container = root.querySelector('.pm-faq__content');
+                  if (!container) return;
+
+                  const toggleBtn = root.querySelector('.pm-faq__toggle');
+                  const contentWrap = root.querySelector('.pm-faq__content-wrap');
+
+                  const syncHeight = () => {
+                    if (!contentWrap) return;
+                    if (root.classList.contains('is-collapsed')) {
+                      contentWrap.style.maxHeight = '0px';
+                    } else {
+                      contentWrap.style.maxHeight = `${contentWrap.scrollHeight}px`;
+                    }
+                  };
+
+                  const escapeHtml = (s) =>
+                    String(s ?? '')
+                      .replaceAll('&', '&amp;')
+                      .replaceAll('<', '&lt;')
+                      .replaceAll('>', '&gt;')
+                      .replaceAll('"', '&quot;')
+                      .replaceAll("'", '&#39;');
+
+                  let data;
+                  try {
+                    data = JSON.parse(jsonScript.textContent || 'null');
+                    if (typeof data === 'string') data = JSON.parse(data);
+                  } catch (e) {
+                    container.innerHTML = `<div class="prose"><pre>${escapeHtml(jsonScript.textContent)}</pre></div>`;
+                    return;
+                  }
+
+                  const items = Array.isArray(data?.faq) ? data.faq : [];
+                  if (items.length === 0) return;
+
+                  const listHtml = items
+                    .map((it, idx) => {
+                      const q = it?.question ?? '';
+                      const a = it?.answer ?? '';
+                      return `
+                        <div class="pm-faq__item" data-idx="${idx}">
+                          <div class="pm-faq__a-wrap">
+                            <div class="pm-faq__q-text">${escapeHtml(q)}</div>
+                            <div class="pm-faq__a">${escapeHtml(a)}</div>
+                          </div>
+                        </div>
+                      `;
+                    })
+                    .join('');
+
+                  container.innerHTML = `<div class="pm-faq__list">${listHtml}</div>`;
+
+                  // After rendering, sync the whole FAQ height
+                  syncHeight();
+
+                  window.addEventListener(
+                    'resize',
+                    () => {
+                      syncHeight();
+                    },
+                    { passive: true }
+                  );
+
+                  if (toggleBtn) {
+                    toggleBtn.addEventListener('click', () => {
+                      const collapsed = root.classList.toggle('is-collapsed');
+                      toggleBtn.setAttribute('aria-expanded', String(!collapsed));
+                      syncHeight();
+                    });
+                  }
+                })();
+              </script>
+            {%- endif -%}
+          </div>
+
+          <!-- Reviews -->
+          <div id="pm-reviews-anchor-{{ section.id }}" class="fivestopsproduct_Reviews"></div>
+        </div>
+      </div>
+    </div>
+  </product-rerender>
+</div>
+
+{%- assign buy_buttons_block = section.blocks | where: 'type', 'buy_buttons' | first -%}
+{%- assign is_custom_case_launch_button = false -%}
+
+{%- if product.template_suffix == 'custom-phone-case' -%}
+  {%- assign is_custom_case_launch_button = true -%}
+{%- endif -%}
+
+{%- if section.settings.show_fixed_add_to_cart and product.available and buy_buttons_block != blank -%}
+  {%- capture sticky_quick_buy_id -%}sticky-quick-buy-{{ section.id }}-{{ product.id }}{%- endcapture -%}
+
+  <product-rerender id="{{ product_form_id }}-sticky-bar" observe-form="{{ product_form_id }}">
+    {%- if product.selected_or_first_available_variant.available -%}
+      <product-quick-add form="{{ product_form_id }}" class="product-quick-add">
+        {%- if is_custom_case_launch_button -%}
+          {%- assign button_label = 'Customize Now' -%}
+        {%- else -%}
+          {%- assign button_label = 'product.general.add_to_cart_button' | t -%}
+        {%- endif -%}
+        {%- capture sticky_button_data_attributes -%}
+          data-atc-button
+          data-button-label="{{ button_label | escape }}"
+          {%- if is_custom_case_launch_button -%}
+            data-custom-case-launch
+            data-custom-case-form-id="{{ product_form_id | escape }}"
+            data-custom-case-product-url="{{ product.url | escape }}"
+          {%- endif -%}
+        {%- endcapture -%}
+        {%- assign sticky_button_aria_controls = sticky_quick_buy_id -%}
+        {%- if is_custom_case_launch_button -%}
+          {%- assign sticky_button_aria_controls = blank -%}
+        {%- endif -%}
+
+        <div class="sm:hidden">
+          {%- render 'button', type: 'button', content: button_label, aria_controls: sticky_button_aria_controls, background: buy_buttons_block.settings.atc_button_background, text_color: buy_buttons_block.settings.atc_button_text_color, secondary: true, stretch: true, size: 'lg', data_attributes: sticky_button_data_attributes -%}
+        </div>
+
+        {%- assign image = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+
+        <div class="product-quick-add__variant {% if image == blank %}no-image{% endif %} hidden sm:grid">
+          {%- if image != blank -%}
+            <variant-media widths="80,160" form="{{ product_form_id }}">
+              {{- image | image_url: width: 160 | image_tag: loading: 'lazy', sizes: '80px', widths: '80,160', class: 'rounded-xs' -}}
+            </variant-media>
+          {%- endif -%}
+
+          <div class="v-stack gap-0.5">
+            {%- assign vendor_block = section.blocks | where: 'type', 'vendor' -%}
+
+            {%- if vendor_block != blank -%}
+              {%- render 'vendor' with product.vendor, class: 'text-xs' -%}
+            {%- endif -%}
+
+            <a href="{{ product.url }}" class="bold truncate-text">{{ product.title }}</a>
+            {%- render 'price-list', product: product, variant: product.selected_or_first_available_variant, form_id: product_form_id -%}
+          </div>
+
+          {%- render 'button', type: 'button', content: button_label, aria_controls: sticky_button_aria_controls, background: buy_buttons_block.settings.atc_button_background, text_color: buy_buttons_block.settings.atc_button_text_color, secondary: true, data_attributes: sticky_button_data_attributes -%}
+        </div>
+      </product-quick-add>
+
+    {%- endif -%}
+  </product-rerender>
+
+  {%- unless is_custom_case_launch_button -%}
+    <quick-buy-drawer id="{{ sticky_quick_buy_id }}" header-bordered open-from="bottom" handle="{{ product.handle }}?variant={{ product.selected_or_first_available_variant.id }}" data-product-handle="{{ product.handle }}" data-product-form="{{ product_form_id }}" role="region" aria-live="polite" class="quick-buy-drawer quick-buy-drawer--case-variants drawer">
+      {%- comment -%}Quick buy content is filled on demand for performance reasons {%- endcomment -%}
+    </quick-buy-drawer>
+  {%- endunless -%}
+{%- endif -%}
+
+{%- comment -%}
+IMPLEMENTATION NOTE: Shopify does not currently allows to render a given section within the context of a given product. However,
+when rendering the quick buy popovers, we want to be able to re-use the merchant's choices (such as the selector type). This
+is however only possible by rendering the whole product page, and extracting the relevant part. Here, we therefore render the
+quick buy information in a template, that will be extracted in JS, but ensure it is not visible in the main product page
+{%- endcomment -%}
+
+{%- render 'product-quick-buy', product: product -%}
+
+{% schema %}
+{
+  "name": "产品页",
+  "class": "shopify-section--main-product",
+  "tag": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "vendor",
+      "name": "供应商",
+      "limit": 1
+    },
+    {
+      "type": "title",
+      "name": "标题",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "样式",
+          "options": [
+            {
+              "value": "h1",
+              "label": "特大"
+            },
+            {
+              "value": "h2",
+              "label": "大"
+            },
+            {
+              "value": "h3",
+              "label": "中"
+            },
+            {
+              "value": "h4",
+              "label": "小"
+            },
+            {
+              "value": "h5",
+              "label": "特小"
+            },
+            {
+              "value": "h6",
+              "label": "超小"
+            }
+          ],
+          "default": "h2"
+        }
+      ]
+    },
+    {
+      "type": "sku",
+      "name": "SKU",
+      "limit": 1
+    },
+    {
+      "type": "badges",
+      "name": "徽章",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "使用元字段添加自定义徽章。[了解更多](https://support.maestrooo.com/article/75-collection-displaying-custom-label)"
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "价格",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_taxes_notice",
+          "label": "显示税费提示",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "payment_terms",
+      "name": "分期付款",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "若要显示分期付款，你的商店需要支持 Shop Pay Installments。[了解更多](https://help.shopify.com/en/manual/payments/shop-pay-installments)"
+        }
+      ]
+    },
+    {
+      "type": "rating",
+      "name": "评分",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "若要显示评分，请添加商品评分应用。[了解更多](https://apps.shopify.com/categories/store-design-social-proof-product-reviews)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_empty",
+          "label": "无评论时显示",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "separator",
+      "name": "分隔线"
+    },
+    {
+      "type": "description",
+      "name": "描述",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "picto-coupon",
+              "label": "优惠券",
+              "group": "购物"
+            },
+            {
+              "value": "picto-percent",
+              "label": "百分比",
+              "group": "购物"
+            },
+            {
+              "value": "picto-gift",
+              "label": "礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-star",
+              "label": "星星",
+              "group": "购物"
+            },
+            {
+              "value": "picto-like",
+              "label": "点赞",
+              "group": "购物"
+            },
+            {
+              "value": "picto-building",
+              "label": "建筑",
+              "group": "购物"
+            },
+            {
+              "value": "picto-love",
+              "label": "爱心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-award-gift",
+              "label": "获奖礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-happy",
+              "label": "开心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子",
+              "group": "配送"
+            },
+            {
+              "value": "picto-pin",
+              "label": "图钉",
+              "group": "配送"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器",
+              "group": "配送"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证",
+              "group": "配送"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车",
+              "group": "配送"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货",
+              "group": "配送"
+            },
+            {
+              "value": "picto-earth",
+              "label": "地球",
+              "group": "配送"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机",
+              "group": "配送"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "信用卡",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "安全资料",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-money",
+              "label": "金钱",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "回收",
+              "group": "环保"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "叶子",
+              "group": "环保"
+            },
+            {
+              "value": "picto-tree",
+              "label": "树",
+              "group": "环保"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "手机",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-phone",
+              "label": "电话",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-chat",
+              "label": "聊天",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "客户支持",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-operator",
+              "label": "客服",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "邮箱箱",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-envelope",
+              "label": "信封",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-comment",
+              "label": "评论",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-send",
+              "label": "发送",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "@ 符号",
+              "group": "科技"
+            },
+            {
+              "value": "picto-camera",
+              "label": "相机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "WiFi",
+              "group": "科技"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "蓝牙",
+              "group": "科技"
+            },
+            {
+              "value": "picto-printer",
+              "label": "打印机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表",
+              "group": "科技"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "咖啡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-burger",
+              "label": "汉堡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-beer",
+              "label": "啤酒",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-target",
+              "label": "目标",
+              "group": "其他"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档",
+              "group": "其他"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "珠宝",
+              "group": "其他"
+            },
+            {
+              "value": "picto-music",
+              "label": "音乐",
+              "group": "其他"
+            },
+            {
+              "value": "picto-file",
+              "label": "文件",
+              "group": "其他"
+            },
+            {
+              "value": "picto-mask",
+              "label": "遮罩",
+              "group": "其他"
+            },
+            {
+              "value": "picto-stop",
+              "label": "停止",
+              "group": "其他"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标",
+          "info": "建议使用 96 x 96px .png 或 .svg。仅在内容折叠时使用。"
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 16,
+          "max": 48,
+          "step": 2,
+          "unit": "px",
+          "label": "图标宽度",
+          "default": 20
+        },
+        {
+          "type": "checkbox",
+          "id": "collapse_content",
+          "label": "折叠内容",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "description_detail_item",
+      "name": "下方描述说明项",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "显示在下方 Description 卡片里。可填写产品元字段键，若对应产品元字段有内容则优先读取；为空时使用这里的兜底内容。"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Shipping Information"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "兜底内容",
+          "default": "<p>Share product details, shipping notes, sizing reminders, or care instructions.</p>"
+        },
+        {
+          "type": "text",
+          "id": "product_metafield_key",
+          "label": "产品元字段键（可选）",
+          "info": "填写 custom 命名空间下的键名，例如 shipping_note。产品有该元字段时会覆盖兜底内容。"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "label": "默认展开",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证"
+            }
+          ],
+          "default": "picto-document"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标（可选）",
+          "info": "建议使用 60 x 60px PNG 或 SVG。设置后会覆盖上方图标。"
+        }
+      ]
+    },
+    {
+      "type": "variant_picker",
+      "name": "变体选择器",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "hide_sold_out_variants",
+          "label": "隐藏售罄变体",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "stack_blocks",
+          "label": "移动端堆叠选项",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "selector_style",
+          "label": "选择器样式",
+          "options": [
+            {
+              "value": "block",
+              "label": "块"
+            },
+            {
+              "value": "dropdown",
+              "label": "下拉菜单"
+            }
+          ],
+          "default": "block"
+        },
+        {
+          "type": "select",
+          "id": "swatch_selector_style",
+          "label": "色样选择器样式",
+          "info": "在商品选项中启用[色样](https://help.shopify.com/en/manual/online-store/themes/theme-structure/theme-settings#options-with-swatches)。",
+          "options": [
+            {
+              "value": "swatch",
+              "label": "色样"
+            },
+            {
+              "value": "block_swatch",
+              "label": "带色样的块"
+            },
+            {
+              "value": "none",
+              "label": "无"
+            }
+          ],
+          "default": "swatch"
+        },
+        {
+          "type": "text",
+          "id": "variant_image_options",
+          "label": "为选项显示变体图片",
+          "info": "用逗号分隔选项名称列表，这些选项值会显示关联的变体图片。[了解更多](https://impact-theme.helpscoutdocs.com/article/555-variant-images-for-color-option)"
+        },
+        {
+          "type": "page",
+          "id": "size_chart_page",
+          "label": "尺码表页面",
+          "info": "为尺码选项指定一个页面"
+        }
+      ]
+    },
+    {
+      "type": "product_variations",
+      "name": "商品变体关联",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "使用色样关联不同颜色的商品。[了解更多](https://support.maestrooo.com/article/307-product-creating-product-variations-that-link-to-different-pages)"
+        },
+        {
+          "type": "text",
+          "id": "option_name",
+          "label": "选项名称",
+          "info": "例如：颜色、样式..."
+        },
+        {
+          "type": "text",
+          "id": "option_value_metafield",
+          "label": "选项值元字段",
+          "info": "输入保存该值的元字段命名空间和键。例如：custom.color"
+        },
+        {
+          "type": "product_list",
+          "id": "products",
+          "label": "商品",
+          "info": "选择所有变体关联商品（包括商品本身）。"
+        },
+        {
+          "type": "select",
+          "id": "selector_style",
+          "label": "选择器样式",
+          "info": "商品图片模式要求所有变体都有关联图片。[了解更多](https://help.shopify.com/en/manual/products/product-media/add-images-variants#add-images-to-existing-variants)",
+          "options": [
+            {
+              "value": "block",
+              "label": "块"
+            },
+            {
+              "value": "block_swatch",
+              "label": "带色样的块"
+            },
+            {
+              "value": "swatch",
+              "label": "色样"
+            },
+            {
+              "value": "variant_image",
+              "label": "变体图片"
+            }
+          ],
+          "default": "swatch"
+        }
+      ]
+    },
+    {
+      "type": "variant_option_image",
+      "name": "Variant Option Image",
+      "limit": 16,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "为某个变体选项值配置自定义图片。Option Name 和 Option Value 需要与产品后台的选项名称和值一致。"
+        },
+        {
+          "type": "text",
+          "id": "option_name",
+          "label": "Option Name",
+          "info": "例如：Color、Case type"
+        },
+        {
+          "type": "text",
+          "id": "option_value",
+          "label": "Option Value",
+          "info": "例如：Matte MagSafe Shockproof"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "Bubble Label"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_bubble_label",
+          "label": "Enable Bubble Label",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "bubble_text",
+          "label": "Bubble Text",
+          "default": "Hot"
+        }
+      ]
+    },
+    {
+      "type": "line_item_property",
+      "name": "订单项属性",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "订单项属性用于收集加入购物车商品的自定义信息。"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "标签",
+          "default": "Your label"
+        },
+        {
+          "type": "select",
+          "id": "type",
+          "label": "类型",
+          "options": [
+            {
+              "value": "text",
+              "label": "文本"
+            },
+            {
+              "value": "checkbox",
+              "label": "复选框"
+            }
+          ],
+          "default": "text"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "必填",
+          "info": "对于文本属性，客户必须填写文本；对于复选框，客户必须勾选后才能加入购物车。",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "文本",
+          "visible_if": "{{ block.settings.type == 'text' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "allow_long_text",
+          "label": "允许长文本",
+          "default": false,
+          "visible_if": "{{ block.settings.type == 'text' }}"
+        },
+        {
+          "type": "number",
+          "id": "max_length",
+          "label": "最大字符数",
+          "visible_if": "{{ block.settings.type == 'text' }}"
+        }
+      ]
+    },
+    {
+      "type": "quantity_selector",
+      "name": "数量选择器",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "如果所有变体都售罄，选择器会自动隐藏。当至少一个变体可用时，选择器会始终显示，以避免切换变体时页面跳动。若要显示阶梯价格表，请添加专用的阶梯价格块。"
+        }
+      ]
+    },
+    {
+      "type": "volume_pricing",
+      "name": "阶梯价格表",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "阶梯价格仅适用于 Shopify Plus 商家。[了解更多](https://help.shopify.com/en/manual/b2b/catalogs/quantity-pricing#volume-pricing)"
+        }
+      ]
+    },
+    {
+      "type": "inventory",
+      "name": "库存",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "low_inventory_threshold",
+          "label": "低库存阈值",
+          "info": "当数量低于阈值时使用低库存颜色。选择 0 可始终显示有货。",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 0
+        }
+      ]
+    },
+    {
+      "type": "buy_buttons",
+      "name": "购买按钮",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_payment_button",
+          "label": "显示动态结账按钮",
+          "info": "每位客户会看到你商店可用付款方式中他们偏好的方式，例如 PayPal 或 Apple Pay。[了解更多](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_icons",
+          "label": "显示支持的支付图标",
+          "info": "显示在快捷支付按钮下方，图标来自店铺已启用的支付方式。",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_gift_card_recipient",
+          "label": "显示礼品卡收件人信息表单",
+          "info": "允许买家随礼品卡一起发送个人留言。[了解更多](https://help.shopify.com/manual/online-store/themes/customizing-themes/add-gift-card-recipient-fields)",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "trust_text",
+          "label": "保障文案",
+          "info": "显示在支付图标下方。留空则隐藏。",
+          "default": "Free Shipping $50+ | 2 Year Extended Warranty"
+        },
+        {
+          "type": "color",
+          "id": "atc_button_background",
+          "label": "加入购物车背景"
+        },
+        {
+          "type": "color",
+          "id": "atc_button_text_color",
+          "label": "加入购物车文字颜色"
+        },
+        {
+          "type": "color",
+          "id": "payment_button_background",
+          "label": "立即购买按钮背景"
+        },
+        {
+          "type": "color",
+          "id": "payment_button_text_color",
+          "label": "立即购买按钮文字颜色"
+        }
+      ]
+    },
+    {
+      "type": "pickup_availability",
+      "name": "自提可用性",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "通过[设置本地自提](https://help.shopify.com/en/manual/sell-in-person/shopify-pos/order-management/local-pickup-for-online-orders)，让客户查看零售门店的可用库存。"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "文本",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "文本",
+          "default": "<p>Share some content to your customers about your products.</p>"
+        }
+      ]
+    },
+    {
+      "type": "collapsible_text",
+      "name": "可折叠文本",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "picto-coupon",
+              "label": "优惠券",
+              "group": "购物"
+            },
+            {
+              "value": "picto-percent",
+              "label": "百分比",
+              "group": "购物"
+            },
+            {
+              "value": "picto-gift",
+              "label": "礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-star",
+              "label": "星星",
+              "group": "购物"
+            },
+            {
+              "value": "picto-like",
+              "label": "点赞",
+              "group": "购物"
+            },
+            {
+              "value": "picto-building",
+              "label": "建筑",
+              "group": "购物"
+            },
+            {
+              "value": "picto-love",
+              "label": "爱心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-award-gift",
+              "label": "获奖礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-happy",
+              "label": "开心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子",
+              "group": "配送"
+            },
+            {
+              "value": "picto-pin",
+              "label": "图钉",
+              "group": "配送"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器",
+              "group": "配送"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证",
+              "group": "配送"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车",
+              "group": "配送"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货",
+              "group": "配送"
+            },
+            {
+              "value": "picto-earth",
+              "label": "地球",
+              "group": "配送"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机",
+              "group": "配送"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "信用卡",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "安全资料",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-money",
+              "label": "金钱",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "回收",
+              "group": "环保"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "叶子",
+              "group": "环保"
+            },
+            {
+              "value": "picto-tree",
+              "label": "树",
+              "group": "环保"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "手机",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-phone",
+              "label": "电话",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-chat",
+              "label": "聊天",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "客户支持",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-operator",
+              "label": "客服",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "邮箱箱",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-envelope",
+              "label": "信封",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-comment",
+              "label": "评论",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-send",
+              "label": "发送",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "@ 符号",
+              "group": "科技"
+            },
+            {
+              "value": "picto-camera",
+              "label": "相机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "WiFi",
+              "group": "科技"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "蓝牙",
+              "group": "科技"
+            },
+            {
+              "value": "picto-printer",
+              "label": "打印机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表",
+              "group": "科技"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "咖啡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-burger",
+              "label": "汉堡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-beer",
+              "label": "啤酒",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-target",
+              "label": "目标",
+              "group": "其他"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档",
+              "group": "其他"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "珠宝",
+              "group": "其他"
+            },
+            {
+              "value": "picto-music",
+              "label": "音乐",
+              "group": "其他"
+            },
+            {
+              "value": "picto-file",
+              "label": "文件",
+              "group": "其他"
+            },
+            {
+              "value": "picto-mask",
+              "label": "遮罩",
+              "group": "其他"
+            },
+            {
+              "value": "picto-stop",
+              "label": "停止",
+              "group": "其他"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标",
+          "info": "建议使用 96 x 96px .png 或 .svg"
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 16,
+          "max": 48,
+          "step": 2,
+          "unit": "px",
+          "label": "图标宽度",
+          "default": 20
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Share some content to your customers about your products.</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "页面",
+          "info": "指定后会替代内联内容。"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "图片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "对齐方式",
+          "options": [
+            {
+              "value": "start",
+              "label": "左侧"
+            },
+            {
+              "value": "center",
+              "label": "居中"
+            },
+            {
+              "value": "end",
+              "label": "右侧"
+            }
+          ],
+          "default": "start"
+        },
+        {
+          "type": "range",
+          "id": "max_width",
+          "min": 50,
+          "max": 500,
+          "step": 10,
+          "unit": "px",
+          "label": "宽度",
+          "default": 150
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "按钮",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "创建指向联系页面、外部市场等的链接。"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "文本",
+          "default": "Button"
+        },
+        {
+          "type": "select",
+          "id": "size",
+          "label": "尺寸",
+          "options": [
+            {
+              "value": "sm",
+              "label": "小"
+            },
+            {
+              "value": "base",
+              "label": "中"
+            },
+            {
+              "value": "lg",
+              "label": "大"
+            },
+            {
+              "value": "xl",
+              "label": "特大"
+            }
+          ],
+          "default": "xl"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "样式",
+          "options": [
+            {
+              "value": "outline",
+              "label": "描边"
+            },
+            {
+              "value": "fill",
+              "label": "填充"
+            }
+          ],
+          "default": "fill"
+        },
+        {
+          "type": "checkbox",
+          "id": "stretch",
+          "label": "拉伸",
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "背景"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本"
+        }
+      ]
+    },
+    {
+      "type": "liquid",
+      "name": "自定义 Liquid 代码",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "liquid",
+          "label": "Liquid 代码",
+          "info": "添加应用片段或其他 Liquid 代码来创建高级自定义。"
+        }
+      ]
+    },
+    {
+      "type": "custom_block",
+      "name": "自定义块",
+      "settings": [
+        {
+          "type": "header",
+          "content": "项目 1"
+        },
+        {
+          "type": "select",
+          "id": "item_1_icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "picto-truck",
+              "label": "卡车"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题"
+            }
+          ],
+          "default": "picto-truck"
+        },
+        {
+          "type": "image_picker",
+          "id": "item_1_icon_image",
+          "label": "自定义图标图片（可选）"
+        },
+        {
+          "type": "liquid",
+          "id": "item_1_icon_svg",
+          "label": "自定义图标 SVG 代码（可选）",
+          "info": "粘贴 <svg>…</svg> 代码。设置后会覆盖图片/图标。"
+        },
+        {
+          "type": "text",
+          "id": "item_1_title",
+          "label": "标题",
+          "default": "Free Shipping"
+        },
+        {
+          "type": "text",
+          "id": "item_1_text",
+          "label": "描述",
+          "default": "Free standard shipping on orders over $129"
+        },
+        {
+          "type": "richtext",
+          "id": "item_1_popup_content",
+          "label": "弹窗内容（点击 ?）",
+          "default": "<p>Shipping policy content...</p>"
+        },
+        {
+          "type": "header",
+          "content": "项目 2"
+        },
+        {
+          "type": "select",
+          "id": "item_2_icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "picto-truck",
+              "label": "卡车"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题"
+            }
+          ],
+          "default": "picto-return"
+        },
+        {
+          "type": "image_picker",
+          "id": "item_2_icon_image",
+          "label": "自定义图标图片（可选）"
+        },
+        {
+          "type": "liquid",
+          "id": "item_2_icon_svg",
+          "label": "自定义图标 SVG 代码（可选）",
+          "info": "粘贴 <svg>…</svg> 代码。设置后会覆盖图片/图标。"
+        },
+        {
+          "type": "text",
+          "id": "item_2_title",
+          "label": "标题",
+          "default": "Free Returns"
+        },
+        {
+          "type": "text",
+          "id": "item_2_text",
+          "label": "描述",
+          "default": "Free returns within 30 days"
+        },
+        {
+          "type": "richtext",
+          "id": "item_2_popup_content",
+          "label": "弹窗内容（点击 ?）",
+          "default": "<p>Returns policy content...</p>"
+        }
+      ]
+    },
+    {
+      "type": "associated_products",
+      "name": "互补商品",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "若要选择互补商品，请使用搜索与发现应用。[了解更多](https://help.shopify.com/en/manual/online-store/search-and-discovery/product-recommendations#complementary-products)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Buy it with"
+        },
+        {
+          "type": "checkbox",
+          "id": "stack_products",
+          "label": "堆叠商品",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "products_count",
+          "min": 1,
+          "max": 10,
+          "label": "显示商品数",
+          "default": 5
+        },
+        {
+          "type": "header",
+          "content": "颜色",
+          "info": "当背景与分区背景相同时，卡片会显示边框。"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "背景"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本"
+        }
+      ]
+    },
+    {
+      "type": "offer",
+      "name": "优惠信息",
+      "settings": [
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "文本对齐方式",
+          "options": [
+            {
+              "value": "start",
+              "label": "左侧"
+            },
+            {
+              "value": "center",
+              "label": "居中"
+            }
+          ],
+          "default": "start"
+        },
+        {
+          "type": "select",
+          "id": "icon_position",
+          "label": "图标位置",
+          "options": [
+            {
+              "value": "aligned",
+              "label": "水平对齐"
+            },
+            {
+              "value": "stacked",
+              "label": "堆叠"
+            }
+          ],
+          "default": "aligned"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "picto-coupon",
+              "label": "优惠券",
+              "group": "购物"
+            },
+            {
+              "value": "picto-percent",
+              "label": "百分比",
+              "group": "购物"
+            },
+            {
+              "value": "picto-gift",
+              "label": "礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-star",
+              "label": "星星",
+              "group": "购物"
+            },
+            {
+              "value": "picto-like",
+              "label": "点赞",
+              "group": "购物"
+            },
+            {
+              "value": "picto-building",
+              "label": "建筑",
+              "group": "购物"
+            },
+            {
+              "value": "picto-love",
+              "label": "爱心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-award-gift",
+              "label": "获奖礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-happy",
+              "label": "开心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子",
+              "group": "配送"
+            },
+            {
+              "value": "picto-pin",
+              "label": "图钉",
+              "group": "配送"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器",
+              "group": "配送"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证",
+              "group": "配送"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车",
+              "group": "配送"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货",
+              "group": "配送"
+            },
+            {
+              "value": "picto-earth",
+              "label": "地球",
+              "group": "配送"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机",
+              "group": "配送"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "信用卡",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "安全资料",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-money",
+              "label": "金钱",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "回收",
+              "group": "环保"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "叶子",
+              "group": "环保"
+            },
+            {
+              "value": "picto-tree",
+              "label": "树",
+              "group": "环保"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "手机",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-phone",
+              "label": "电话",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-chat",
+              "label": "聊天",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "客户支持",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-operator",
+              "label": "客服",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "邮箱箱",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-envelope",
+              "label": "信封",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-comment",
+              "label": "评论",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-send",
+              "label": "发送",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "@ 符号",
+              "group": "科技"
+            },
+            {
+              "value": "picto-camera",
+              "label": "相机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "WiFi",
+              "group": "科技"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "蓝牙",
+              "group": "科技"
+            },
+            {
+              "value": "picto-printer",
+              "label": "打印机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表",
+              "group": "科技"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "咖啡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-burger",
+              "label": "汉堡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-beer",
+              "label": "啤酒",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-target",
+              "label": "目标",
+              "group": "其他"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档",
+              "group": "其他"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "珠宝",
+              "group": "其他"
+            },
+            {
+              "value": "picto-music",
+              "label": "音乐",
+              "group": "其他"
+            },
+            {
+              "value": "picto-file",
+              "label": "文件",
+              "group": "其他"
+            },
+            {
+              "value": "picto-mask",
+              "label": "遮罩",
+              "group": "其他"
+            },
+            {
+              "value": "picto-stop",
+              "label": "停止",
+              "group": "其他"
+            }
+          ],
+          "default": "picto-coupon"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标",
+          "info": "建议使用 240 x 240px .png"
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 20,
+          "max": 100,
+          "step": 4,
+          "unit": "px",
+          "label": "图标宽度",
+          "default": 20
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Shipping"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Short content about your shipping rates or discounts.</p>"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "背景",
+          "default": "#eaf2ed"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本",
+          "default": "#00a341"
+        }
+      ]
+    },
+    {
+      "type": "share_buttons",
+      "name": "分享按钮",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "为了提升用户体验和性能，在支持时会使用原生分享按钮。"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "对齐方式",
+          "options": [
+            {
+              "value": "start",
+              "label": "左侧"
+            },
+            {
+              "value": "center",
+              "label": "居中"
+            },
+            {
+              "value": "end",
+              "label": "右侧"
+            }
+          ],
+          "default": "start"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_fixed_add_to_cart",
+      "label": "滚动时显示加入购物车",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "关联加购商品"
+    },
+    {
+      "type": "paragraph",
+      "content": "此面板会优先读取产品元字段 custom.also_bought_products。如果该元字段为空，则使用这里选择的兜底商品。"
+    },
+    {
+      "type": "product_list",
+      "id": "also_bought_fallback_products",
+      "label": "兜底商品",
+      "info": "为“其他人也购买了”面板选择兜底商品。只会显示前两个商品。"
+    },
+    {
+      "type": "header",
+      "content": "媒体"
+    },
+    {
+      "type": "paragraph",
+      "content": "了解更多[媒体类型](https://help.shopify.com/en/manual/products/product-media)"
+    },
+    {
+      "type": "range",
+      "id": "desktop_media_width",
+      "label": "桌面端媒体尺寸",
+      "min": 35,
+      "max": 65,
+      "step": 5,
+      "unit": "%",
+      "default": 55
+    },
+    {
+      "type": "select",
+      "id": "desktop_media_layout",
+      "label": "桌面端媒体布局",
+      "options": [
+        {
+          "value": "grid_one",
+          "label": "网格（1x1）"
+        },
+        {
+          "value": "grid",
+          "label": "网格（2x2）"
+        },
+        {
+          "value": "grid_highlight",
+          "label": "网格（2x2，突出媒体）"
+        },
+        {
+          "value": "carousel_thumbnails_left",
+          "label": "左侧缩略图（轮播）"
+        },
+        {
+          "value": "carousel_thumbnails_bottom",
+          "label": "底部缩略图（轮播）"
+        }
+      ],
+      "default": "carousel_thumbnails_left"
+    },
+    {
+      "type": "select",
+      "id": "mobile_media_size",
+      "label": "移动端媒体尺寸",
+      "options": [
+        {
+          "value": "expanded",
+          "label": "展开"
+        },
+        {
+          "value": "contained",
+          "label": "容器内"
+        }
+      ],
+      "default": "expanded"
+    },
+    {
+      "type": "select",
+      "id": "mobile_carousel_control",
+      "label": "移动端轮播控制",
+      "options": [
+        {
+          "value": "dots",
+          "label": "圆点"
+        },
+        {
+          "value": "floating_dots",
+          "label": "悬浮圆点"
+        },
+        {
+          "value": "thumbnails",
+          "label": "缩略图"
+        },
+        {
+          "value": "free_scroll",
+          "label": "自由滚动"
+        }
+      ],
+      "default": "floating_dots"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_autoplay",
+      "label": "启用视频自动播放",
+      "info": "视频会自动静音以允许自动播放。桌面端网格模式会关闭自动播放。",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "label": "启用视频循环播放",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "图片缩放"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_image_zoom",
+      "label": "启用",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "max_image_zoom_level",
+      "min": 1,
+      "max": 4,
+      "step": 0.5,
+      "label": "最大缩放级别",
+      "default": 3,
+      "visible_if": "{{ section.settings.enable_image_zoom }}"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "header",
+      "content": "输入框颜色",
+      "info": "适用于数量选择器、变体选择器等元素。"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "背景",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "文本"
+    }
+  ]
+}
+{% endschema %}

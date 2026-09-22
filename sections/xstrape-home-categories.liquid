@@ -1,0 +1,507 @@
+{% liquid
+  assign has_section_header = false
+  if section.settings.categories_kicker != blank or section.settings.categories_title != blank
+    assign has_section_header = true
+  endif
+
+  assign has_category_blocks = false
+  assign has_feature_blocks = false
+  for block in section.blocks
+    if block.type == 'category'
+      assign has_category_blocks = true
+    elsif block.type == 'feature_banner'
+      assign has_feature_blocks = true
+    endif
+  endfor
+%}
+
+<section
+  class="xstrape-home-scope xh-section xh-categories{% unless has_section_header %} xh-categories--no-header{% endunless %}{% unless has_category_blocks %} xh-categories--no-card-grid{% endunless %}"
+  style="--xh-page-bg: {{ section.settings.page_background | default: '#f3f3f3' }}; --xh-text: {{ section.settings.text_color | default: '#111111' }}; --xh-muted: {{ section.settings.muted_text_color | default: '#6c6c6c' }}; --xh-category-title: {{ section.settings.card_text_color | default: '#ffffff' }}; --xh-feature-kicker-size: {{ section.settings.feature_kicker_font_size | default: 28 }}px; --xh-feature-heading-size: {{ section.settings.feature_heading_font_size | default: 52 }}px; --xh-feature-button-size: {{ section.settings.feature_button_font_size | default: 16 }}px; --xh-feature-mobile-kicker-size: {{ section.settings.feature_mobile_kicker_font_size | default: 16 }}px; --xh-feature-mobile-heading-size: {{ section.settings.feature_mobile_heading_font_size | default: 32 }}px; --xh-feature-mobile-button-size: {{ section.settings.feature_mobile_button_font_size | default: 15 }}px;"
+>
+  <div class="xh-container">
+    {% if has_section_header %}
+      <div class="xh-section-header">
+        <div>
+          {% if section.settings.categories_kicker != blank %}
+            <p class="xh-eyebrow">{{ section.settings.categories_kicker | escape }}</p>
+          {% endif %}
+          {% if section.settings.categories_title != blank %}
+            <h2 class="xh-heading">{{ section.settings.categories_title | escape }}</h2>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if has_category_blocks %}
+      <div class="xh-card-grid">
+        {% for block in section.blocks %}
+          {% unless block.type == 'category' %}
+            {% continue %}
+          {% endunless %}
+
+          {%- assign category_asset = block.settings.asset_image -%}
+
+          <a
+            class="xh-media-card xh-category-card"
+            {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}
+            style="--xh-image-x: {{ block.settings.image_position_x | default: 50 }}%; --xh-image-y: {{ block.settings.image_position_y | default: 50 }}%;"
+            {{ block.shopify_attributes }}
+          >
+            <span class="xh-media-card__image">
+              {% if block.settings.image != blank %}
+                {{
+                  block.settings.image
+                  | image_url: width: 900
+                  | image_tag: loading: 'lazy', sizes: '(max-width: 699px) calc(100vw - 40px), (max-width: 999px) calc(50vw - 30px), min(25vw, 335px)', widths: '180,240,320,420,540,720,900'
+                }}
+              {% elsif category_asset != blank %}
+                <img
+                  src="{{ category_asset | asset_url }}"
+                  alt="{{ block.settings.title | escape }}"
+                  loading="lazy"
+                  width="1000"
+                  height="245"
+                >
+              {% else %}
+                {{ 'collection-1' | placeholder_svg_tag: 'xh-media-card__placeholder' }}
+              {% endif %}
+            </span>
+            <span class="xh-media-card__body">
+              {% if block.settings.title != blank %}
+                <h3 class="xh-media-card__title"><span>{{ block.settings.title | escape }}</span></h3>
+              {% endif %}
+            </span>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if has_feature_blocks or section.settings.show_feature_banner %}
+      <div class="xh-category-features">
+        {% if has_feature_blocks %}
+          {% for block in section.blocks %}
+            {% unless block.type == 'feature_banner' %}
+              {% continue %}
+            {% endunless %}
+
+            {% liquid
+              assign feature_asset = block.settings.asset_image
+              assign feature_alt = block.settings.heading
+              if feature_alt == blank
+                assign feature_alt = block.settings.kicker
+              endif
+            %}
+
+            <a
+              class="xh-category-feature xh-category-feature--image-{{ block.settings.image_side | default: 'right' }}"
+              style="--xh-feature-image-x: {{ block.settings.image_position_x | default: 50 }}%; --xh-feature-image-y: {{ block.settings.image_position_y | default: 50 }}%;"
+              {% if block.settings.link != blank %}
+                href="{{ block.settings.link }}"
+              {% endif %}
+              {{ block.shopify_attributes }}
+            >
+              <span class="xh-category-feature__media">
+                {% if block.settings.image != blank %}
+                  {{
+                    block.settings.image
+                    | image_url: width: 1300
+                    | image_tag:
+                      loading: 'lazy',
+                      sizes: '(max-width: 699px) calc(100vw - 24px), (max-width: 999px) calc(100vw - 40px), min(50vw, 686px)',
+                      widths: '360,540,720,900,1100,1300',
+                      alt: feature_alt
+                  }}
+                {% elsif feature_asset != blank %}
+                  <img
+                    src="{{ feature_asset | asset_url }}"
+                    alt="{{ feature_alt | escape }}"
+                    loading="lazy"
+                    width="2200"
+                    height="1052"
+                  >
+                {% else %}
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'xh-category-feature__placeholder' }}
+                {% endif %}
+              </span>
+
+              <span class="xh-category-feature__content">
+                <span class="xh-category-feature__text">
+                  {% if block.settings.kicker != blank %}
+                    <span class="xh-category-feature__kicker">{{ block.settings.kicker | escape }}</span>
+                  {% endif %}
+                  {% if block.settings.heading != blank %}
+                    <span class="xh-category-feature__heading">{{ block.settings.heading | escape }}</span>
+                  {% endif %}
+                  {% if block.settings.button_text != blank %}
+                    <span class="xh-category-feature__button">{{ block.settings.button_text | escape }}</span>
+                  {% endif %}
+                </span>
+              </span>
+            </a>
+          {% endfor %}
+        {% elsif section.settings.show_feature_banner %}
+          {% liquid
+            assign feature_asset = section.settings.feature_asset_image
+            assign feature_alt = section.settings.feature_heading
+            if feature_alt == blank
+              assign feature_alt = section.settings.feature_kicker
+            endif
+          %}
+
+          <a
+            class="xh-category-feature xh-category-feature--image-{{ section.settings.feature_image_side | default: 'right' }}"
+            {% if section.settings.feature_link != blank %}
+              href="{{ section.settings.feature_link }}"
+            {% endif %}
+          >
+            <span class="xh-category-feature__media">
+              {% if section.settings.feature_image != blank %}
+                {{
+                  section.settings.feature_image
+                  | image_url: width: 1300
+                  | image_tag:
+                    loading: 'lazy',
+                    sizes: '(max-width: 699px) calc(100vw - 24px), (max-width: 999px) calc(100vw - 40px), min(50vw, 686px)',
+                    widths: '360,540,720,900,1100,1300',
+                    alt: feature_alt
+                }}
+              {% elsif feature_asset != blank %}
+                <img
+                  src="{{ feature_asset | asset_url }}"
+                  alt="{{ feature_alt | escape }}"
+                  loading="lazy"
+                  width="2200"
+                  height="1052"
+                >
+              {% else %}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'xh-category-feature__placeholder' }}
+              {% endif %}
+            </span>
+
+            <span class="xh-category-feature__content">
+              <span class="xh-category-feature__text">
+                {% if section.settings.feature_kicker != blank %}
+                  <span class="xh-category-feature__kicker">{{ section.settings.feature_kicker | escape }}</span>
+                {% endif %}
+                {% if section.settings.feature_heading != blank %}
+                  <span class="xh-category-feature__heading">{{ section.settings.feature_heading | escape }}</span>
+                {% endif %}
+                {% if section.settings.feature_button_text != blank %}
+                  <span class="xh-category-feature__button">{{ section.settings.feature_button_text | escape }}</span>
+                {% endif %}
+              </span>
+            </span>
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "分类入口",
+  "class": "shopify-section--xstrape-categories",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "categories_kicker",
+      "label": "小标题"
+    },
+    {
+      "type": "text",
+      "id": "categories_title",
+      "label": "标题",
+      "default": "Shop by Category"
+    },
+    {
+      "type": "header",
+      "content": "底部大图"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_feature_banner",
+      "label": "显示底部大图",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_image",
+      "label": "自定义图片"
+    },
+    {
+      "type": "text",
+      "id": "feature_asset_image",
+      "label": "默认主题图片文件名"
+    },
+    {
+      "type": "select",
+      "id": "feature_image_side",
+      "label": "图片位置",
+      "options": [
+        {
+          "value": "right",
+          "label": "右侧"
+        },
+        {
+          "value": "left",
+          "label": "左侧"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "text",
+      "id": "feature_kicker",
+      "label": "小标题",
+      "default": "Elevate Your iPhone"
+    },
+    {
+      "type": "text",
+      "id": "feature_heading",
+      "label": "标题",
+      "default": "Traditional Leather Case"
+    },
+    {
+      "type": "text",
+      "id": "feature_button_text",
+      "label": "按钮文字",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "feature_link",
+      "label": "链接"
+    },
+    {
+      "type": "range",
+      "id": "feature_kicker_font_size",
+      "label": "底部大图小标题字号（桌面）",
+      "min": 14,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "feature_heading_font_size",
+      "label": "底部大图标题字号（桌面）",
+      "min": 18,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "feature_button_font_size",
+      "label": "底部大图按钮字号（桌面）",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "feature_mobile_kicker_font_size",
+      "label": "底部大图小标题字号（移动）",
+      "min": 12,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "feature_mobile_heading_font_size",
+      "label": "底部大图标题字号（移动）",
+      "min": 16,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "feature_mobile_button_font_size",
+      "label": "底部大图按钮字号（移动）",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "颜色"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "背景",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "次要文字",
+      "default": "#6c6c6c"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "卡片文字",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "分类卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "标签"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Category"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "文字"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "自定义图片"
+        },
+        {
+          "type": "range",
+          "id": "image_position_x",
+          "label": "图片水平位置",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "image_position_y",
+          "label": "图片垂直位置",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "text",
+          "id": "asset_image",
+          "label": "默认主题图片文件名"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        }
+      ]
+    },
+    {
+      "type": "feature_banner",
+      "name": "底部大图卡片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "自定义图片"
+        },
+        {
+          "type": "text",
+          "id": "asset_image",
+          "label": "默认主题图片文件名"
+        },
+        {
+          "type": "select",
+          "id": "image_side",
+          "label": "图片位置",
+          "options": [
+            {
+              "value": "right",
+              "label": "右侧"
+            },
+            {
+              "value": "left",
+              "label": "左侧"
+            }
+          ],
+          "default": "right"
+        },
+        {
+          "type": "range",
+          "id": "image_position_x",
+          "label": "图片水平位置",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "image_position_y",
+          "label": "图片垂直位置",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "text",
+          "id": "kicker",
+          "label": "小标题",
+          "default": "Elevate Your iPhone"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "标题",
+          "default": "Traditional Leather Case"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "按钮文字",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "分类入口"
+    }
+  ]
+}
+{% endschema %}

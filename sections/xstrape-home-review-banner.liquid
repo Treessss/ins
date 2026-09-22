@@ -1,0 +1,129 @@
+<section
+  class="xstrape-home-scope xh-section xh-review-section"
+  style="--xh-page-bg: {{ section.settings.page_background | default: '#f3f3f3' }}; --xh-review-text: {{ section.settings.text_color | default: '#ffffff' }}; --xh-review-muted: {{ section.settings.muted_text_color | default: '#ffffff' }}; --xh-review-overlay-opacity: {{ section.settings.image_overlay_opacity | default: 0 | divided_by: 100.0 }};"
+>
+  <div class="xh-container">
+    <a class="xh-media-card xh-review-banner" {% if section.settings.review_link != blank %}href="{{ section.settings.review_link }}"{% endif %}>
+      <span class="xh-media-card__image">
+        {% if section.settings.review_image != blank %}
+          <picture>
+            {% if section.settings.review_mobile_image != blank %}
+              <source
+                media="(max-width: 699px)"
+                srcset="{{ section.settings.review_mobile_image | image_url: width: 480 }} 480w, {{ section.settings.review_mobile_image | image_url: width: 720 }} 720w, {{ section.settings.review_mobile_image | image_url: width: 1000 }} 1000w, {{ section.settings.review_mobile_image | image_url: width: 1200 }} 1200w"
+                sizes="calc(100vw - 32px)"
+              >
+            {% endif %}
+            {{
+              section.settings.review_image
+              | image_url: width: 1800
+              | image_tag: loading: 'lazy', sizes: '(max-width: 699px) calc(100vw - 32px), (max-width: 999px) calc(100vw - 40px), min(100vw - 40px, 1400px)', widths: '600,720,900,1200,1400,1600,1800'
+            }}
+          </picture>
+        {% else %}
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'xh-media-card__placeholder' }}
+        {% endif %}
+      </span>
+      <span class="xh-media-card__body">
+        {% if section.settings.review_stars != blank %}
+          <span class="xh-stars">{{ section.settings.review_stars | escape }}</span>
+        {% endif %}
+        {% if section.settings.review_title != blank %}
+          <span class="xh-media-card__title">{{ section.settings.review_title | escape }}</span>
+        {% endif %}
+        {% if section.settings.review_text != blank %}
+          <span class="xh-media-card__text">{{ section.settings.review_text | escape }}</span>
+        {% endif %}
+        {% if section.settings.review_button_text != blank %}
+          <span class="xh-pill-button" style="margin-top: 1.35rem;">{{ section.settings.review_button_text | escape }}</span>
+        {% endif %}
+      </span>
+    </a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "评价横幅",
+  "class": "shopify-section--xstrape-review-banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "review_image",
+      "label": "桌面图片"
+    },
+    {
+      "type": "image_picker",
+      "id": "review_mobile_image",
+      "label": "移动端图片"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "label": "图片遮罩透明度",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "text",
+      "id": "review_stars",
+      "label": "星级",
+      "default": "★★★★★"
+    },
+    {
+      "type": "text",
+      "id": "review_title",
+      "label": "标题",
+      "default": "17,000+ 5 Star Reviews"
+    },
+    {
+      "type": "text",
+      "id": "review_text",
+      "label": "文字",
+      "default": "Trusted by customers"
+    },
+    {
+      "type": "text",
+      "id": "review_button_text",
+      "label": "按钮文字",
+      "default": "Shop Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "review_link",
+      "label": "链接"
+    },
+    {
+      "type": "header",
+      "content": "颜色"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "背景",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "次要文字",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "评价横幅"
+    }
+  ]
+}
+{% endschema %}

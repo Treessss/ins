@@ -1,0 +1,206 @@
+<section
+  class="xstrape-home-scope xh-section xh-community"
+  style="--xh-page-bg: {{ section.settings.page_background | default: '#f3f3f3' }}; --xh-text: {{ section.settings.text_color | default: '#111111' }}; --xh-muted: {{ section.settings.muted_text_color | default: '#6c6c6c' }};"
+>
+  <div class="xh-container">
+    <div class="xh-section-header">
+      <div>
+        {% if section.settings.community_kicker != blank %}
+          <p class="xh-eyebrow">{{ section.settings.community_kicker | escape }}</p>
+        {% endif %}
+        {% if section.settings.community_title != blank %}
+          <h2 class="xh-heading">{{ section.settings.community_title | escape }}</h2>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="xh-community-list">
+      {% for block in section.blocks %}
+        <a class="xh-community-card {% if block.settings.video == blank and block.settings.image == blank %}xh-community-card--text{% endif %}" {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} {% if block.settings.video != blank %}data-xh-lazy-video-card{% endif %} {{ block.shopify_attributes }}>
+          <span class="xh-community-card__media">
+            {% if block.settings.video != blank %}
+              {%- assign video_poster = block.settings.video.preview_image -%}
+              {%- if video_poster != blank -%}
+                {{
+                  video_poster
+                  | image_url: width: 420
+                  | image_tag:
+                    loading: 'lazy',
+                    sizes: '(max-width: 699px) 174px, (max-width: 999px) 174px, 353px',
+                    widths: '174,260,353,420',
+                    class: 'xh-community-card__poster',
+                    alt: block.settings.label
+                }}
+              {%- endif -%}
+              <video
+                class="xh-community-card__video"
+                playsinline
+                muted
+                loop
+                preload="none"
+                aria-hidden="true"
+                data-xh-lazy-video
+              >
+                {%- for source in block.settings.video.sources -%}
+                  <source data-src="{{ source.url }}" type="{{ source.mime_type }}">
+                {%- endfor -%}
+              </video>
+            {% elsif block.settings.image != blank %}
+              {{
+                block.settings.image
+                | image_url: width: 720
+                | image_tag: loading: 'lazy', sizes: '(max-width: 699px) 174px, (max-width: 999px) 174px, 353px', widths: '174,260,353,420,540,720'
+              }}
+            {% else %}
+              {{ 'lifestyle-1' | placeholder_svg_tag }}
+            {% endif %}
+          </span>
+          {% if block.settings.label != blank %}
+            <span class="xh-community-card__label">{{ block.settings.label | escape }}</span>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  (() => {
+    const section = document.currentScript.previousElementSibling;
+    if (!section?.matches('.xh-community')) return;
+
+    const videos = Array.from(section.querySelectorAll('[data-xh-lazy-video]'));
+    if (videos.length === 0) return;
+
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    const activateVideo = (video) => {
+      if (video.dataset.xhVideoActivated === 'true') return;
+      video.dataset.xhVideoActivated = 'true';
+      video.preload = 'metadata';
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.querySelectorAll('source[data-src]').forEach((source) => {
+        source.src = source.dataset.src;
+        source.removeAttribute('data-src');
+      });
+
+      const playWhenReady = () => {
+        video.dataset.xhVideoReady = 'true';
+        video.play().catch(() => {});
+      };
+      if (video.readyState >= 2) {
+        playWhenReady();
+      } else {
+        video.addEventListener('loadeddata', playWhenReady, { once: true });
+        video.load();
+      }
+    };
+
+    section.querySelectorAll('[data-xh-lazy-video-card]').forEach((card) => {
+      const video = card.querySelector('[data-xh-lazy-video]');
+      if (!video) return;
+
+      card.addEventListener('pointerenter', () => activateVideo(video), { passive: true });
+      card.addEventListener('focusin', () => activateVideo(video));
+      card.addEventListener('touchstart', () => activateVideo(video), { passive: true, once: true });
+    });
+
+    if (!canHover && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          activateVideo(entry.target);
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: '80px 0px', threshold: 0.35 });
+
+      videos.forEach((video) => observer.observe(video));
+    } else if (!canHover) {
+      window.addEventListener('load', () => videos.forEach(activateVideo), { once: true });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "社区展示",
+  "class": "shopify-section--xstrape-community",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "community_kicker",
+      "label": "小标题",
+      "default": "In the wild"
+    },
+    {
+      "type": "text",
+      "id": "community_title",
+      "label": "标题",
+      "default": "From the Community"
+    },
+    {
+      "type": "header",
+      "content": "颜色"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "背景",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "次要文字",
+      "default": "#6c6c6c"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "community",
+      "name": "社区卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "标签文字",
+          "default": "Road setup"
+        },
+        {
+          "type": "paragraph",
+          "content": "选择视频后会优先显示视频；未选择视频时显示图片。"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "视频"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "社区展示"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,268 @@
+{%- comment -%}
+------------------------------------------------------------------------------------------------------------------------
+NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing this theme as much as we did for
+  developing it. We have put a lot of work to make this theme as developer friendly as possible by offering you
+  hooks to integrate into critical parts of the theme. You will find the complete technical documentation (including
+  all events, dependencies...) in the "documentation.txt" file, located in the Assets folder.
+------------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<!doctype html>
+
+<html lang="{{ request.locale.iso_code }}" dir="{% render 'direction' %}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=1.0">
+    {%- comment -%}
+      Mobile browser status/address bar color.
+      - Android Chrome uses theme-color.
+      - iOS Safari (newer versions) also uses theme-color for the top UI.
+      We output both light/dark variants so OS dark mode does not clash.
+    {%- endcomment -%}
+    <meta name="theme-color" content="{{ settings.header_background }}" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="{{ settings.header_background }}" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <script>
+      var _AutofillCallbackHandler = window._AutofillCallbackHandler || function() {};
+      var _autofillcallbackhandler = window._autofillcallbackhandler || _AutofillCallbackHandler;
+
+      (function() {
+        var autofillHandlerNames = ['_AutofillCallbackHandler', '_autofillcallbackhandler'];
+
+        function noopAutofillCallbackHandler() {}
+
+        function defineAutofillCallbackHandler(name) {
+          if (typeof window[name] === 'function') {
+            return;
+          }
+
+          try {
+            Object.defineProperty(window, name, {
+              configurable: true,
+              writable: true,
+              value: noopAutofillCallbackHandler
+            });
+          } catch (error) {
+            window[name] = noopAutofillCallbackHandler;
+          }
+        }
+
+        function patchAutofillCallbackHandlers() {
+          for (var index = 0; index < autofillHandlerNames.length; index += 1) {
+            defineAutofillCallbackHandler(autofillHandlerNames[index]);
+          }
+        }
+
+        function isAutofillCallbackError(message) {
+          return typeof message === 'string' && message.indexOf('_AutofillCallbackHandler') !== -1;
+        }
+
+        function isCheckValidityNullError(message, filename) {
+          if (typeof message !== 'string') {
+            return false;
+          }
+
+          var normalizedMessage = message.toLowerCase();
+          var isThemeScript = !filename || filename.indexOf('theme.js') !== -1;
+
+          return isThemeScript && (
+            normalizedMessage.indexOf("cannot read properties of null (reading 'checkvalidity')") !== -1 ||
+            normalizedMessage.indexOf("null is not an object (evaluating 'this.form.checkvalidity')") !== -1
+          );
+        }
+
+        patchAutofillCallbackHandlers();
+
+        window.addEventListener('error', function(event) {
+          var message = event.message || event.error && event.error.message;
+
+          if (isAutofillCallbackError(message)) {
+            patchAutofillCallbackHandlers();
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            return true;
+          }
+
+          if (isCheckValidityNullError(message, event.filename)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            return true;
+          }
+        }, true);
+
+        function patchCustomerPrivacy() {
+          window.Shopify = window.Shopify || {};
+          window.Shopify.customerPrivacy = window.Shopify.customerPrivacy || {};
+          window.Shopify.customerPrivacy.marketingAllowed = window.Shopify.customerPrivacy.marketingAllowed || function() { return false; };
+          window.Shopify.customerPrivacy.analyticsProcessingAllowed = window.Shopify.customerPrivacy.analyticsProcessingAllowed || function() { return false; };
+        }
+
+        function patchConsentEvent(event) {
+          patchCustomerPrivacy();
+
+          if (!event.detail) {
+            try {
+              Object.defineProperty(event, 'detail', {
+                configurable: true,
+                value: {}
+              });
+            } catch (error) {
+              return;
+            }
+          }
+
+          event.detail.marketingAllowed = event.detail.marketingAllowed == null ? window.Shopify.customerPrivacy.marketingAllowed() : event.detail.marketingAllowed;
+          event.detail.analyticsAllowed = event.detail.analyticsAllowed == null ? window.Shopify.customerPrivacy.analyticsProcessingAllowed() : event.detail.analyticsAllowed;
+        }
+
+        patchCustomerPrivacy();
+        window.setTimeout(patchCustomerPrivacy, 0);
+        window.setTimeout(patchCustomerPrivacy, 250);
+        window.setTimeout(patchCustomerPrivacy, 1000);
+        document.addEventListener('visitorConsentCollected', patchConsentEvent, true);
+        window.addEventListener('load', patchCustomerPrivacy, { once: true });
+      })();
+    </script>
+
+    <title>{% if page_title == blank %}{{ shop.name }}{% else %}{{ page_title }}{% if current_page != 1 %} &ndash; {{ 'general.page' | t: page: current_page }}{% endif %}{% endif %}</title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 96 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180 }}">
+    {%- elsif shop.brand.logo != blank -%}
+      <link rel="icon" href="{{ shop.brand.logo | image_url: width: 96 }}">
+      <link rel="apple-touch-icon" href="{{ shop.brand.logo | image_url: width: 180 }}">
+    {%- else -%}
+      <link rel="icon" href="{{ 'caseease-favicon.svg' | asset_url }}">
+    {%- endif -%}
+
+    {%- comment -%}Few prefetch to increase performance on commonly used third-parties{%- endcomment -%}
+    <link rel="preconnect" href="https://cdn.shopify.com">
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
+
+    {%- unless settings.heading_font.system? -%}
+      <link rel="preload" href="{{ settings.heading_font | font_url }}" as="font" type="font/woff2" crossorigin>
+    {%- endunless -%}
+
+    {%- unless settings.text_font.system? -%}
+      <link rel="preload" href="{{ settings.text_font | font_url }}" as="font" type="font/woff2" crossorigin>
+    {%- endunless -%}
+
+    {%- if request.page_type == 'product' and product != blank -%}
+      {%- assign lcp_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+      {%- assign lcp_image = lcp_media.preview_image | default: lcp_media -%}
+
+      {%- if lcp_image != blank -%}
+        <link
+          rel="preload"
+          as="image"
+          href="{{ lcp_image | image_url: width: 900 }}"
+          imagesrcset="
+            {{ lcp_image | image_url: width: 400 }} 400w,
+            {{ lcp_image | image_url: width: 500 }} 500w,
+            {{ lcp_image | image_url: width: 600 }} 600w,
+            {{ lcp_image | image_url: width: 800 }} 800w,
+            {{ lcp_image | image_url: width: 1000 }} 1000w,
+            {{ lcp_image | image_url: width: 1200 }} 1200w,
+            {{ lcp_image | image_url: width: 1400 }} 1400w,
+            {{ lcp_image | image_url: width: 1600 }} 1600w,
+            {{ lcp_image | image_url: width: 1800 }} 1800w
+          "
+          imagesizes="(max-width: 740px) calc(100vw - 40px), (max-width: 999px) calc(100vw - 64px), min(730px, 40vw)"
+          fetchpriority="high"
+        >
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- render 'social-meta-tags' -%}
+    {%- render 'microdata-schema' -%}
+    {%- render 'css-variables' -%}
+    {%- render 'js-variables' -%}
+
+    <script type="importmap">
+      {%- comment -%}On Safari 16.3 and lower, a polyfill is used to load importmap{%- endcomment -%}
+      {
+        "imports": {
+          "vendor": "{{ 'vendor.min.js' | asset_url }}",
+          "theme": "{{ 'theme.js' | asset_url }}",
+          "photoswipe": "{{ 'photoswipe.min.js' | asset_url }}"
+        }
+      }
+    </script>
+
+    <script type="module" src="{{ 'vendor.min.js' | asset_url }}"></script>
+    <script type="module" src="{{ 'theme.js' | asset_url }}"></script>
+
+    {{ content_for_header }}
+
+    {{- 'theme.css' | asset_url | stylesheet_tag: preload: true -}}
+
+    {%- if request.page_type == 'index' -%}
+      {{- 'xstrape-home.css' | asset_url | stylesheet_tag: preload: true -}}
+    {%- endif -%}
+  </head>
+
+  <body class="{% if settings.zoom_image_on_hover %}zoom-image--enabled{% endif %}{% if settings.show_page_transition %} page-transition-enabled{% endif %}">
+    {%- render 'shadow-dom-templates' -%}
+
+    <a href="#main" class="skip-to-content sr-only">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+    {%- comment -%}
+    This placeholder will be filled to screen readers for any kind of announcements
+    {%- endcomment -%}
+    <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+      <span id="status-announcement"></span>
+    </div>
+
+    <div class="sr-only" role="alert" aria-live="assertive" aria-atomic="true">
+      <span id="error-announcement"></span>
+    </div>
+
+    {%- if settings.show_page_transition -%}
+      <div class="page-transition-overlay" data-page-transition aria-hidden="true">
+        <div class="page-transition__inner">
+          <div class="page-transition__logo-wrap" data-page-transition-logo>
+            <span class="page-transition__logo-text">{{ shop.name | escape }}</span>
+          </div>
+          <span class="page-transition__bar" aria-hidden="true"></span>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if request.page_type != 'password' -%}
+      {%- sections 'header-group' -%}
+      {%- sections 'overlay-group' -%}
+
+      {%- if settings.cart_type == 'popover' -%}
+        <cart-notification-drawer open-from="bottom" class="quick-buy-drawer drawer"></cart-notification-drawer>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/addresses' -%}
+      {%- section 'account-banner' -%}
+    {%- endif -%}
+
+    <main role="main" id="main" class="anchor">
+      {{ content_for_layout }}
+
+      {%- comment -%}
+      IMPLEMENTATION NOTE: due to the very complex logic of margin/padding collapsing in Impact, the footer group is
+      added into the main element to ensure that dynamic sections added into the footer group are properly laid out.
+      {%- endcomment -%}
+      {%- if request.page_type != 'password' -%}
+        {%- sections 'footer-group' -%}
+      {%- endif -%}
+    </main>
+  </body>
+</html>

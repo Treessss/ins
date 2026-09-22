@@ -1,0 +1,611 @@
+{%- if section.blocks.size > 0 -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      --text-with-icons-template: {% if section.settings.stack_on_mobile %}minmax(0, 1fr){% else %}auto-flow 100%{% endif %};
+      --text-with-icons-justify: center;
+      --text-with-icons-text-align: center;
+      --text-with-icons-gap: {% if section.settings.icon_spacing == 'small' %}var(--spacing-5){% elsif section.settings.icon_spacing == 'medium' %}var(--spacing-6){% else %}var(--spacing-7){% endif %};
+    }
+
+    {%- if section.settings.stack_on_mobile -%}
+      @media screen and (min-width: 699px) {
+        #shopify-section-{{ section.id }} {
+          --text-with-icons-template: repeat(2, minmax(0, 1fr));
+        }
+      }
+    {%- endif -%}
+
+    @media screen and (min-width: 1150px) {
+      #shopify-section-{{ section.id }} {
+        --text-with-icons-gap: {% if section.settings.icon_spacing == 'small' %}var(--spacing-5){% elsif section.settings.icon_spacing == 'medium' %}var(--spacing-6){% else %}var(--spacing-8){% endif %};
+      }
+    }
+
+    {%- if section.blocks.size <= 3 -%}
+      @media screen and (min-width: 1000px) {
+        #shopify-section-{{ section.id }} {
+          --text-with-icons-template: repeat({{ section.blocks.size }}, minmax(0, 630px));
+          --text-with-icons-justify: {% if section.settings.text_alignment == 'center' %}center{% else %}start{% endif %};
+          --text-with-icons-text-align: {% if section.settings.text_alignment == 'center' %}center{% else %}start{% endif %};
+        }
+      }
+    {%- else -%}
+      @media screen and (min-width: 1150px) {
+        #shopify-section-{{ section.id }} {
+          --text-with-icons-template: repeat({{ section.blocks.size }}, 1fr);
+          --text-with-icons-justify: {% if section.settings.text_alignment == 'center' %}center{% else %}start{% endif %};
+          --text-with-icons-text-align: {% if section.settings.text_alignment == 'center' %}center{% else %}start{% endif %};
+        }
+      }
+    {%- endif -%}
+  </style>
+
+  <div {% render 'section-properties' %}>
+    <div class="section-stack">
+      {%- if section.settings.title != blank -%}
+        <div class="justify-self-center">
+          <h2 class="h3">{{ section.settings.title | escape }}</h2>
+        </div>
+      {%- endif -%}
+
+      <div class="text-with-icons">
+        <scroll-carousel class="text-with-icons__list scroll-area full-bleed {% if section.blocks.size <= 3 %}md:unbleed{% else %}lg:unbleed{% endif %}" id="carousel-{{ section.id }}" role="region">
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign loading_strategy = nil
+    
+              if section.index > 3 or forloop.index > 3
+                assign loading_strategy = 'lazy'
+              endif
+            -%}
+
+            <div id="block-{{ section.id }}-{{ block.id }}" class="text-with-icons__item snap-center" role="group" aria-label="{{ 'general.accessibility.item_nth_of_count' | t: index: forloop.index, count: section.blocks.size }}" {{ block.shopify_attributes }}>
+              {%- capture icon -%}
+                {%- if block.settings.custom_icon != blank -%}
+                  {%- capture sizes -%}{{ block.settings.icon_width }}px{%- endcapture -%}
+                  {%- capture widths -%}{{ block.settings.icon_width }}, {{ block.settings.icon_width | times: 2 | at_most: block.settings.custom_icon.width }}{%- endcapture -%}
+                  {%- capture style -%}--mobile-icon-max-width: {{ block.settings.mobile_icon_width }}px; --icon-max-width: {{ block.settings.icon_width }}px{%- endcapture -%}
+                  {{- block.settings.custom_icon | image_url: width: block.settings.custom_icon.width | image_tag: loading: loading_strategy, sizes: sizes, widths: widths, style: style, class: 'image-icon' -}}
+                {%- else -%}
+                  {%- render 'icon' with block.settings.icon, width: block.settings.mobile_icon_width, height: block.settings.mobile_icon_width, class: 'sm:hidden' -%}
+                  {%- render 'icon' with block.settings.icon, width: block.settings.icon_width, height: block.settings.icon_width, class: 'hidden sm:block' -%}
+                {%- endif -%}
+              {%- endcapture -%}
+
+              {%- if icon != blank -%}
+                {%- if block.settings.icon_background_type == 'none' -%}
+                  <div {% render 'surface', text_color: block.settings.icon_color %}>
+                    {{- icon -}}
+                  </div>
+                {%- else -%}
+                  {%- capture surface_class -%}icon-block {% if block.settings.icon_background_type == 'circle' %}rounded-full{% endif %}{%- endcapture -%}
+                  <div {% render 'surface', class: surface_class, background: block.settings.icon_background, text_color: block.settings.icon_color, background_fallback: 'bg-secondary' %}>
+                    {{- icon -}}
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
+
+              <div class="text-with-icons__text-wrapper">
+                <div class="prose">
+                  {%- if block.settings.title != blank -%}
+                    <p class="{{ section.settings.heading_tag }}">{{ block.settings.title | escape }}</p>
+                  {%- endif -%}
+
+                  {{- block.settings.content -}}
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </scroll-carousel>
+
+        {%- if section.blocks.size > 1 -%}
+          <page-dots aria-controls="carousel-{{ section.id }}" class="page-dots peer-not-scrollable:hidden">
+            {%- for index in (1..section.blocks.size) -%}
+              <button type="button" class="tap-area" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
+                <span class="sr-only">{{ 'general.accessibility.go_to_item' | t: index: index }}</span>
+              </button>
+            {%- endfor -%}
+          </page-dots>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "图标文字",
+  "class": "shopify-section--text-with-icons",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "图标文字",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "picto-coupon",
+              "label": "优惠券",
+              "group": "购物"
+            },
+            {
+              "value": "picto-percent",
+              "label": "百分比",
+              "group": "购物"
+            },
+            {
+              "value": "picto-gift",
+              "label": "礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-star",
+              "label": "星星",
+              "group": "购物"
+            },
+            {
+              "value": "picto-like",
+              "label": "点赞",
+              "group": "购物"
+            },
+            {
+              "value": "picto-building",
+              "label": "建筑",
+              "group": "购物"
+            },
+            {
+              "value": "picto-love",
+              "label": "爱心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-award-gift",
+              "label": "获奖礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-happy",
+              "label": "开心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子",
+              "group": "配送"
+            },
+            {
+              "value": "picto-pin",
+              "label": "图钉",
+              "group": "配送"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器",
+              "group": "配送"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证",
+              "group": "配送"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车",
+              "group": "配送"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货",
+              "group": "配送"
+            },
+            {
+              "value": "picto-earth",
+              "label": "地球",
+              "group": "配送"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机",
+              "group": "配送"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "信用卡",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "安全资料",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-money",
+              "label": "金钱",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "回收",
+              "group": "环保"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "叶子",
+              "group": "环保"
+            },
+            {
+              "value": "picto-tree",
+              "label": "树",
+              "group": "环保"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "手机",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-phone",
+              "label": "电话",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-chat",
+              "label": "聊天",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "客户支持",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-operator",
+              "label": "客服",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "邮箱箱",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-envelope",
+              "label": "信封",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-comment",
+              "label": "评论",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-send",
+              "label": "发送",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "@ 符号",
+              "group": "科技"
+            },
+            {
+              "value": "picto-camera",
+              "label": "相机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "WiFi",
+              "group": "科技"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "蓝牙",
+              "group": "科技"
+            },
+            {
+              "value": "picto-printer",
+              "label": "打印机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表",
+              "group": "科技"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "咖啡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-burger",
+              "label": "汉堡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-beer",
+              "label": "啤酒",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-target",
+              "label": "目标",
+              "group": "其他"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档",
+              "group": "其他"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "珠宝",
+              "group": "其他"
+            },
+            {
+              "value": "picto-music",
+              "label": "音乐",
+              "group": "其他"
+            },
+            {
+              "value": "picto-file",
+              "label": "文件",
+              "group": "其他"
+            },
+            {
+              "value": "picto-mask",
+              "label": "遮罩",
+              "group": "其他"
+            },
+            {
+              "value": "picto-stop",
+              "label": "停止",
+              "group": "其他"
+            }
+          ],
+          "default": "picto-coupon"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标",
+          "info": "建议使用 240 x 240px .png"
+        },
+        {
+          "type": "range",
+          "id": "mobile_icon_width",
+          "min": 24,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "label": "移动端图标宽度",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 24,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "label": "图标宽度",
+          "default": 32
+        },
+        {
+          "type": "select",
+          "id": "icon_background_type",
+          "label": "图标背景类型",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "square",
+              "label": "正方形"
+            },
+            {
+              "value": "circle",
+              "label": "圆形"
+            }
+          ],
+          "default": "circle"
+        },
+        {
+          "type": "color",
+          "id": "icon_background",
+          "label": "图标背景",
+          "visible_if": "{{ block.settings.icon_background_type != 'none' }}"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "图标颜色",
+          "visible_if": "{{ block.settings.custom_icon == blank }}"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Short content about your store</p>"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_on_mobile",
+      "label": "移动端堆叠",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题"
+    },
+    {
+      "type": "header",
+      "content": "项目"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "标题大小",
+      "options": [
+        {
+          "value": "h1",
+          "label": "特大"
+        },
+        {
+          "value": "h2",
+          "label": "大"
+        },
+        {
+          "value": "h3",
+          "label": "中"
+        },
+        {
+          "value": "h4",
+          "label": "小"
+        },
+        {
+          "value": "h5",
+          "label": "特小"
+        },
+        {
+          "value": "h6",
+          "label": "超小"
+        }
+      ],
+      "default": "h5"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "文本对齐方式（桌面端）",
+      "options": [
+        {
+          "value": "start",
+          "label": "左侧"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "icon_spacing",
+      "label": "图标间距",
+      "options": [
+        {
+          "value": "small",
+          "label": "小"
+        },
+        {
+          "value": "medium",
+          "label": "中"
+        },
+        {
+          "value": "large",
+          "label": "大"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "图标文字",
+      "category": "Trust & social proof",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "Free shipping",
+            "content": "<p>Free worldwide shipping and returns - customs and duties taxes included</p>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Customer service",
+            "content": "<p>We are available from monday to friday to answer your questions.</p>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Secure payment",
+            "content": "<p>Your payment information is processed securely.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

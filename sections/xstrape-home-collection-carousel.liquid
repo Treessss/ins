@@ -1,0 +1,351 @@
+{%- liquid
+  assign carousel_id = 'xstrape-series-carousel-' | append: section.id
+  assign products = section.settings.products
+  assign fallback_product_handles = section.settings.fallback_product_handles | newline_to_br | split: '<br />'
+  assign mobile_card_width = 'minmax(282px, 78vw)'
+  assign mobile_image_size = '78vw'
+
+  if products == blank and section.settings.collection != blank
+    assign products = section.settings.collection.products
+  endif
+
+	  if section.settings.products_per_row_mobile == '2'
+	    assign mobile_card_width = 'calc(50vw - 24px)'
+	    assign mobile_image_size = 'calc(50vw - 24px)'
+	  endif
+-%}
+
+<section
+  class="xstrape-home-scope xh-section xh-series-carousel xh-series-carousel--mobile-{{ section.settings.products_per_row_mobile }}"
+  style="--xh-page-bg: {{ section.settings.page_background | default: '#f3f3f3' }}; --xh-text: {{ section.settings.text_color | default: '#000000' }}; --xh-muted: {{ section.settings.muted_text_color | default: '#6c6c6c' }}; --xh-card-bg: {{ section.settings.card_background | default: '#f3f3f3' }}; --xh-series-columns: {{ section.settings.products_per_row_desktop | default: 5 }}; --xh-series-mobile-card: {{ mobile_card_width }};"
+>
+  <div class="xh-container">
+    <div class="xh-series-carousel__header">
+      <div>
+        {% if section.settings.kicker != blank %}
+          <p class="xh-eyebrow">{{ section.settings.kicker | escape }}</p>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="xh-heading">{{ section.settings.heading | escape }}</h2>
+        {% endif %}
+      </div>
+
+      {% if section.settings.link_text != blank %}
+        {%- liquid
+          assign link_url = section.settings.link_url
+          if link_url == blank and section.settings.collection != blank
+            assign link_url = section.settings.collection.url
+          endif
+        -%}
+        {% if link_url != blank %}
+          <a class="xh-series-carousel__link" href="{{ link_url }}">{{ section.settings.link_text | escape }}</a>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="xh-series-carousel__shell">
+      <button class="xh-series-carousel__arrow xh-series-carousel__arrow--prev" type="button" aria-label="Previous products" aria-controls="{{ carousel_id }}" disabled>
+        <span aria-hidden="true"></span>
+      </button>
+
+      <div id="{{ carousel_id }}" class="xh-series-carousel__track" tabindex="0">
+        {% if products != blank %}
+          {% for product in products limit: section.settings.products_count %}
+            <div class="xh-series-carousel__item">
+              {% render 'product-card',
+                product: product,
+                stacked: false,
+                position: forloop.index,
+	                background: section.settings.card_background,
+	                text_color: section.settings.card_text_color,
+	                show_badges: section.settings.show_badges,
+	                show_quick_buy: section.settings.enable_quick_buy,
+	                show_rating: false,
+	                show_vendor: false,
+	                show_secondary_image: section.settings.show_secondary_image,
+	                show_swatches: false,
+	                image_mobile_size: mobile_image_size,
+	                image_widths: '180,240,300,360,420,480',
+	                image_max_width: 480
+	              %}
+            </div>
+          {% endfor %}
+        {% else %}
+          {% assign fallback_products_rendered = 0 %}
+
+          {% for fallback_product_handle in fallback_product_handles %}
+            {% assign fallback_product_handle = fallback_product_handle | strip | split: '?' | first | split: '/products/' | last | split: '/' | last %}
+            {% assign fallback_product = all_products[fallback_product_handle] %}
+
+            {% if fallback_product != blank %}
+              {% assign fallback_products_rendered = fallback_products_rendered | plus: 1 %}
+              <div class="xh-series-carousel__item">
+                {% render 'product-card',
+                  product: fallback_product,
+                  stacked: false,
+                  position: fallback_products_rendered,
+	                  background: section.settings.card_background,
+	                  text_color: section.settings.card_text_color,
+	                  show_badges: section.settings.show_badges,
+	                  show_quick_buy: section.settings.enable_quick_buy,
+	                  show_rating: false,
+	                  show_vendor: false,
+	                  show_secondary_image: section.settings.show_secondary_image,
+	                  show_swatches: false,
+	                  image_mobile_size: mobile_image_size,
+	                  image_widths: '180,240,300,360,420,480',
+	                  image_max_width: 480
+	                %}
+              </div>
+            {% endif %}
+
+            {% if fallback_products_rendered >= section.settings.products_count %}
+              {% break %}
+            {% endif %}
+          {% endfor %}
+
+          {% if fallback_products_rendered == 0 %}
+            {% for i in (1..section.settings.products_count) %}
+              <div class="xh-series-carousel__item">
+                {% capture placeholder_image %}product-{% cycle '1', '2', '3', '4', '5', '6' %}{% endcapture %}
+                {% render 'product-card-placeholder',
+                  placeholder_image: placeholder_image,
+                  stacked: false,
+                  background: section.settings.card_background,
+                  text_color: section.settings.card_text_color,
+                  text_alignment: 'left'
+                %}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <button class="xh-series-carousel__arrow xh-series-carousel__arrow--next" type="button" aria-label="Next products" aria-controls="{{ carousel_id }}">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  (() => {
+    const section = document.currentScript.closest('.shopify-section');
+    if (!section) return;
+
+    const track = section.querySelector('.xh-series-carousel__track');
+    const prev = section.querySelector('.xh-series-carousel__arrow--prev');
+    const next = section.querySelector('.xh-series-carousel__arrow--next');
+    if (!track || !prev || !next) return;
+
+    let step = 0;
+    let maxScroll = 0;
+    let measureFrame = 0;
+    let buttonFrame = 0;
+
+    const measure = () => {
+      const item = track.querySelector('.xh-series-carousel__item');
+      const trackWidth = track.clientWidth;
+
+      if (!item) {
+        step = trackWidth * 0.8;
+      } else {
+        const styles = getComputedStyle(track);
+        const gap = parseFloat(styles.columnGap || styles.gap || 0);
+        step = item.getBoundingClientRect().width + gap;
+      }
+
+      maxScroll = Math.max(track.scrollWidth - trackWidth - 2, 0);
+    };
+
+    const updateButtons = () => {
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= maxScroll;
+    };
+
+    const scheduleButtonUpdate = () => {
+      if (buttonFrame) return;
+      buttonFrame = requestAnimationFrame(() => {
+        buttonFrame = 0;
+        updateButtons();
+      });
+    };
+
+    const scheduleMeasure = () => {
+      if (measureFrame) return;
+      measureFrame = requestAnimationFrame(() => {
+        measureFrame = 0;
+        measure();
+        scheduleButtonUpdate();
+      });
+    };
+
+    const getStep = () => {
+      if (!step) measure();
+      return step || track.clientWidth * 0.8;
+    };
+
+    prev.addEventListener('click', () => track.scrollBy({ left: -getStep(), behavior: 'smooth' }));
+    next.addEventListener('click', () => track.scrollBy({ left: getStep(), behavior: 'smooth' }));
+    track.addEventListener('scroll', scheduleButtonUpdate, { passive: true });
+    window.addEventListener('resize', scheduleMeasure, { passive: true });
+
+    if ('ResizeObserver' in window) {
+      const resizeObserver = new ResizeObserver(scheduleMeasure);
+      resizeObserver.observe(track);
+    }
+
+    scheduleMeasure();
+
+    document.addEventListener('shopify:section:load', (event) => {
+      if (event.target === section) scheduleMeasure();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "系列产品轮播",
+  "class": "shopify-section--xstrape-series-carousel",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "小标题"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "Shop the Collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "商品系列"
+    },
+    {
+      "type": "product_list",
+      "id": "products",
+      "label": "手动选择商品",
+      "info": "选择后会覆盖上面的商品系列。"
+    },
+    {
+      "type": "textarea",
+      "id": "fallback_product_handles",
+      "label": "默认商品 Handle 列表",
+      "info": "每行一个商品 handle（句柄）。未选择商品或系列为空时，会用这里的商品兜底显示。"
+    },
+    {
+      "type": "range",
+      "id": "products_count",
+      "label": "显示商品数量",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "移动端每行商品数",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "label": "桌面端每屏商品数",
+      "min": 3,
+      "max": 6,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "查看全部文字",
+      "default": "Shop All"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "查看全部链接",
+      "info": "留空时使用所选商品系列链接。"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_quick_buy",
+      "label": "启用快捷购物车",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "显示商品标签",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "显示评分",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "悬停显示第二张图",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "颜色"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "背景",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "次要文字",
+      "default": "#6c6c6c"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "商品卡图片背景",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "商品卡文字",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "系列产品轮播"
+    }
+  ]
+}
+{% endschema %}

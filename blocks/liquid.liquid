@@ -1,0 +1,26 @@
+{%- if block.settings.liquid != blank -%}
+  <div class="liquid" {{ block.shopify_attributes }}>
+    {{- block.settings.liquid -}}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Liquid 代码",
+  "tag": null,
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "liquid",
+      "label": "Liquid 代码",
+      "info": "添加应用片段或其他 Liquid 代码来创建高级自定义。",
+      "default": "<p>Write some Liquid code.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Liquid 代码"
+    }
+  ]
+}
+{% endschema %}

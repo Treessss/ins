@@ -1,0 +1,1146 @@
+{%- liquid
+  assign is_xstrape_about_page = false
+  if section.settings.enable_about_layout or page.handle == 'about-us' or page.handle == 'about'
+    assign is_xstrape_about_page = true
+  endif
+
+  assign about_shop_url = section.settings.about_primary_button_link | default: routes.all_products_collection_url
+  assign about_contact_url = section.settings.about_secondary_button_link | default: pages.contact.url | default: routes.root_url
+  assign about_cta_primary_url = section.settings.about_cta_primary_button_link | default: about_shop_url
+  assign about_cta_secondary_url = section.settings.about_cta_secondary_button_link | default: about_contact_url
+  assign about_hero_image = section.settings.about_hero_image
+  assign about_hero_mobile_image = section.settings.about_hero_mobile_image
+  assign about_hero_alt = section.settings.about_hero_image_alt | default: 'Pet exploring an xstrapetm enrichment toy'
+  assign about_material_image_1 = section.settings.about_material_image_1
+  assign about_material_image_2 = section.settings.about_material_image_2
+  assign about_material_image_3 = section.settings.about_material_image_3
+  assign about_material_alt_1 = section.settings.about_material_image_1_alt | default: 'Close view of an engaging pet toy texture'
+  assign about_material_alt_2 = section.settings.about_material_image_2_alt | default: 'Natural pet toy material detail'
+  assign about_material_alt_3 = section.settings.about_material_image_3_alt | default: 'Pet enrichment product construction detail'
+  assign about_stat_blocks = section.blocks | where: 'type', 'stat'
+  assign about_value_blocks = section.blocks | where: 'type', 'value'
+  assign about_step_blocks = section.blocks | where: 'type', 'step'
+  assign about_collection_blocks = section.blocks | where: 'type', 'collection_card'
+
+  if about_hero_image == blank
+    assign about_hero_image = images['xstrapetm-crinkle-cat-hideout-09-lifestyle.png']
+  endif
+
+  if about_hero_mobile_image == blank
+    assign about_hero_mobile_image = about_hero_image
+  endif
+
+  if about_material_image_1 == blank
+    assign about_material_image_1 = images['xstrapetm-cotton-cat-rope-03-materials.png']
+  endif
+
+  if about_material_image_2 == blank
+    assign about_material_image_2 = images['xstrapetm-sisal-cat-kicker-03-materials.png']
+  endif
+
+  if about_material_image_3 == blank
+    assign about_material_image_3 = images['xstrapetm-crinkle-cat-hideout-05-construction.png']
+  endif
+
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --page-max-width: {{ section.settings.content_width }};
+  }
+
+  {%- if is_xstrape_about_page -%}
+    #shopify-section-{{ section.id }} {
+      --xstrape-about-bg: #f2f9ed;
+      --xstrape-about-ink: #17132f;
+      --xstrape-about-muted: rgb(23 19 47 / 0.66);
+      --xstrape-about-soft: #fbfff7;
+      --xstrape-about-line: rgb(23 19 47 / 0.12);
+      --xstrape-about-accent: #ff4f88;
+      background: var(--xstrape-about-bg);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about {
+      overflow: hidden;
+      background: var(--xstrape-about-bg);
+      color: var(--xstrape-about-ink);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__hero {
+      position: relative;
+      display: flex;
+      align-items: end;
+      min-height: 620px;
+      overflow: hidden;
+      background: #17132f;
+      color: #f2f9ed;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__hero-media,
+    #shopify-section-{{ section.id }} .xstrape-about__hero-media img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__hero-media img {
+      object-fit: cover;
+      object-position: center;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgb(0 0 0 / 0.72), rgb(0 0 0 / 0.18) 58%, rgb(0 0 0 / 0.04)),
+        linear-gradient(0deg, rgb(0 0 0 / 0.48), rgb(0 0 0 / 0.02) 54%);
+      pointer-events: none;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(1440px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 130px 0 72px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__eyebrow {
+      margin: 0 0 16px;
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__hero-title {
+      max-width: 720px;
+      margin: 0;
+      color: inherit;
+      font-size: 82px;
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: 0;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__hero-text {
+      max-width: 560px;
+      margin: 22px 0 0;
+      color: rgb(255 255 255 / 0.82);
+      font-size: 19px;
+      font-weight: 650;
+      line-height: 1.45;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__hero-actions,
+    #shopify-section-{{ section.id }} .xstrape-about__cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 22px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: #dfff32;
+      color: #17132f;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__button:hover {
+      transform: translateY(-1px);
+      background: #ff4f88;
+      color: #17132f;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__button--ghost {
+      border-color: rgb(255 255 255 / 0.45);
+      background: rgb(255 255 255 / 0.12);
+      color: #f2f9ed;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__button--ghost:hover {
+      border-color: #f2f9ed;
+      background: #f2f9ed;
+      color: #17132f;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__section {
+      width: min(1440px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 78px 0;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__intro {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 56px;
+      align-items: start;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__kicker {
+      margin: 0 0 12px;
+      color: var(--xstrape-about-accent);
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__heading {
+      margin: 0;
+      color: var(--xstrape-about-ink);
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__body {
+      color: var(--xstrape-about-muted);
+      font-size: 17px;
+      line-height: 1.68;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__body > *:first-child {
+      margin-top: 0;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__stat,
+    #shopify-section-{{ section.id }} .xstrape-about__value,
+    #shopify-section-{{ section.id }} .xstrape-about__collection-card {
+      border: 1px solid var(--xstrape-about-line);
+      border-radius: 8px;
+      background: var(--xstrape-about-soft);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__stat {
+      min-height: 128px;
+      padding: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__stat-number {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--xstrape-about-ink);
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__stat-label {
+      display: block;
+      color: var(--xstrape-about-muted);
+      font-size: 13px;
+      font-weight: 760;
+      line-height: 1.35;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__image-row {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr 0.85fr;
+      gap: 12px;
+      padding-top: 0;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__image-tile {
+      position: relative;
+      min-height: 430px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #ddd;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__image-tile--small {
+      min-height: 360px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__image-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__values {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding-top: 0;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__value {
+      min-height: 240px;
+      padding: 28px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__value-index {
+      display: block;
+      margin-bottom: 54px;
+      color: var(--xstrape-about-muted);
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__value-title {
+      margin: 0 0 12px;
+      color: var(--xstrape-about-ink);
+      font-size: 25px;
+      font-weight: 900;
+      line-height: 1.05;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__value-text {
+      margin: 0;
+      color: var(--xstrape-about-muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__craft {
+      background: #17132f;
+      color: #f2f9ed;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__craft-inner {
+      width: min(1440px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 86px 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 62px;
+      align-items: start;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__craft .xstrape-about__kicker {
+      color: #dfff32;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__craft .xstrape-about__heading {
+      color: #f2f9ed;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__steps {
+      display: grid;
+      gap: 0;
+      border-top: 1px solid rgb(255 255 255 / 0.16);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__step {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr);
+      gap: 20px;
+      padding: 26px 0;
+      border-bottom: 1px solid rgb(255 255 255 / 0.16);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__step-number {
+      color: rgb(255 255 255 / 0.48);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__step-title {
+      margin: 0 0 8px;
+      color: #f2f9ed;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__step-text {
+      margin: 0;
+      color: rgb(255 255 255 / 0.68);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collections {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collection-card {
+      display: grid;
+      overflow: hidden;
+      color: inherit;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collection-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 42px rgb(0 0 0 / 0.08);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collection-media {
+      aspect-ratio: 1.22;
+      overflow: hidden;
+      background: #ddd;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collection-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collection-card:hover img {
+      transform: scale(1.035);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collection-body {
+      min-height: 142px;
+      padding: 22px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collection-title {
+      margin: 0 0 8px;
+      color: var(--xstrape-about-ink);
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.08;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__collection-text {
+      margin: 0;
+      color: var(--xstrape-about-muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__cta {
+      width: min(1440px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 0 0 90px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__cta-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 32px;
+      align-items: center;
+      min-height: 250px;
+      padding: 38px;
+      border-radius: 8px;
+      background: #fbfff7;
+      border: 1px solid var(--xstrape-about-line);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__cta .xstrape-about__button {
+      background: #dfff32;
+      color: #17132f;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__cta .xstrape-about__button:hover {
+      background: var(--xstrape-about-accent);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__cta .xstrape-about__button--ghost {
+      border-color: var(--xstrape-about-line);
+      background: transparent;
+      color: #17132f;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-about__cta .xstrape-about__button--ghost:hover {
+      border-color: #ff4f88;
+      background: #ff4f88;
+      color: #17132f;
+    }
+
+    @media screen and (max-width: 989px) {
+      #shopify-section-{{ section.id }} .xstrape-about__hero {
+        min-height: 560px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__hero-inner,
+      #shopify-section-{{ section.id }} .xstrape-about__section,
+      #shopify-section-{{ section.id }} .xstrape-about__craft-inner,
+      #shopify-section-{{ section.id }} .xstrape-about__cta {
+        width: min(100% - 32px, 720px);
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__hero-inner {
+        padding: 100px 0 54px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__hero-title {
+        font-size: 58px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__intro,
+      #shopify-section-{{ section.id }} .xstrape-about__craft-inner,
+      #shopify-section-{{ section.id }} .xstrape-about__cta-inner {
+        grid-template-columns: 1fr;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__heading {
+        font-size: 40px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__image-row,
+      #shopify-section-{{ section.id }} .xstrape-about__values,
+      #shopify-section-{{ section.id }} .xstrape-about__collections {
+        grid-template-columns: 1fr;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__image-tile,
+      #shopify-section-{{ section.id }} .xstrape-about__image-tile--small {
+        min-height: auto;
+        aspect-ratio: 1.12;
+      }
+    }
+
+    @media screen and (max-width: 699px) {
+      #shopify-section-{{ section.id }} .xstrape-about__hero {
+        min-height: 520px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__hero-title {
+        font-size: 43px;
+        line-height: 0.96;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__hero-text {
+        font-size: 16px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__section {
+        padding: 56px 0;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__heading {
+        font-size: 34px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__body {
+        font-size: 16px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__stats {
+        grid-template-columns: 1fr;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__stat {
+        min-height: 104px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__value {
+        min-height: 210px;
+        padding: 24px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__value-index {
+        margin-bottom: 38px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__craft-inner {
+        padding: 64px 0;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__step {
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__cta {
+        padding-bottom: 64px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__cta-inner {
+        min-height: 0;
+        padding: 26px;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__hero-actions,
+      #shopify-section-{{ section.id }} .xstrape-about__cta-actions {
+        flex-direction: column;
+      }
+
+      #shopify-section-{{ section.id }} .xstrape-about__button {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #shopify-section-{{ section.id }} .xstrape-about__button,
+      #shopify-section-{{ section.id }} .xstrape-about__collection-card,
+      #shopify-section-{{ section.id }} .xstrape-about__collection-media img {
+        transition: none;
+      }
+    }
+  {%- endif -%}
+</style>
+
+{%- if is_xstrape_about_page -%}
+  <section class="xstrape-about" aria-labelledby="xstrape-about-title">
+    <div class="xstrape-about__hero">
+      <picture class="xstrape-about__hero-media">
+        {%- if about_hero_mobile_image != blank -%}
+          <source
+            media="(max-width: 699px)"
+            srcset="{{ about_hero_mobile_image | image_url: width: 700 }} 700w, {{ about_hero_mobile_image | image_url: width: 1000 }} 1000w, {{ about_hero_mobile_image | image_url: width: 1400 }} 1400w"
+          >
+        {%- endif -%}
+
+        {%- if about_hero_image != blank -%}
+          {{
+            about_hero_image
+            | image_url: width: 2400
+            | image_tag: loading: 'eager', fetchpriority: 'high', widths: '900,1200,1600,2000,2400', sizes: '100vw', alt: about_hero_alt
+          }}
+        {%- endif -%}
+      </picture>
+      <div class="xstrape-about__hero-inner">
+        {%- if section.settings.about_hero_eyebrow != blank -%}
+          <p class="xstrape-about__eyebrow">{{ section.settings.about_hero_eyebrow | escape }}</p>
+        {%- endif -%}
+        <h1 id="xstrape-about-title" class="xstrape-about__hero-title">{{ section.settings.about_hero_title | default: page.title | escape }}</h1>
+        {%- if section.settings.about_hero_text != blank -%}
+          <p class="xstrape-about__hero-text">{{ section.settings.about_hero_text | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.about_primary_button_text != blank or section.settings.about_secondary_button_text != blank -%}
+          <div class="xstrape-about__hero-actions">
+            {%- if section.settings.about_primary_button_text != blank -%}
+              <a class="xstrape-about__button" href="{{ about_shop_url }}">{{ section.settings.about_primary_button_text | escape }}</a>
+            {%- endif -%}
+            {%- if section.settings.about_secondary_button_text != blank -%}
+              <a class="xstrape-about__button xstrape-about__button--ghost" href="{{ about_contact_url }}">{{ section.settings.about_secondary_button_text | escape }}</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="xstrape-about__section xstrape-about__intro">
+      <div>
+        {%- if section.settings.about_intro_kicker != blank -%}
+          <p class="xstrape-about__kicker">{{ section.settings.about_intro_kicker | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.about_intro_heading != blank -%}
+          <h2 class="xstrape-about__heading">{{ section.settings.about_intro_heading | escape }}</h2>
+        {%- endif -%}
+      </div>
+      <div>
+        <div class="xstrape-about__body prose">
+          {%- if section.settings.about_intro_body != blank -%}
+            {{ section.settings.about_intro_body }}
+          {%- elsif page.content != empty -%}
+            {{ page.content }}
+          {%- else -%}
+            <p>Xstrapetm was built around a simple idea: good pet products should make everyday play easier to understand and more rewarding to share.</p>
+            <p>We focus on natural behaviors, engaging textures, practical care, and clear guidance for real pets, real homes, and better time together.</p>
+          {%- endif -%}
+        </div>
+
+        {%- if about_stat_blocks.size > 0 -%}
+          <div class="xstrape-about__stats" aria-label="品牌亮点">
+            {%- for block in about_stat_blocks -%}
+              <div class="xstrape-about__stat" {{ block.shopify_attributes }}>
+                <span class="xstrape-about__stat-number">{{ block.settings.number | escape }}</span>
+                <span class="xstrape-about__stat-label">{{ block.settings.text | escape }}</span>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="xstrape-about__section xstrape-about__image-row" aria-label="Xstrapetm materials and play details">
+      <div class="xstrape-about__image-tile">
+        {%- if about_material_image_1 != blank -%}
+          {{
+            about_material_image_1
+            | image_url: width: 1400
+            | image_tag: loading: 'lazy', widths: '700,900,1100,1400', sizes: '(max-width: 989px) calc(100vw - 32px), 42vw', alt: about_material_alt_1
+          }}
+        {%- endif -%}
+      </div>
+      <div class="xstrape-about__image-tile xstrape-about__image-tile--small">
+        {%- if about_material_image_2 != blank -%}
+          {{
+            about_material_image_2
+            | image_url: width: 1100
+            | image_tag: loading: 'lazy', widths: '500,700,900,1100', sizes: '(max-width: 989px) calc(100vw - 32px), 29vw', alt: about_material_alt_2
+          }}
+        {%- endif -%}
+      </div>
+      <div class="xstrape-about__image-tile xstrape-about__image-tile--small">
+        {%- if about_material_image_3 != blank -%}
+          {{
+            about_material_image_3
+            | image_url: width: 1100
+            | image_tag: loading: 'lazy', widths: '500,700,900,1100', sizes: '(max-width: 989px) calc(100vw - 32px), 29vw', alt: about_material_alt_3
+          }}
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if about_value_blocks.size > 0 -%}
+      <div class="xstrape-about__section xstrape-about__values">
+        {%- for block in about_value_blocks -%}
+          <article class="xstrape-about__value" {{ block.shopify_attributes }}>
+            <span class="xstrape-about__value-index">{{ block.settings.index | escape }}</span>
+            <h3 class="xstrape-about__value-title">{{ block.settings.title | escape }}</h3>
+            <p class="xstrape-about__value-text">{{ block.settings.text | escape }}</p>
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="xstrape-about__craft">
+      <div class="xstrape-about__craft-inner">
+        <div>
+          {%- if section.settings.about_process_kicker != blank -%}
+            <p class="xstrape-about__kicker">{{ section.settings.about_process_kicker | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.about_process_heading != blank -%}
+            <h2 class="xstrape-about__heading">{{ section.settings.about_process_heading | escape }}</h2>
+          {%- endif -%}
+        </div>
+        {%- if about_step_blocks.size > 0 -%}
+          <div class="xstrape-about__steps">
+            {%- for block in about_step_blocks -%}
+              <div class="xstrape-about__step" {{ block.shopify_attributes }}>
+                <span class="xstrape-about__step-number">{{ block.settings.number | escape }}</span>
+                <div>
+                  <h3 class="xstrape-about__step-title">{{ block.settings.title | escape }}</h3>
+                  <p class="xstrape-about__step-text">{{ block.settings.text | escape }}</p>
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="xstrape-about__section">
+      {%- if section.settings.about_collection_kicker != blank -%}
+        <p class="xstrape-about__kicker">{{ section.settings.about_collection_kicker | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.about_collection_heading != blank -%}
+        <h2 class="xstrape-about__heading">{{ section.settings.about_collection_heading | escape }}</h2>
+      {%- endif -%}
+      {%- if about_collection_blocks.size > 0 -%}
+        <div class="xstrape-about__collections">
+          {%- for block in about_collection_blocks -%}
+            {%- liquid
+              assign collection_card_image = block.settings.image
+              assign collection_card_url = block.settings.link | default: about_shop_url
+            -%}
+            <a class="xstrape-about__collection-card" href="{{ collection_card_url }}" {{ block.shopify_attributes }}>
+              <span class="xstrape-about__collection-media">
+                {%- if collection_card_image != blank -%}
+                  {{
+                    collection_card_image
+                    | image_url: width: 1100
+                    | image_tag: loading: 'lazy', widths: '500,700,900,1100', sizes: '(max-width: 989px) calc(100vw - 32px), 32vw', alt: block.settings.image_alt
+                  }}
+                {%- endif -%}
+              </span>
+              <span class="xstrape-about__collection-body">
+                <span class="xstrape-about__collection-title">{{ block.settings.title | escape }}</span>
+                <span class="xstrape-about__collection-text">{{ block.settings.text | escape }}</span>
+              </span>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="xstrape-about__cta">
+      <div class="xstrape-about__cta-inner">
+        <div>
+          {%- if section.settings.about_cta_kicker != blank -%}
+            <p class="xstrape-about__kicker">{{ section.settings.about_cta_kicker | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.about_cta_heading != blank -%}
+            <h2 class="xstrape-about__heading">{{ section.settings.about_cta_heading | escape }}</h2>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.about_cta_primary_button_text != blank or section.settings.about_cta_secondary_button_text != blank -%}
+          <div class="xstrape-about__cta-actions">
+            {%- if section.settings.about_cta_primary_button_text != blank -%}
+              <a class="xstrape-about__button" href="{{ about_cta_primary_url }}">{{ section.settings.about_cta_primary_button_text | escape }}</a>
+            {%- endif -%}
+            {%- if section.settings.about_cta_secondary_button_text != blank -%}
+              <a class="xstrape-about__button xstrape-about__button--ghost" href="{{ about_cta_secondary_url }}">{{ section.settings.about_cta_secondary_button_text | escape }}</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+{%- else -%}
+  <div class="container">
+    <div class="page-spacer">
+      <div class="page">
+        <h1 class="h1 text-center">{{ page.title }}</h1>
+
+        {%- if page.content != empty -%}
+          <div class="prose">
+            {{ page.content }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "页面",
+  "class": "shopify-section--main-page",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_about_layout",
+      "label": "启用关于我们装饰布局",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "内容宽度",
+      "options": [
+        {
+          "value": "60ch",
+          "label": "小"
+        },
+        {
+          "value": "80ch",
+          "label": "中"
+        },
+        {
+          "value": "100ch",
+          "label": "大"
+        },
+        {
+          "value": "120ch",
+          "label": "特大"
+        },
+        {
+          "value": "100%",
+          "label": "全宽"
+        }
+      ],
+      "default": "80ch"
+    },
+    {
+      "type": "header",
+      "content": "关于我们顶部横幅"
+    },
+    {
+      "type": "image_picker",
+      "id": "about_hero_image",
+      "label": "顶部横幅桌面图片"
+    },
+    {
+      "type": "image_picker",
+      "id": "about_hero_mobile_image",
+      "label": "顶部横幅移动端图片"
+    },
+    {
+      "type": "text",
+      "id": "about_hero_image_alt",
+      "label": "顶部图片替代文字",
+      "default": "Pet exploring an xstrapetm enrichment toy"
+    },
+    {
+      "type": "text",
+      "id": "about_hero_eyebrow",
+      "label": "顶部小标题",
+      "default": "About XSTRAPETM"
+    },
+    {
+      "type": "text",
+      "id": "about_hero_title",
+      "label": "顶部主标题"
+    },
+    {
+      "type": "textarea",
+      "id": "about_hero_text",
+      "label": "顶部描述",
+      "default": "We create playful, practical essentials inspired by the ways dogs and cats naturally move, explore, and unwind."
+    },
+    {
+      "type": "text",
+      "id": "about_primary_button_text",
+      "label": "顶部主按钮文字",
+      "default": "Shop all pet favorites"
+    },
+    {
+      "type": "url",
+      "id": "about_primary_button_link",
+      "label": "顶部主按钮链接"
+    },
+    {
+      "type": "text",
+      "id": "about_secondary_button_text",
+      "label": "顶部次按钮文字",
+      "default": "Contact us"
+    },
+    {
+      "type": "url",
+      "id": "about_secondary_button_link",
+      "label": "顶部次按钮链接"
+    },
+    {
+      "type": "header",
+      "content": "关于我们简介"
+    },
+    {
+      "type": "text",
+      "id": "about_intro_kicker",
+      "label": "简介小标题",
+      "default": "Our point of view"
+    },
+    {
+      "type": "text",
+      "id": "about_intro_heading",
+      "label": "简介标题",
+      "default": "Everyday enrichment should feel easy."
+    },
+    {
+      "type": "richtext",
+      "id": "about_intro_body",
+      "label": "简介正文",
+      "default": "<p>Xstrapetm was built around a simple idea: good pet products should make everyday play easier to understand and more rewarding to share.</p><p>We focus on natural behaviors, engaging textures, practical care, and clear guidance for real pets, real homes, and better time together.</p>"
+    },
+    {
+      "type": "header",
+      "content": "关于我们材质图片"
+    },
+    {
+      "type": "image_picker",
+      "id": "about_material_image_1",
+      "label": "材质图片区大图"
+    },
+    {
+      "type": "image_picker",
+      "id": "about_material_image_2",
+      "label": "材质图片区图片 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "about_material_image_3",
+      "label": "材质图片区图片 3"
+    },
+    {
+      "type": "text",
+      "id": "about_material_image_1_alt",
+      "label": "材质大图替代文字",
+      "default": "Close view of an engaging pet toy texture"
+    },
+    {
+      "type": "text",
+      "id": "about_material_image_2_alt",
+      "label": "材质图片 2 替代文字",
+      "default": "Natural pet toy material detail"
+    },
+    {
+      "type": "text",
+      "id": "about_material_image_3_alt",
+      "label": "材质图片 3 替代文字",
+      "default": "Pet enrichment product construction detail"
+    },
+    {
+      "type": "header",
+      "content": "关于我们选择流程"
+    },
+    {
+      "type": "text",
+      "id": "about_process_kicker",
+      "label": "流程小标题",
+      "default": "How we choose"
+    },
+    {
+      "type": "text",
+      "id": "about_process_heading",
+      "label": "流程标题",
+      "default": "Every product starts with a real behavior."
+    },
+    {
+      "type": "header",
+      "content": "关于我们系列卡片"
+    },
+    {
+      "type": "text",
+      "id": "about_collection_kicker",
+      "label": "系列区小标题",
+      "default": "Explore by play style"
+    },
+    {
+      "type": "text",
+      "id": "about_collection_heading",
+      "label": "系列区标题",
+      "default": "Find the kind of fun that fits their day."
+    },
+    {
+      "type": "header",
+      "content": "关于我们底部行动区"
+    },
+    {
+      "type": "text",
+      "id": "about_cta_kicker",
+      "label": "底部小标题",
+      "default": "Need help choosing?"
+    },
+    {
+      "type": "text",
+      "id": "about_cta_heading",
+      "label": "底部标题",
+      "default": "Tell us how your pet likes to play—we’ll help narrow it down."
+    },
+    {
+      "type": "text",
+      "id": "about_cta_primary_button_text",
+      "label": "底部主按钮文字",
+      "default": "Shop all pet favorites"
+    },
+    {
+      "type": "url",
+      "id": "about_cta_primary_button_link",
+      "label": "底部主按钮链接"
+    },
+    {
+      "type": "text",
+      "id": "about_cta_secondary_button_text",
+      "label": "底部次按钮文字",
+      "default": "Ask a question"
+    },
+    {
+      "type": "url",
+      "id": "about_cta_secondary_button_link",
+      "label": "底部次按钮链接"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "统计卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "数字或编号",
+          "default": "01"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "说明文字",
+          "default": "Designed around natural play, everyday enrichment, and easy routines."
+        }
+      ]
+    },
+    {
+      "type": "value",
+      "name": "价值卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "index",
+          "label": "编号",
+          "default": "01"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Play with purpose"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "描述",
+          "default": "Every product starts with a real pet behavior—from chewing and chasing to hiding and settling in."
+        }
+      ]
+    },
+    {
+      "type": "step",
+      "name": "流程步骤",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "步骤编号",
+          "default": "01"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "步骤标题",
+          "default": "Watch how pets play"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "步骤描述",
+          "default": "We begin with instinctive behaviors such as pawing, pouncing, kicking, sniffing, and resting."
+        }
+      ]
+    },
+    {
+      "type": "collection_card",
+      "name": "系列卡片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "图片替代文字",
+          "default": "Pet enrichment toy shown in use"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Chew & Explore"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "描述",
+          "default": "Tactile toys for curious mouths, busy paws, and everyday discovery."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

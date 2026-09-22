@@ -1,0 +1,286 @@
+{%- if section.blocks.size > 0 -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      --testimonial-list-items-per-row: 1;
+      --testimonial-list-carousel-item-width: 74vw;
+
+      --testimonial-list-grid: {% if section.settings.stack_testimonials %}auto / repeat(var(--testimonial-list-items-per-row), minmax(0, 1fr)){% else %}auto / auto-flow var(--testimonial-list-carousel-item-width){% endif %};
+    }
+
+    #shopify-section-{{ section.id }} .scrollbar {
+      {%- assign controls_color = section.settings.text_color | default: section.settings.heading_color | default: settings.text_color -%}
+      --text-color: {{ controls_color.rgb }};
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} {
+        --testimonial-list-items-per-row: 2;
+        --testimonial-list-carousel-item-width: 52vw;
+      }
+    }
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} {
+        --testimonial-list-carousel-item-width: 36vw;
+      }
+    }
+
+    @media screen and (min-width: 1150px) {
+      #shopify-section-{{ section.id }} {
+        --testimonial-list-items-per-row: 3;
+        --testimonial-list-carousel-item-width: calc(100% / 3 - (var(--grid-gutter) / 3 * 2));
+      }
+    }
+  </style>
+
+  <div {% render 'section-properties' %}>
+    <div class="section-stack">
+      {%- render 'section-header', subheading: section.settings.subheading, heading: section.settings.title, heading_color: section.settings.heading_color, heading_gradient: section.settings.heading_gradient, content: section.settings.content, link_text: section.settings.link_text, link_url: section.settings.link_url -%}
+
+      <div class="scrollable-with-controls">
+        {%- assign scroll_area_id = 'scroll-area-' | append: section.id -%}
+
+        <scroll-carousel id="{{ scroll_area_id }}" class="testimonial-list scroll-area bleed {% if section.blocks.size > 3 %}is-scrollable{% endif %}">
+          {%- for block in section.blocks -%}
+            <div {% render 'surface', class: 'testimonial rounded-sm', background: section.settings.testimonial_card_background, text_color: section.settings.testimonial_card_text_color, background_fallback: 'bg-secondary' %} {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank or block.settings.author != blank or block.settings.show_rating -%}
+                {%- liquid
+                  assign loading_strategy = nil
+        
+                  if section.index > 3 or forloop.index > 3
+                    assign loading_strategy = 'lazy'
+                  endif
+                -%}
+
+                <div class="h-stack align-start gap-4 sm:gap-6">
+                  {%- if block.settings.image != blank -%}
+                    {%- capture image_class -%}testimonial__image {% if block.settings.round_avatar %}rounded-full{% endif %}{%- endcapture -%}
+                    {{- block.settings.image | image_url: width: block.settings.image.width | image_tag: loading: loading_strategy, sizes: '(max-width: 699px) 40px, 56px', widths: '40,56,80,112,120,168', class: image_class -}}
+                  {%- endif -%}
+
+                  <div class="v-stack gap-2 sm:gap-2.5">
+                    {%- if block.settings.show_rating -%}
+                      <div class="rating">
+                        <div class="rating__stars" role="img" aria-label="{{ 'general.rating.info' | t: rating_value: block.settings.rating, rating_max: 5 }}">
+                          {%- for i in (1..5) -%}
+                            {%- if i <= block.settings.rating -%}
+                              {%- render 'icon' with 'rating-star', class: 'rating__star rating__star--full' -%}
+                            {%- else -%}
+                              {%- render 'icon' with 'rating-star', class: 'rating__star rating__star--empty' -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </div>
+                      </div>
+                    {%- endif -%}
+
+                    {%- if block.settings.author != blank -%}
+                      <p class="text-subdued">{{ block.settings.author | escape }}</p>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.title != blank or block.settings.content != blank -%}
+                <div class="v-stack gap-2 sm:gap-2.5">
+                  {%- if block.settings.title != blank -%}
+                    <p class="bold">{{ block.settings.title | escape }}</p>
+                  {%- endif -%}
+
+                  {{- block.settings.content -}}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </scroll-carousel>
+
+        {%- unless section.settings.stack_testimonials -%}
+          {%- assign default_progress = 3.0 | divided_by: section.blocks.size -%}
+          {%- render 'scrollbar', observes: scroll_area_id, default_progress: default_progress, show_buttons: true -%}
+        {%- endunless -%}
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "客户评价",
+  "class": "shopify-section--testimonials",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "tag": "section",
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "客户评价",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "头像",
+          "info": "建议使用 250 x 250px .jpg"
+        },
+        {
+          "type": "checkbox",
+          "id": "round_avatar",
+          "label": "圆形头像",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_rating",
+          "label": "显示评分",
+          "default": true
+        },
+        {
+          "type": "range",
+          "min": 0,
+          "max": 5,
+          "id": "rating",
+          "label": "评分",
+          "default": 4,
+          "visible_if": "{{ block.settings.show_rating }}"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "作者"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Testimonial"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Share what your customers are saying about your products, customer service or shipping rates.</p>"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_testimonials",
+      "label": "堆叠客户评价",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "副标题"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Testimonials"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "内容"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "链接网址"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "链接文本"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    },
+    {
+      "type": "color",
+      "id": "testimonial_card_background",
+      "label": "评价卡片背景"
+    },
+    {
+      "type": "color",
+      "id": "testimonial_card_text_color",
+      "label": "评价卡片文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "客户评价",
+      "category": "Trust & social proof",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "rating": 4,
+            "author": "John S.",
+            "title": "Testimonial 1",
+            "content": "<p>Share what your customers are saying about your products, customer service or shipping rates.</p>"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "author": "Mary U.",
+            "title": "Testimonial 2",
+            "content": "<p>Share what your customers are saying about your products, customer service or shipping rates.</p>"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "rating": 4,
+            "author": "Joshua A.",
+            "title": "Testimonial 3",
+            "content": "<p>Share what your customers are saying about your products, customer service or shipping rates.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

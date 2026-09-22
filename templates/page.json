@@ -1,0 +1,50 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "enable_about_layout": true,
+        "content_width": "80ch",
+        "about_hero_image": "shopify://shop_images/9998218925384609-941e913a-64eb-48e6-a816-41116ab400f2-video_task_01KTR53NW8GJ1B4MGTFFRSPR7B_0.webp",
+        "about_hero_image_alt": "Featured lifestyle image",
+        "about_hero_eyebrow": "About Us",
+        "about_hero_title": "",
+        "about_hero_text": "We design Featured products that feel good all day, look clean with every outfit, and hold up through the routines that actually fill your week.",
+        "about_primary_button_text": "Shop all bands",
+        "about_primary_button_link": "",
+        "about_secondary_button_text": "Contact us",
+        "about_secondary_button_link": "",
+        "about_intro_kicker": "Our point of view",
+        "about_intro_heading": "Small details, better everyday wear.",
+        "about_intro_body": "<p>Add your brand story here.</p><p>Use this space for your brand details and value proposition.</p>",
+        "about_material_image_2": "shopify://shop_images/ChatGPT_Image_2026_6_10_01_13_27.webp",
+        "about_material_image_3": "shopify://shop_images/Matte_Dual-Layer_Shockproof.webp",
+        "about_material_image_1_alt": "Featured image",
+        "about_material_image_2_alt": "Featured image",
+        "about_material_image_3_alt": "Featured image",
+        "about_process_kicker": "How we choose",
+        "about_process_heading": "Every band has to earn its place.",
+        "about_collection_kicker": "Explore the collection",
+        "about_collection_heading": "Find the band that matches your day.",
+        "about_cta_kicker": "Need help choosing?",
+        "about_cta_heading": "We can help match the band to your watch, wrist, and routine.",
+        "about_cta_primary_button_text": "Shop all bands",
+        "about_cta_primary_button_link": "",
+        "about_cta_secondary_button_text": "Ask a question",
+        "about_cta_secondary_button_link": ""
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

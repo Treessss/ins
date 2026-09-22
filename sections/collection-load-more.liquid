@@ -1,0 +1,214 @@
+{%- if section.settings.collection != blank -%}
+  {%- assign target_collection = section.settings.collection -%}
+
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      --product-list-items-per-row: {{ section.settings.products_per_row_mobile | times: 1 }};
+      --product-list-grid: auto-flow dense / repeat(var(--product-list-items-per-row), minmax(0, 1fr));
+      --product-list-gap: var(--product-list-row-gap) var(--product-list-column-gap);
+    }
+    @media screen and (max-width: 699px) {
+  #shopify-section-{{ section.id }} {
+    --product-list-gap: var(--spacing-2) var(--spacing-2); /* 例如 8px 8px */
+  }
+}
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} {
+        --product-list-items-per-row: {{ section.settings.products_per_row_desktop }};
+      }
+    }
+
+    #shopify-section-{{ section.id }} .collection-load-more__footer {
+      display: flex;
+      justify-content: center;
+      margin-top: var(--spacing-8);
+    }
+  </style>
+
+  <div {% render 'section-properties' %}>
+    <div class="section-stack">
+      {%- render 'section-header',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        content: section.settings.content,
+        text_alignment: section.settings.text_alignment
+      -%}
+
+      <collection-load-more
+        class="v-stack gap-6"
+        data-section-id="{{ section.id }}"
+        data-base-url="{{ target_collection.url }}"
+        data-page-size="{{ section.settings.page_size }}"
+        data-initial-count="{{ section.settings.initial_count }}"
+      >
+        {%- paginate target_collection.products by section.settings.page_size -%}
+          <reveal-items selector=".product-list > *">
+            <product-list class="product-list" role="region" aria-live="polite" data-items>
+              {%- assign position = 0 -%}
+
+              {%- for product in target_collection.products -%}
+                {%- assign position = position | plus: 1 -%}
+                <div {% if forloop.index > section.settings.initial_count %}hidden data-hidden-item{% endif %}>
+                  {%- render 'product-card', product: product, stacked: true, position: position, show_badges: true, show_quick_add: section.settings.show_quick_add -%}
+                </div>
+              {%- endfor -%}
+            </product-list>
+          </reveal-items>
+
+          <div class="collection-load-more__footer">
+            {%- if paginate.next.is_link -%}
+              <a class="button button--lg" href="{{ target_collection.url }}">
+                {{- section.settings.load_more_label | escape -}}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endpaginate -%}
+      </collection-load-more>
+    </div>
+  </div>
+{%- else -%}
+  <div {% render 'section-properties' %}>
+    <div class="empty-state">
+      <div class="prose text-center">
+        <p class="h4">请选择一个 collection</p>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "系列 - 加载更多",
+  "class": "shopify-section--collection-load-more",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "系列"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "副标题"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "Must-have accessories"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "内容"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "文本对齐方式",
+      "options": [
+        {
+          "value": "start",
+          "label": "左侧"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "网格"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "每行商品数（移动端）",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "label": "每行商品数（桌面端）",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "分页"
+    },
+    {
+      "type": "range",
+      "id": "page_size",
+      "label": "每页商品数（初始 + 每次加载）",
+      "min": 4,
+      "max": 48,
+      "step": 4,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "initial_count",
+      "label": "初始显示商品数",
+      "min": 1,
+      "max": 24,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "显示快速添加",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "load_more_label",
+      "label": "加载更多按钮标签",
+      "default": "Show more"
+    },
+    {
+      "type": "text",
+      "id": "loading_label",
+      "label": "加载中按钮标签",
+      "default": "Loading..."
+    }
+  ],
+  "presets": [
+    {
+      "name": "系列 - 加载更多"
+    }
+  ]
+}
+{% endschema %}
+

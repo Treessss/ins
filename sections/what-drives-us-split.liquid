@@ -1,0 +1,700 @@
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --what-drives-gap: 1rem;
+    margin-top: -2rem !important;
+    position: relative;
+    z-index: 2;
+    border-radius: 36px 36px 0 0;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives {
+    
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: var(--what-drives-gap);
+    align-items: stretch;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__left {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: var(--what-drives-gap);
+    min-height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__surface,
+  #shopify-section-{{ section.id }} .what-drives__image-surface,
+  #shopify-section-{{ section.id }} .what-drives__mini-surface,
+  #shopify-section-{{ section.id }} .what-drives__stat-surface {
+    border-radius: 1.75rem;
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .what-drives__surface {
+    background:#fff;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__stat-surface {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__content-card {
+    height: 100%;
+    padding: 2.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2rem;
+    min-height: 28rem;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__content .prose {
+    max-width: 28rem;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__content .prose p {
+    color: rgb(var(--text-color) / 0.78);
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 5.5rem;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__feature-icon {
+    width: {{ section.settings.feature_icon_size }}px;
+    height: {{ section.settings.feature_icon_size }}px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__feature-icon img,
+  #shopify-section-{{ section.id }} .what-drives__feature-icon svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__feature-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) 1fr;
+    gap: var(--what-drives-gap);
+    align-items: stretch;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__mini-card {
+    min-height: 6rem;
+    display: flex;
+    align-items: center;
+    padding: 1.35rem 1.5rem;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__mini-card .prose {
+    max-width: 18rem;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__mini-card .prose,
+  #shopify-section-{{ section.id }} .what-drives__mini-card .prose p {
+    color: rgb(var(--text-color));
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__stat-card {
+    box-sizing: border-box;
+    flex: 1;
+    width: 100%;
+    min-width: 6.5rem;
+    min-height: 6rem;
+    padding: 1.1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.15;
+    gap: 0.25rem;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__stat-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.95;
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__image-card {
+    position: relative;
+    min-height: 100%;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__image-media {
+    height: 100%;
+    min-height: 35rem;
+    background: rgb(var(--text-color) / 0.04);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__image-media img,
+  #shopify-section-{{ section.id }} .what-drives__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__image-media img {
+    transition: transform 0.6s ease, filter 0.35s ease;
+    transform: scale(1);
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__image-card:hover .what-drives__image-media img {
+    transform: scale({{ section.settings.image_hover_scale }});
+    filter: brightness(1.03);
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__cta {
+    position: absolute;
+    inset-inline-end: 1.25rem;
+    inset-block-end: 1.25rem;
+    z-index: 2;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.5rem;
+    padding: 0.45rem 0.75rem 0.45rem 0.95rem;
+    border-radius: 999px;
+  
+    color: #111;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    color:#fff;
+  }
+
+  #shopify-section-{{ section.id }} .what-drives__cta-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color:#191919;
+  }
+
+  @media screen and (max-width: 999px) {
+     #shopify-section-{{ section.id }} {
+      border-radius:16px;
+     }
+    #shopify-section-{{ section.id }} .what-drives{
+      gap:0;
+    }
+
+     #shopify-section-{{ section.id }} .what-drives__image-card {
+      padding: 1rem;
+      background:#fff;
+      
+     }
+     #shopify-section-{{ section.id }} .what-drives__image-surface {
+      border-radius: 24px 24px 0 0;
+     }
+      #shopify-section-{{ section.id }} .what-drives__surface {
+        border-radius:0 0 24px 24px ;
+      }
+      #shopify-section-{{ section.id }} .what-drives__image-media {
+         border-radius:18px;
+      }
+
+    #shopify-section-{{ section.id }} .what-drives {
+      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column-reverse;
+    }
+
+    #shopify-section-{{ section.id }} .what-drives__content-card {
+      min-height: auto;
+      padding: 1.75rem 1.5rem;
+       background:#fff;
+    
+    }
+    
+
+    #shopify-section-{{ section.id }} .what-drives__image-media {
+      min-height: 28rem;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .what-drives__features {
+      gap: 1.25rem;
+      justify-content: space-between;
+    }
+
+    #shopify-section-{{ section.id }} .what-drives__bottom {
+      grid-template-columns: minmax(0, 3fr) 1fr;
+    }
+
+    #shopify-section-{{ section.id }} .what-drives__stat-value {
+      font-size: 1.5rem;
+    }
+
+    #shopify-section-{{ section.id }} .what-drives__stat-label {
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+
+    #shopify-section-{{ section.id }} .what-drives__stat-card {
+      min-width: 100%;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      padding: 1.1rem 1.25rem;
+    }
+
+    #shopify-section-{{ section.id }} .what-drives__image-media {
+      min-height: 22rem;
+    }
+  }
+</style>
+
+<div {% render 'section-properties' %}>
+  <div class="what-drives">
+    <div class="what-drives__left">
+      <div
+        {% render 'surface',
+          class: 'what-drives__surface',
+          background: section.settings.card_background,
+          text_color: section.settings.text_color,
+          background_fallback: 'bg-secondary'
+        %}
+      >
+        <div class="what-drives__content-card">
+          <div class="what-drives__content">
+            <div class="prose">
+              {%- if section.settings.title != blank -%}
+                <h2 class="h2">
+                  {%- render 'styled-text',
+                    content: section.settings.title,
+                    text_color: section.settings.heading_color,
+                    gradient: section.settings.heading_gradient
+                  -%}
+                </h2>
+              {%- endif -%}
+
+              {%- if section.settings.content != blank -%}
+                {{ section.settings.content }}
+              {%- endif -%}
+            </div>
+          </div>
+
+          <div class="what-drives__features">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'feature' -%}
+                <div class="what-drives__feature" {{ block.shopify_attributes }}>
+                  <div class="what-drives__feature-icon">
+                    {%- if block.settings.icon_image != blank -%}
+                      {%- assign icon_width_2x = section.settings.feature_icon_size | times: 2 -%}
+                      {%- capture icon_sizes -%}{{ section.settings.feature_icon_size }}px{%- endcapture -%}
+                      {%- capture icon_widths -%}{{ section.settings.feature_icon_size }}, {{ icon_width_2x }}{%- endcapture -%}
+                      {{
+                        block.settings.icon_image
+                        | image_url: width: icon_width_2x
+                        | image_tag:
+                          loading: 'lazy',
+                          sizes: icon_sizes,
+                          widths: icon_widths,
+                          alt: block.settings.title
+                      }}
+                    {%- else -%}
+                      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/>
+                      </svg>
+                    {%- endif -%}
+                  </div>
+
+                  {%- if block.settings.title != blank -%}
+                    <div class="what-drives__feature-title">{{ block.settings.title }}</div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+
+      <div class="what-drives__bottom">
+        <div
+          {% render 'surface',
+            class: 'what-drives__mini-surface',
+            background: section.settings.bottom_card_background,
+            text_color: section.settings.bottom_card_text_color,
+            background_fallback: 'bg-secondary'
+          %}
+        >
+          <div class="what-drives__mini-card">
+            <div class="prose">
+              {{ section.settings.bottom_card_text }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          {% render 'surface',
+            class: 'what-drives__stat-surface',
+            background: section.settings.stat_background,
+            text_color: section.settings.stat_text_color,
+            background_fallback: 'bg-secondary'
+          %}
+        >
+          <div class="what-drives__stat-card">
+            <div
+              class="what-drives__stat-value"
+              data-countup
+              data-countup-end="{{ section.settings.stat_number }}"
+              data-countup-duration="{{ section.settings.stat_duration }}"
+              data-countup-prefix="{{ section.settings.stat_prefix | default: '' | escape }}"
+              data-countup-suffix="{{ section.settings.stat_suffix | default: '' | escape }}"
+            >
+              {{ section.settings.stat_prefix | default: '' }}0{{ section.settings.stat_suffix | default: '' }}
+            </div>
+            <div class="what-drives__stat-label">{{ section.settings.stat_label }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      {% render 'surface',
+        class: 'what-drives__image-surface',
+        background: section.settings.image_card_background,
+        text_color: section.settings.text_color,
+        background_fallback: 'bg-secondary'
+      %}
+    >
+      <div class="what-drives__image-card">
+        <div class="what-drives__image-media">
+          {%- if section.settings.image != blank -%}
+            {%- capture sizes -%}(max-width: 999px) 100vw, 52vw{%- endcapture -%}
+            {%- capture widths -%}600,800,1000,1200,1400,1600,1800{%- endcapture -%}
+            {{
+              section.settings.image
+              | image_url: width: 1800
+              | image_tag: loading: 'lazy', sizes: sizes, widths: widths
+            }}
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'what-drives__placeholder' }}
+          {%- endif -%}
+        </div>
+
+        {% comment %} {%- if section.settings.button_text != blank -%}
+          <div class="what-drives__cta">
+            <a {% if section.settings.button_url != blank %}href="{{ section.settings.button_url }}"{% endif %} class="what-drives__cta-link">
+              <span>{{ section.settings.button_text }}</span>
+              <span class="what-drives__cta-icon">
+                <svg aria-hidden="true" focusable="false" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </a>
+          </div>
+        {%- endif -%} {% endcomment %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section) return;
+
+    const items = section.querySelectorAll('[data-countup]');
+
+    const animateCount = (el) => {
+      if (el.dataset.counted === 'true') return;
+      el.dataset.counted = 'true';
+
+      const end = parseInt(el.dataset.countupEnd || '0', 10);
+      const duration = parseInt(el.dataset.countupDuration || '1600', 10);
+      const prefix = el.dataset.countupPrefix || '';
+      const suffix = el.dataset.countupSuffix || '';
+
+      const startTime = performance.now();
+
+      const tick = (now) => {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(end * eased);
+
+        el.textContent = prefix + current.toLocaleString() + suffix;
+
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          el.textContent = prefix + end.toLocaleString() + suffix;
+        }
+      };
+
+      requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+
+    items.forEach((item) => observer.observe(item));
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "品牌理念分栏",
+  "class": "shopify-section--what-drives-us-split",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "卖点",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "图标图片"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Safety"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "What Drives Us"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "内容",
+      "default": "<p>Add your brand story here.</p>"
+    },
+    {
+      "type": "range",
+      "id": "feature_icon_size",
+      "label": "卖点图标尺寸",
+      "min": 20,
+      "max": 64,
+      "step": 2,
+      "default": 32
+    },
+    {
+      "type": "richtext",
+      "id": "bottom_card_text",
+      "label": "左下卡片文本",
+      "default": "<p>Smart engineering-so your connection stays powered wherever you go.</p>"
+    },
+    {
+      "type": "text",
+      "id": "stat_prefix",
+      "label": "数据前缀"
+    },
+    {
+      "type": "number",
+      "id": "stat_number",
+      "label": "数据数字",
+      "default": 1000
+    },
+    {
+      "type": "text",
+      "id": "stat_suffix",
+      "label": "数据后缀",
+      "default": "+"
+    },
+    {
+      "type": "text",
+      "id": "stat_label",
+      "label": "数据标签",
+      "default": "Stability"
+    },
+    {
+      "type": "range",
+      "id": "stat_duration",
+      "label": "数据动画时长",
+      "min": 500,
+      "max": 4000,
+      "step": 100,
+      "unit": "ms",
+      "default": 1600
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "右侧图片"
+    },
+    {
+      "type": "range",
+      "id": "image_hover_scale",
+      "label": "图片悬停放大",
+      "min": 1,
+      "max": 1.2,
+      "step": 0.1,
+      "default": 1.1
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文本",
+      "default": "Read More"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "按钮链接"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "分区背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "分区背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "主内容卡片背景"
+    },
+    {
+      "type": "color",
+      "id": "image_card_background",
+      "label": "图片卡片背景"
+    },
+    {
+      "type": "color",
+      "id": "bottom_card_background",
+      "label": "左下卡片背景",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "bottom_card_text_color",
+      "label": "左下卡片文本",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "stat_background",
+      "label": "数据卡片背景",
+      "default": "#3B3EF3"
+    },
+    {
+      "type": "color",
+      "id": "stat_text_color",
+      "label": "数据卡片文本",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    }
+  ],
+  "presets": [
+    {
+      "name": "品牌理念分栏",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Safety"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Intelligence"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Stability"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

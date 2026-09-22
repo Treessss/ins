@@ -1,0 +1,2820 @@
+{%- liquid
+  assign is_home_overlay = false
+  if section.settings.overlay_on_homepage and request.page_type == 'index'
+    assign is_home_overlay = true
+  endif
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --xstrape-header-max-width: {{ section.settings.max_width }}px;
+    --xstrape-header-side-gap: {{ section.settings.side_gap }}px;
+    --xstrape-header-top-gap: {{ section.settings.desktop_top_gap }}px;
+    --xstrape-header-mobile-top-gap: {{ section.settings.mobile_top_gap }}px;
+    --xstrape-header-height: {{ section.settings.desktop_height }}px;
+    --xstrape-header-mobile-height: {{ section.settings.mobile_height }}px;
+    --xstrape-header-radius: {{ section.settings.bar_radius }}px;
+    --xstrape-header-panel-radius: {{ section.settings.mobile_panel_radius }}px;
+    --xstrape-header-mobile-side-gap: {{ section.settings.mobile_side_gap | default: 10 }}px;
+    --xstrape-header-mobile-bar-radius: {{ section.settings.mobile_bar_radius | default: 24 }}px;
+    --xstrape-header-mobile-logo-left-padding: {{ section.settings.mobile_logo_left_padding | default: 25 }}px;
+    --xstrape-header-mobile-logo-height-gap: {{ section.settings.mobile_logo_height_gap | default: 27 }}px;
+    --xstrape-header-mobile-icon-width: {{ section.settings.mobile_icon_width | default: 45 }}px;
+    --xstrape-header-mobile-menu-icon-width: {{ section.settings.mobile_menu_icon_width | default: 52 }}px;
+    --xstrape-mobile-menu-top-spacing: {{ section.settings.mobile_menu_top_spacing | default: 5 }}px;
+    --xstrape-mobile-menu-padding-x: {{ section.settings.mobile_menu_padding_x | default: 15 }}px;
+    --xstrape-mobile-menu-padding-bottom: {{ section.settings.mobile_menu_padding_bottom | default: 15 }}px;
+    --xstrape-mobile-menu-gap: {{ section.settings.mobile_menu_gap | default: 10 }}px;
+    --xstrape-mobile-card-height: {{ section.settings.mobile_card_height | default: 82 }}px;
+    --xstrape-mobile-card-padding: {{ section.settings.mobile_card_padding | default: 4 }}px;
+    --xstrape-mobile-card-radius: {{ section.settings.mobile_card_radius | default: 16 }}px;
+    --xstrape-mobile-card-image-size: {{ section.settings.mobile_card_image_size | default: 74 }}px;
+    --xstrape-mobile-card-image-radius: {{ section.settings.mobile_card_image_radius | default: 11 }}px;
+    --xstrape-mobile-card-content-gap: {{ section.settings.mobile_card_content_gap | default: 10 }}px;
+    --xstrape-mobile-title-font-size: {{ section.settings.mobile_title_font_size | default: 16 }}px;
+    --xstrape-mobile-subtitle-font-size: {{ section.settings.mobile_subtitle_font_size | default: 11 }}px;
+    --xstrape-mobile-badge-font-size: {{ section.settings.mobile_badge_font_size | default: 11 }}px;
+    --xstrape-mobile-arrow-size: {{ section.settings.mobile_arrow_size | default: 23 }}px;
+    --xstrape-header-bg: {{ section.settings.bar_background }};
+    --xstrape-header-text: {{ section.settings.text_color }};
+    --xstrape-header-accent: {{ section.settings.accent_color }};
+    --xstrape-header-panel-bg: {{ section.settings.panel_background }};
+    --xstrape-header-card-bg: {{ section.settings.card_background }};
+    --xstrape-header-shadow: 0 18px 38px rgb(0 0 0 / {{ section.settings.shadow_opacity | divided_by: 100.0 }});
+    --xstrape-announcement-bg-rgb: {{ section.settings.announcement_background.rgb }};
+    --xstrape-logo-y-offset: {{ section.settings.logo_vertical_offset | default: 0 }}px;
+    --xstrape-logo-mobile-y-offset: {{ section.settings.logo_mobile_vertical_offset | default: 0 }}px;
+
+    position: {% if is_home_overlay and section.settings.enable_sticky %}fixed{% elsif is_home_overlay %}absolute{% elsif section.settings.enable_sticky %}sticky{% else %}relative{% endif %};
+    inset-inline: 0;
+    top: calc(var(--sticky-announcement-bar-enabled, 0) * var(--announcement-bar-height, 0px));
+    z-index: 80;
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }}::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 0;
+    height: 92px;
+    background: linear-gradient(
+      180deg,
+      rgb(var(--xstrape-announcement-bg-rgb) / 0.72) 0%,
+      rgb(var(--xstrape-announcement-bg-rgb) / 0.42) 44%,
+      rgb(var(--xstrape-announcement-bg-rgb) / 0) 100%
+    );
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header {
+    position: relative;
+    z-index: 1;
+    color: var(--xstrape-header-text);
+    padding: 0 0 var(--xstrape-header-top-gap);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__announcement {
+    position: relative;
+    z-index: 3;
+    width: min(var(--xstrape-header-max-width), calc(100vw - (var(--xstrape-header-side-gap) * 2)));
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    color: {{ section.settings.announcement_text_color }};
+    font-size: 14px;
+    font-weight: 850;
+    line-height: 1;
+    text-align: center;
+    text-shadow: 0 1px 16px rgb(0 0 0 / 0.34);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__announcement-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 18px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__announcement-cta {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__announcement-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__bar {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: minmax(150px, auto) minmax(0, 1fr) minmax(160px, auto);
+    align-items: center;
+    gap: clamp(16px, 2vw, 34px);
+    width: min(var(--xstrape-header-max-width), calc(100vw - (var(--xstrape-header-side-gap) * 2)));
+    min-height: var(--xstrape-header-height);
+    margin-inline: auto;
+    padding-inline: clamp(28px, 3.2vw, 72px);
+    border-radius: var(--xstrape-header-radius);
+    background: var(--xstrape-header-bg);
+    box-shadow: var(--xstrape-header-shadow), 0 2px 0 rgb(255 255 255 / 0.82) inset;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__logo-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    min-width: 0;
+    color: inherit;
+    line-height: 0;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__logo {
+    display: flex;
+    align-items: center;
+    height: var(--xstrape-header-height);
+    margin: 0;
+    line-height: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__logo-image {
+    display: block;
+    width: auto;
+    max-width: min({{ section.settings.logo_width }}px, 38vw);
+    max-height: calc(var(--xstrape-header-height) - 24px);
+    height: auto;
+    flex: 0 0 auto;
+    object-fit: contain;
+    object-position: center;
+    transform: translateY(var(--xstrape-logo-y-offset));
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__logo-text {
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+    font-size: clamp(1.35rem, 2vw, 2.15rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform: translateY(var(--xstrape-logo-y-offset));
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__nav {
+    justify-self: center;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__nav-list,
+  #shopify-section-{{ section.id }} .xstrape-header__actions,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-list,
+  #shopify-section-{{ section.id }} .xstrape-header__mega-cards,
+  #shopify-section-{{ section.id }} .xstrape-header__mega-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__nav-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, {{ section.settings.nav_gap | divided_by: 10.0 }}vw, {{ section.settings.nav_gap }}px);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__nav-item {
+    position: static;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__nav-summary,
+  #shopify-section-{{ section.id }} .xstrape-header__nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--xstrape-header-text);
+    font-size: {{ section.settings.nav_font_size }}px;
+    font-weight: 850;
+    letter-spacing: 0;
+    line-height: 1.05;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__nav-item[open] .xstrape-header__nav-summary,
+  #shopify-section-{{ section.id }} .xstrape-header__nav-item:hover .xstrape-header__nav-summary,
+  #shopify-section-{{ section.id }} .xstrape-header__nav-summary:hover,
+  #shopify-section-{{ section.id }} .xstrape-header__nav-link:hover,
+  #shopify-section-{{ section.id }} .xstrape-header__nav-link--highlight {
+    color: var(--xstrape-header-accent);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    display: none;
+    padding: 18px;
+    border: 1px solid rgb(0 0 0 / 0.06);
+    border-radius: 30px;
+    background: var(--xstrape-header-panel-bg);
+    color: #111;
+    box-shadow: 0 24px 70px rgb(0 0 0 / 0.18);
+    max-height: min(720px, calc(100dvh - 150px));
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0 0 0 / 0.28) transparent;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-panel--simple {
+    left: var(--xstrape-header-simple-left, 50%);
+    right: auto;
+    width: min(var(--xstrape-header-simple-menu-width, 360px), calc(100vw - 56px));
+    padding: 18px 24px;
+    border-radius: 24px;
+    transform: translateX(-50%);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-panel::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -36px;
+    height: 36px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__nav-item[open] .xstrape-header__mega-panel,
+  #shopify-section-{{ section.id }} .xstrape-header__nav-item:hover .xstrape-header__mega-panel {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-inner {
+    --xstrape-header-card-columns: 1;
+    --xstrape-header-card-track-min: 330px;
+    display: grid;
+    grid-template-columns: minmax(var(--xstrape-header-card-track-min), 0.9fr) minmax(0, 1.45fr) minmax(250px, 0.7fr);
+    gap: 18px;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-panel--simple .xstrape-header__mega-inner {
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-inner--no-links {
+    grid-template-columns: minmax(var(--xstrape-header-card-track-min), 1fr) minmax(280px, 0.75fr);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-inner--no-feature:not(.xstrape-header__mega-inner--no-links) {
+    grid-template-columns: minmax(var(--xstrape-header-card-track-min), 0.8fr) minmax(0, 2fr);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-inner--no-cards:not(.xstrape-header__mega-inner--no-feature):not(.xstrape-header__mega-inner--no-links) {
+    grid-template-columns: minmax(0, 1.5fr) minmax(250px, 0.7fr);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-inner--no-links.xstrape-header__mega-inner--no-feature,
+  #shopify-section-{{ section.id }} .xstrape-header__mega-inner--no-cards.xstrape-header__mega-inner--no-feature,
+  #shopify-section-{{ section.id }} .xstrape-header__mega-inner--no-cards.xstrape-header__mega-inner--no-links {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-inner--no-cards .xstrape-header__mega-cards {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-cards,
+  #shopify-section-{{ section.id }} .xstrape-header__mega-links {
+    display: grid;
+    gap: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-cards {
+    grid-template-columns: repeat(var(--xstrape-header-card-columns), minmax(0, 1fr));
+    align-content: start;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-link-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px clamp(18px, 2.2vw, 34px);
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-panel--simple .xstrape-header__mega-link-grid {
+    grid-template-columns: repeat(var(--xstrape-header-simple-link-columns, 1), minmax(0, 1fr));
+    gap: 16px 28px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-link-grid--columns-1 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-link-grid--columns-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-link-column {
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-link-grid--single .xstrape-header__mega-links {
+    display: block;
+    columns: 128px 4;
+    column-fill: balance;
+    column-gap: clamp(18px, 2.6vw, 42px);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-link-grid--single .xstrape-header__mega-links > li {
+    break-inside: avoid;
+    margin-bottom: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-link-grid--single .xstrape-header__mega-links a {
+    display: inline-block;
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-panel--simple .xstrape-header__mega-link-grid--single .xstrape-header__mega-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+    column-gap: 22px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-card {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    min-height: 92px;
+    padding: 10px 12px 10px 10px;
+    border-radius: 18px;
+    background: var(--xstrape-header-card-bg);
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-card:hover {
+    transform: translateY(-1px);
+    background: #ececec;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__thumb,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 30% 24%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0) 35%),
+      linear-gradient(145deg, #fafafa, #d7d7d7 62%, #9a9a9a);
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__thumb {
+    width: 76px;
+    height: 76px;
+    border-radius: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__thumb img,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__thumb--placeholder::before,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb--placeholder::before,
+  #shopify-section-{{ section.id }} .xstrape-header__thumb--placeholder::after,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb--placeholder::after {
+    content: "";
+    position: absolute;
+    border: 2px solid rgb(17 17 17 / 0.5);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__thumb--placeholder::before,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb--placeholder::before {
+    width: 52%;
+    height: 34%;
+    left: 24%;
+    top: 36%;
+    border-radius: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__thumb--placeholder::after,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb--placeholder::after {
+    width: 24%;
+    height: 24%;
+    left: 38%;
+    top: 18%;
+    border-radius: 999px;
+    border-bottom-color: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-title,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-weight: 900;
+    line-height: 1.08;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-title {
+    margin-bottom: 4px;
+    font-size: 0.98rem;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-text,
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-text {
+    margin: 0;
+    color: rgb(0 0 0 / 0.6);
+    font-weight: 700;
+    line-height: 1.28;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-text {
+    font-size: 0.82rem;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--xstrape-header-accent);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+    box-shadow: 0 8px 18px rgb(0 72 255 / 0.25);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__badge--hot,
+  #shopify-section-{{ section.id }} .xstrape-header__badge--sale {
+    background: #f5164f;
+    box-shadow: 0 8px 18px rgb(245 22 79 / 0.25);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__arrow {
+    color: rgb(0 0 0 / 0.42);
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-heading {
+    margin: 8px 0 14px;
+    color: #111;
+    font-size: 0.82rem;
+    font-weight: 900;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-panel--simple .xstrape-header__mega-heading {
+    margin-top: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-links a {
+    color: rgb(0 0 0 / 0.64);
+    font-size: 0.94rem;
+    font-weight: 750;
+    line-height: 1.25;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mega-links a:hover {
+    color: #111;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__feature {
+    position: relative;
+    display: flex;
+    align-items: end;
+    min-height: 100%;
+    overflow: hidden;
+    padding: 22px;
+    border-radius: 24px;
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(0 0 0 / 0.78)),
+      linear-gradient(145deg, #f2f2f2, #101010);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__feature img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__feature::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(0 0 0 / 0.02), rgb(0 0 0 / 0.72));
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__feature-body {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__feature-kicker {
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__feature-title {
+    font-size: 1.35rem;
+    font-weight: 900;
+    line-height: 1.08;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__feature-cta {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    font-size: 0.78rem;
+    font-weight: 900;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__icon {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    background: transparent;
+    color: var(--xstrape-header-text);
+    line-height: 0;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__icon svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.4;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__cart-count {
+    position: absolute;
+    top: 4px;
+    right: 3px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--xstrape-header-accent);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 900;
+    line-height: 17px;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__cart-count.is-empty {
+    opacity: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__menu-close {
+    display: none;
+  }
+
+  html.xstrape-mobile-menu-open #shopify-section-{{ section.id }} .xstrape-header__menu-open {
+    display: none;
+  }
+
+  html.xstrape-mobile-menu-open #shopify-section-{{ section.id }} .xstrape-header__menu-close {
+    display: inline-flex;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-scrim {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgb(0 0 0 / 0.62);
+    opacity: 0;
+    transition: opacity 0.24s ease;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-surface {
+    position: absolute;
+    top: var(--xstrape-mobile-panel-top, var(--xstrape-header-mobile-top-gap));
+    left: var(--xstrape-header-side-gap);
+    right: var(--xstrape-header-side-gap);
+    height: var(--xstrape-mobile-panel-closed-height, var(--xstrape-header-bar-real-height, var(--xstrape-header-mobile-height)));
+    max-height: var(--xstrape-mobile-panel-max-height, calc(100dvh - var(--xstrape-mobile-panel-top, var(--xstrape-header-mobile-top-gap)) - var(--xstrape-header-mobile-top-gap)));
+    overflow: hidden;
+    overscroll-behavior: contain;
+    padding: calc(var(--xstrape-header-bar-real-height, var(--xstrape-header-mobile-height)) + var(--xstrape-mobile-menu-top-spacing)) var(--xstrape-mobile-menu-padding-x) var(--xstrape-mobile-menu-padding-bottom);
+    border-radius: var(--xstrape-header-panel-radius);
+    background: #f9f9f9;
+    box-shadow: 0 22px 50px rgb(0 0 0 / 0.25);
+    opacity: 0;
+    transition:
+      height 0.4s ease-in-out,
+      opacity 0.15s ease-out,
+      background-color 0.3s ease-in-out,
+      box-shadow 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) 0.08s;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0 0 0 / 0.28) transparent;
+    will-change: height, opacity;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-panel.is-open {
+    pointer-events: auto;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-panel.is-open .xstrape-header__mobile-scrim {
+    opacity: 1;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-panel.is-open .xstrape-header__mobile-surface {
+    height: var(--xstrape-mobile-panel-target-height, var(--xstrape-mobile-panel-max-height, 80vh));
+    overflow: auto;
+    background: var(--xstrape-header-panel-bg);
+    opacity: 1;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-level {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition:
+      opacity 0.28s ease-in-out 0.1s,
+      transform 0.3s ease-in-out 0.08s;
+    will-change: opacity, transform;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-panel.is-open .xstrape-header__mobile-level:not([hidden]) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-list {
+    display: grid;
+    gap: var(--xstrape-mobile-menu-gap);
+    padding-top: 1px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-level[hidden] {
+    display: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-subhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    margin: -1px 0 11px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-back {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 37px;
+    border: 0;
+    border-radius: 50px;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+    box-shadow:
+      0 6px 6px -3px rgb(0 0 0 / 0.08),
+      0 3px 3px -1.5px rgb(0 0 0 / 0.08),
+      0 1px 1px -0.5px rgb(0 0 0 / 0.08),
+      0 0 0 1px rgb(0 0 0 / 0.06);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-back::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-bottom: 4px solid currentColor;
+    border-left: 4px solid currentColor;
+    transform: rotate(45deg);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-subheading {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 40px;
+    margin: 0;
+    color: #000;
+    font-size: var(--xstrape-mobile-title-font-size);
+    font-weight: 900;
+    line-height: 1;
+    text-align: right;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-card {
+    display: grid;
+    grid-template-columns: var(--xstrape-mobile-card-image-size) minmax(0, 1fr) var(--xstrape-mobile-arrow-size);
+    gap: var(--xstrape-mobile-card-content-gap);
+    align-items: center;
+    height: var(--xstrape-mobile-card-height);
+    min-height: var(--xstrape-mobile-card-height);
+    overflow: hidden;
+    padding: var(--xstrape-mobile-card-padding);
+    border-radius: var(--xstrape-mobile-card-radius);
+    background: #fff;
+    color: #000;
+    text-decoration: none;
+    box-shadow:
+      0 6px 6px -3px rgb(0 0 0 / 0.06),
+      0 3px 3px -1.5px rgb(0 0 0 / 0.06),
+      0 1px 1px -0.5px rgb(0 0 0 / 0.06),
+      0 0 0 1px rgb(0 0 0 / 0.06);
+  }
+
+  #shopify-section-{{ section.id }} button.xstrape-header__mobile-card {
+    width: 100%;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb {
+    width: var(--xstrape-mobile-card-image-size);
+    height: var(--xstrape-mobile-card-image-size);
+    border-radius: var(--xstrape-mobile-card-image-radius);
+    background: #f3f3f3;
+    box-shadow: none !important;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb img {
+    display: block;
+    border-radius: var(--xstrape-mobile-card-image-radius);
+    box-shadow: none !important;
+    filter: none !important;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-sublist {
+    padding-top: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-all-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 53px;
+    padding: 0 18px;
+    border-radius: var(--xstrape-mobile-card-radius);
+    background: #fff;
+    color: #000;
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    box-shadow:
+      0 6px 6px -3px rgb(0 0 0 / 0.06),
+      0 3px 3px -1.5px rgb(0 0 0 / 0.06),
+      0 1px 1px -0.5px rgb(0 0 0 / 0.06),
+      0 0 0 1px rgb(0 0 0 / 0.06);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-body {
+    display: block;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-title {
+    display: flex;
+    align-items: center;
+    gap: var(--xstrape-mobile-card-content-gap);
+    margin: 0;
+    color: #000;
+    font-size: var(--xstrape-mobile-title-font-size);
+    font-weight: 900;
+    line-height: var(--xstrape-mobile-title-font-size);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-text {
+    display: block;
+    margin-top: 5px;
+    color: #000;
+    font-size: var(--xstrape-mobile-subtitle-font-size);
+    font-weight: 400;
+    line-height: var(--xstrape-mobile-subtitle-font-size);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-title .xstrape-header__badge {
+    min-height: calc(var(--xstrape-mobile-badge-font-size) + 10px);
+    padding: 5px 6px 4px;
+    border-radius: 10px;
+    font-size: var(--xstrape-mobile-badge-font-size);
+    font-weight: 900;
+    line-height: calc(var(--xstrape-mobile-badge-font-size) + 1px);
+    box-shadow:
+      0 1.8px 3.2px rgb(0 0 0 / 0.1),
+      0 1.7px 10.3px rgb(0 0 0 / 0.07),
+      0 3.5px 10px rgb(0 0 0 / 0.05),
+      0 7.5px 7px rgb(0 0 0 / 0.05);
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-arrow {
+    position: relative;
+    display: grid;
+    place-items: center;
+    justify-self: end;
+    width: var(--xstrape-mobile-arrow-size);
+    height: var(--xstrape-mobile-arrow-size);
+    color: #000;
+    font-size: 0;
+    line-height: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-header__mobile-arrow::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-top: 4px solid currentColor;
+    border-right: 4px solid currentColor;
+    transform: rotate(45deg);
+  }
+
+  @media screen and (max-width: 1149px) {
+    html.xstrape-mobile-menu-open {
+      overflow: hidden;
+    }
+
+    #shopify-section-{{ section.id }} {
+      --xstrape-header-side-gap: var(--xstrape-header-mobile-side-gap);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header {
+      padding: 0 0 var(--xstrape-header-mobile-top-gap);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__announcement {
+      height: 36px;
+      margin-bottom: 4px;
+      font-size: 13px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    #shopify-section-{{ section.id }}::before {
+      height: 72px;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: calc(100vw - (var(--xstrape-header-side-gap) * 2));
+      min-height: var(--xstrape-header-mobile-height);
+      padding: 0;
+      gap: 0;
+      border-radius: var(--xstrape-header-mobile-bar-radius);
+      box-shadow:
+        0 0 0 1px rgb(0 0 0 / 0.06),
+        0 1px 1px -0.5px rgb(0 0 0 / 0.06),
+        0 3px 3px -1.5px rgb(0 0 0 / 0.06),
+        0 6px 6px -3px rgb(0 0 0 / 0.06),
+        0 12px 12px -6px rgb(0 0 0 / 0.06),
+        0 24px 24px -12px rgb(0 0 0 / 0.06);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__logo-image {
+      max-width: min({{ section.settings.logo_mobile_width }}px, 45vw);
+      max-height: calc(var(--xstrape-header-mobile-height) - var(--xstrape-header-mobile-logo-height-gap));
+      transform: translateY(var(--xstrape-logo-mobile-y-offset));
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__logo {
+      height: var(--xstrape-header-mobile-height);
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__logo-link {
+      height: var(--xstrape-header-mobile-height);
+      padding-left: var(--xstrape-header-mobile-logo-left-padding);
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__logo-text {
+      font-size: clamp(1.18rem, 7vw, 1.7rem);
+      transform: translateY(var(--xstrape-logo-mobile-y-offset));
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__nav,
+    #shopify-section-{{ section.id }} .xstrape-header__desktop-only {
+      display: none !important;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__actions {
+      height: var(--xstrape-header-mobile-height);
+      gap: 0;
+      padding-right: 0;
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__icon {
+      width: var(--xstrape-header-mobile-icon-width);
+      height: var(--xstrape-header-mobile-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #shopify-section-{{ section.id }} [data-xstrape-mobile-menu-toggle] {
+      width: var(--xstrape-header-mobile-menu-icon-width);
+    }
+  }
+
+  @media screen and (min-width: 1150px) {
+    #shopify-section-{{ section.id }} .xstrape-header__mobile-only,
+    #shopify-section-{{ section.id }} .xstrape-header__mobile-panel {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 430px) {
+    #shopify-section-{{ section.id }} .xstrape-header__mobile-card {
+      grid-template-columns: var(--xstrape-mobile-card-image-size) minmax(0, 1fr) var(--xstrape-mobile-arrow-size);
+      min-height: var(--xstrape-mobile-card-height);
+    }
+
+    #shopify-section-{{ section.id }} .xstrape-header__mobile-thumb {
+      width: var(--xstrape-mobile-card-image-size);
+      height: var(--xstrape-mobile-card-image-size);
+    }
+  }
+</style>
+
+<div class="xstrape-header" data-xstrape-header>
+  {%- if section.settings.show_announcement and section.settings.announcement_text != blank -%}
+    <div class="xstrape-header__announcement">
+      <a class="xstrape-header__announcement-link" {% if section.settings.announcement_link != blank %}href="{{ section.settings.announcement_link }}"{% endif %}>
+        <span>{{ section.settings.announcement_text | escape }}</span>
+        {%- if section.settings.announcement_link_text != blank -%}
+          <span aria-hidden="true">|</span>
+          <span class="xstrape-header__announcement-cta">{{ section.settings.announcement_link_text | escape }}</span>
+        {%- endif -%}
+        {%- if section.settings.show_announcement_info_icon -%}
+          <span class="xstrape-header__announcement-info" aria-hidden="true">i</span>
+        {%- endif -%}
+      </a>
+    </div>
+  {%- endif -%}
+
+    <div class="xstrape-header__bar" data-xstrape-header-bar>
+      {%- capture logo_content -%}
+        {%- if section.settings.logo != blank -%}
+        {%- assign logo_desktop_width = section.settings.logo_width | default: 150 -%}
+        {%- assign logo_mobile_width = section.settings.logo_mobile_width | default: logo_desktop_width -%}
+        {%- assign logo_desktop_render_width = logo_desktop_width | times: 2 -%}
+        {%- assign logo_mobile_render_width = logo_mobile_width | times: 2 -%}
+        {%- assign logo_render_width = logo_desktop_render_width | at_least: logo_mobile_render_width | at_least: 220 | at_most: 360 -%}
+        {%- assign logo_sizes = '(max-width: 699px) ' | append: logo_mobile_width | append: 'px, ' | append: logo_desktop_width | append: 'px' -%}
+        {%- assign logo_alt = section.settings.logo.alt | default: section.settings.logo_text | default: shop.name -%}
+        {{ section.settings.logo | image_url: width: logo_render_width | image_tag: loading: 'eager', class: 'xstrape-header__logo-image', alt: logo_alt, sizes: logo_sizes, widths: '110,150,220,300,360' }}
+      {%- else -%}
+        <span class="xstrape-header__logo-text">{{ section.settings.logo_text | default: shop.name | escape }}</span>
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {%- if request.page_type == 'index' -%}
+      <h1 class="xstrape-header__logo">
+        <a class="xstrape-header__logo-link" href="{{ routes.root_url }}">{{ logo_content }}</a>
+      </h1>
+    {%- else -%}
+      <div class="xstrape-header__logo">
+        <a class="xstrape-header__logo-link" href="{{ routes.root_url }}">{{ logo_content }}</a>
+      </div>
+    {%- endif -%}
+
+    <nav class="xstrape-header__nav" aria-label="{{ section.settings.desktop_menu_label | escape }}">
+      <ul class="xstrape-header__nav-list" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'desktop_item' -%}
+            {%- liquid
+              assign item_url = block.settings.link
+              assign has_dropdown = block.settings.enable_dropdown
+              assign has_link_columns = false
+              assign link_column_count = 0
+              assign largest_link_count = 0
+              assign desktop_item_title_handle = block.settings.title | handleize
+              assign desktop_card_columns = block.settings.desktop_card_columns | default: 1 | plus: 0
+              assign desktop_card_count = 0
+              assign feature_image_asset = block.settings.feature_image_asset | strip
+              assign has_feature_card = false
+              assign has_dropdown_content = false
+              assign is_simple_dropdown = false
+
+              if desktop_card_columns < 1
+                assign desktop_card_columns = 1
+              elsif desktop_card_columns > 4
+                assign desktop_card_columns = 4
+              endif
+
+              assign desktop_card_track_min = desktop_card_columns | times: 240
+              if desktop_card_track_min < 330
+                assign desktop_card_track_min = 330
+              elsif desktop_card_track_min > 900
+                assign desktop_card_track_min = 900
+              endif
+
+              if block.settings.feature_image != blank or feature_image_asset != blank
+                assign has_feature_card = true
+              endif
+
+              for card_block in section.blocks
+                assign card_parent_handle = card_block.settings.parent_title | handleize
+                if card_block.type == 'desktop_menu_card' and card_block.settings.title != blank and card_parent_handle == desktop_item_title_handle
+                  assign desktop_card_count = desktop_card_count | plus: 1
+                endif
+              endfor
+
+              for index in (1..3)
+                assign list_key = 'link_list_' | append: index
+                assign link_list = block.settings[list_key]
+                if link_list != blank and link_list.links.size > 0
+                  assign has_link_columns = true
+                  assign link_column_count = link_column_count | plus: 1
+                  if link_list.links.size > largest_link_count
+                    assign largest_link_count = link_list.links.size
+                  endif
+                endif
+              endfor
+
+              if has_dropdown and has_link_columns and desktop_card_count == 0 and has_feature_card == false
+                assign is_simple_dropdown = true
+              endif
+
+              if has_link_columns or desktop_card_count > 0 or has_feature_card
+                assign has_dropdown_content = true
+              endif
+
+              assign simple_menu_width = link_column_count | times: 210 | plus: 112
+              if largest_link_count > 8 and link_column_count == 1
+                assign simple_menu_width = 560
+              elsif simple_menu_width < 320
+                assign simple_menu_width = 320
+              elsif simple_menu_width > 760
+                assign simple_menu_width = 760
+              endif
+            -%}
+
+            <li class="xstrape-header__nav-item" {{ block.shopify_attributes }}>
+              {%- if has_dropdown and has_dropdown_content -%}
+                <div class="xstrape-header__nav-item" data-xstrape-mega-item>
+                  {%- capture desktop_menu_label -%}
+                    {%- if block.settings.split_title -%}
+                      {{ block.settings.title | escape | replace: ' ', '<br>' }}
+                    {%- else -%}
+                      {{ block.settings.title | escape }}
+                    {%- endif -%}
+                  {%- endcapture -%}
+
+                  {%- if item_url != blank -%}
+                    <a class="xstrape-header__nav-summary" href="{{ item_url }}" aria-haspopup="true" aria-expanded="false" data-xstrape-mega-trigger>
+                      {{ desktop_menu_label }}
+                    </a>
+                  {%- else -%}
+                    <button class="xstrape-header__nav-summary" type="button" aria-haspopup="true" aria-expanded="false" data-xstrape-mega-trigger>
+                      {{ desktop_menu_label }}
+                    </button>
+                  {%- endif -%}
+
+                  <div class="xstrape-header__mega-panel {% if is_simple_dropdown %}xstrape-header__mega-panel--simple{% endif %}" {% if is_simple_dropdown %}style="--xstrape-header-simple-menu-width: {{ simple_menu_width }}px; --xstrape-header-simple-link-columns: {{ link_column_count }};"{% endif %}>
+                    <div class="xstrape-header__mega-inner {% unless has_link_columns %}xstrape-header__mega-inner--no-links{% endunless %} {% unless has_feature_card %}xstrape-header__mega-inner--no-feature{% endunless %} {% if desktop_card_count == 0 %}xstrape-header__mega-inner--no-cards{% endif %}" style="--xstrape-header-card-columns: {{ desktop_card_columns }}; --xstrape-header-card-track-min: {{ desktop_card_track_min }}px;">
+                      <ul class="xstrape-header__mega-cards" role="list">
+                        {%- for card_block in section.blocks -%}
+                          {%- liquid
+                            assign card_parent_handle = card_block.settings.parent_title | handleize
+                            assign card_image_asset = card_block.settings.image_asset | strip
+                            assign card_badge = card_block.settings.badge
+                            assign card_badge_normalized = card_badge | upcase
+                            assign card_badge_style = 'new'
+                            if card_badge_normalized contains 'HOT'
+                              assign card_badge_style = 'hot'
+                            elsif card_badge_normalized contains 'SALE' or card_badge_normalized contains 'FEATURED'
+                              assign card_badge_style = 'sale'
+                            endif
+                          -%}
+
+                          {%- if card_block.type == 'desktop_menu_card' and card_block.settings.title != blank and card_parent_handle == desktop_item_title_handle -%}
+                            <li {{ card_block.shopify_attributes }}>
+                              <a class="xstrape-header__mega-card" {% if card_block.settings.link != blank %}href="{{ card_block.settings.link }}"{% elsif item_url != blank %}href="{{ item_url }}"{% endif %}>
+                                <span class="xstrape-header__thumb {% if card_block.settings.image == blank and card_image_asset == blank %}xstrape-header__thumb--placeholder{% endif %}">
+                                  {%- if card_block.settings.image != blank -%}
+                                    {{ card_block.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', sizes: '76px' }}
+                                  {%- elsif card_image_asset != blank -%}
+                                    <img src="{{ card_image_asset | asset_url }}" alt="" loading="lazy" width="76" height="76">
+                                  {%- endif -%}
+                                </span>
+                                <span>
+                                  <span class="xstrape-header__mega-title">
+                                    {{ card_block.settings.title | escape }}
+                                    {%- if card_badge != blank -%}
+                                      <span class="xstrape-header__badge xstrape-header__badge--{{ card_badge_style }}">{{ card_badge | escape }}</span>
+                                    {%- endif -%}
+                                  </span>
+                                  {%- if card_block.settings.text != blank -%}
+                                    <span class="xstrape-header__mega-text">{{ card_block.settings.text | escape }}</span>
+                                  {%- endif -%}
+                                </span>
+                                <span class="xstrape-header__arrow" aria-hidden="true">&rsaquo;</span>
+                              </a>
+                            </li>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </ul>
+
+                      {%- if has_link_columns -%}
+                        <div class="xstrape-header__mega-link-grid xstrape-header__mega-link-grid--columns-{{ link_column_count }} {% if link_column_count == 1 and largest_link_count > 8 %}xstrape-header__mega-link-grid--single{% endif %}">
+                          {%- for index in (1..3) -%}
+                            {%- liquid
+                              assign heading_key = 'link_heading_' | append: index
+                              assign list_key = 'link_list_' | append: index
+                              assign link_list = block.settings[list_key]
+                              assign heading = block.settings[heading_key] | default: link_list.title
+                            -%}
+                            {%- if link_list != blank and link_list.links.size > 0 -%}
+                              <div class="xstrape-header__mega-link-column">
+                                <p class="xstrape-header__mega-heading">{{ heading | escape }}</p>
+                                <ul class="xstrape-header__mega-links" role="list">
+                                  {%- for link in link_list.links -%}
+                                    <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                                  {%- endfor -%}
+                                </ul>
+                              </div>
+                            {%- endif -%}
+                          {%- endfor -%}
+                        </div>
+                      {%- endif -%}
+
+                      {%- if has_feature_card -%}
+                        <a class="xstrape-header__feature" {% if block.settings.feature_link != blank %}href="{{ block.settings.feature_link }}"{% elsif item_url != blank %}href="{{ item_url }}"{% endif %}>
+                          {%- if block.settings.feature_image != blank -%}
+                            {{ block.settings.feature_image | image_url: width: 700 | image_tag: loading: 'lazy', sizes: '280px' }}
+                          {%- elsif feature_image_asset != blank -%}
+                            <img src="{{ feature_image_asset | asset_url }}" alt="" loading="lazy" width="700" height="700">
+                          {%- endif -%}
+                          <span class="xstrape-header__feature-body">
+                            {%- if block.settings.feature_kicker != blank -%}
+                              <span class="xstrape-header__feature-kicker">{{ block.settings.feature_kicker | escape }}</span>
+                            {%- endif -%}
+                            <span class="xstrape-header__feature-title">{{ block.settings.feature_title | default: block.settings.title | escape }}</span>
+                            {%- if block.settings.feature_button_text != blank -%}
+                              <span class="xstrape-header__feature-cta">{{ block.settings.feature_button_text | escape }}</span>
+                            {%- endif -%}
+                          </span>
+                        </a>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              {%- else -%}
+                <a class="xstrape-header__nav-link {% if block.settings.highlight %}xstrape-header__nav-link--highlight{% endif %}" {% if item_url != blank %}href="{{ item_url }}"{% endif %}>
+                  {%- if block.settings.split_title -%}
+                    {{ block.settings.title | escape | replace: ' ', '<br>' }}
+                  {%- else -%}
+                    {{ block.settings.title | escape }}
+                  {%- endif -%}
+                </a>
+              {%- endif -%}
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <ul class="xstrape-header__actions" role="list">
+      {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
+        <li class="xstrape-header__desktop-only">
+          {%- render 'localization-selector', type: 'country', show_country_name: section.settings.show_country_name, show_country_flag: section.settings.show_country_flag, popover_vertical_position: 'end' -%}
+        </li>
+      {%- endif -%}
+
+      {%- if section.settings.show_search -%}
+        <li>
+          <a class="xstrape-header__icon" href="{{ routes.search_url }}" aria-controls="search-drawer">
+            <span class="sr-only">{{ 'header.general.search' | t }}</span>
+            {%- render 'icon' with 'search' -%}
+          </a>
+        </li>
+      {%- endif -%}
+
+      {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+        <li class="xstrape-header__desktop-only">
+          <shopify-account menu="{{ section.settings.customer_account_menu }}">
+            <div slot="signed-out-avatar" class="xstrape-header__icon">
+              <span class="sr-only">{{ 'header.general.login' | t }}</span>
+              {%- render 'icon' with 'account' -%}
+            </div>
+          </shopify-account>
+        </li>
+      {%- endif -%}
+
+      {%- if section.settings.show_cart -%}
+        <li>
+          <a class="xstrape-header__icon" href="{{ routes.cart_url }}" data-no-instant {% if settings.cart_type != 'page' and request.page_type != 'cart' %}aria-controls="cart-drawer"{% endif %}>
+            <span class="sr-only">{{ 'header.general.cart' | t }}</span>
+            {%- render 'icon' with 'cart' -%}
+            <cart-count class="xstrape-header__cart-count {% if cart.item_count == 0 %}is-empty{% endif %}" aria-hidden="true">{{ cart.item_count }}</cart-count>
+          </a>
+        </li>
+      {%- endif -%}
+
+      <li class="xstrape-header__mobile-only">
+        <button class="xstrape-header__icon" type="button" aria-controls="xstrape-mobile-panel-{{ section.id }}" aria-expanded="false" data-xstrape-mobile-menu-toggle>
+          <span class="sr-only">{{ 'header.general.menu' | t }}</span>
+          <span class="xstrape-header__menu-open">{%- render 'icon' with 'hamburger' -%}</span>
+          <span class="xstrape-header__menu-close">{%- render 'icon' with 'close', width: 25, height: 25 -%}</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div id="xstrape-mobile-panel-{{ section.id }}" class="xstrape-header__mobile-panel" hidden>
+    <button class="xstrape-header__mobile-scrim" type="button" aria-label="{{ 'general.accessibility.close' | t | escape }}" data-xstrape-mobile-menu-close></button>
+    <div class="xstrape-header__mobile-surface" role="dialog" aria-modal="true" aria-label="{{ 'header.general.menu' | t | escape }}" tabindex="-1">
+      <div class="xstrape-header__mobile-level" data-xstrape-mobile-main>
+        <ul class="xstrape-header__mobile-list" role="list">
+          {%- assign has_mobile_cards = false -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'mobile_card' -%}
+              {%- assign has_mobile_cards = true -%}
+              {%- liquid
+                assign has_submenu = false
+                assign auto_submenu_menu = block.settings.auto_submenu_menu
+                assign mobile_card_title_handle = block.settings.title | handleize
+                if auto_submenu_menu != blank and auto_submenu_menu.links.size > 0
+                  assign has_submenu = true
+                endif
+                for submenu_block in section.blocks
+                  if submenu_block.type == 'mobile_submenu_item'
+                    assign submenu_parent_handle = submenu_block.settings.parent_title | handleize
+                    if submenu_block.settings.title != blank and submenu_parent_handle == mobile_card_title_handle
+                      assign has_submenu = true
+                    endif
+                  endif
+                endfor
+
+                assign mobile_image_asset = block.settings.image_asset | strip
+                if mobile_image_asset == blank
+                  assign mobile_image_asset = blank
+                endif
+              -%}
+
+              {%- capture mobile_card_inner -%}
+                <span class="xstrape-header__mobile-thumb {% if block.settings.image == blank and mobile_image_asset == blank %}xstrape-header__mobile-thumb--placeholder{% endif %}">
+                  {%- if block.settings.image != blank -%}
+                    {{ block.settings.image | image_url: width: 320 | image_tag: loading: 'lazy', sizes: '74px' }}
+                  {%- elsif mobile_image_asset != blank -%}
+                    <img src="{{ mobile_image_asset | asset_url }}" alt="" loading="lazy" width="74" height="74">
+                  {%- endif -%}
+                </span>
+                <span class="xstrape-header__mobile-body">
+                  <span class="xstrape-header__mobile-title">
+                    {{ block.settings.title | escape }}
+                    {%- if block.settings.badge != blank -%}
+                      <span class="xstrape-header__badge xstrape-header__badge--{{ block.settings.badge_style }}">{{ block.settings.badge | escape }}</span>
+                    {%- endif -%}
+                  </span>
+                  {%- if block.settings.subtitle != blank -%}
+                    <span class="xstrape-header__mobile-text">{{ block.settings.subtitle | escape }}</span>
+                  {%- endif -%}
+                </span>
+                <span class="xstrape-header__mobile-arrow" aria-hidden="true">&rsaquo;</span>
+              {%- endcapture -%}
+
+              <li {{ block.shopify_attributes }}>
+                {%- if has_submenu -%}
+                  <button class="xstrape-header__mobile-card" type="button" aria-controls="xstrape-mobile-submenu-{{ section.id }}-{{ block.id }}" data-xstrape-mobile-submenu-open="{{ block.id }}">
+                    {{ mobile_card_inner }}
+                  </button>
+                {%- else -%}
+                  <a class="xstrape-header__mobile-card" {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}>
+                    {{ mobile_card_inner }}
+                  </a>
+                {%- endif -%}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- unless has_mobile_cards -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'desktop_item' -%}
+                <li>
+                  <a class="xstrape-header__mobile-card" {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}>
+                    <span class="xstrape-header__mobile-thumb xstrape-header__mobile-thumb--placeholder"></span>
+                    <span class="xstrape-header__mobile-body">
+                      <span class="xstrape-header__mobile-title">{{ block.settings.title | escape }}</span>
+                    </span>
+                    <span class="xstrape-header__mobile-arrow" aria-hidden="true">&rsaquo;</span>
+                  </a>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endunless -%}
+        </ul>
+      </div>
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'mobile_card' -%}
+          {%- liquid
+            assign has_submenu = false
+            assign auto_submenu_menu = block.settings.auto_submenu_menu
+            assign mobile_card_title_handle = block.settings.title | handleize
+            if auto_submenu_menu != blank and auto_submenu_menu.links.size > 0
+              assign has_submenu = true
+            endif
+            for submenu_block in section.blocks
+              if submenu_block.type == 'mobile_submenu_item'
+                assign submenu_parent_handle = submenu_block.settings.parent_title | handleize
+                if submenu_block.settings.title != blank and submenu_parent_handle == mobile_card_title_handle
+                  assign has_submenu = true
+                endif
+              endif
+            endfor
+          -%}
+
+          {%- if has_submenu -%}
+            <div id="xstrape-mobile-submenu-{{ section.id }}-{{ block.id }}" class="xstrape-header__mobile-level" data-xstrape-mobile-submenu="{{ block.id }}" hidden>
+              <div class="xstrape-header__mobile-subhead">
+                <button class="xstrape-header__mobile-back" type="button" aria-label="返回上一级菜单" data-xstrape-mobile-submenu-back></button>
+                <p class="xstrape-header__mobile-subheading">{{ block.settings.title | escape }}</p>
+              </div>
+              <ul class="xstrape-header__mobile-list xstrape-header__mobile-sublist" role="list">
+                {%- liquid
+                  assign mobile_card_title_handle = block.settings.title | handleize
+                  assign auto_submenu_menu = block.settings.auto_submenu_menu
+                -%}
+
+                {%- if auto_submenu_menu != blank and auto_submenu_menu.links.size > 0 -%}
+                  {%- for auto_link in auto_submenu_menu.links -%}
+                    {%- liquid
+                      assign auto_child_image = blank
+                      if auto_link.object != blank
+                        case auto_link.type
+                          when 'collection_link'
+                            assign auto_child_image = auto_link.object.image
+                            if auto_child_image == blank
+                              assign auto_child_image = auto_link.object.featured_image
+                            endif
+                            if auto_child_image == blank
+                              assign auto_child_image = auto_link.object.products.first.featured_media
+                            endif
+                          when 'product_link'
+                            assign auto_child_image = auto_link.object.featured_media
+                          when 'blog_link'
+                            assign auto_child_image = auto_link.object.articles.first.image
+                          when 'article_link'
+                            assign auto_child_image = auto_link.object.image
+                        endcase
+                      endif
+                    -%}
+                    <li>
+                      <a class="xstrape-header__mobile-card" href="{{ auto_link.url }}">
+                        <span class="xstrape-header__mobile-thumb {% if auto_child_image == blank %}xstrape-header__mobile-thumb--placeholder{% endif %}">
+                          {%- if auto_child_image != blank -%}
+                            {{ auto_child_image | image_url: width: 320 | image_tag: loading: 'lazy', sizes: '74px', alt: auto_link.title }}
+                          {%- endif -%}
+                        </span>
+                        <span class="xstrape-header__mobile-body">
+                          <span class="xstrape-header__mobile-title">
+                            {{ auto_link.title | escape }}
+                          </span>
+                        </span>
+                        <span class="xstrape-header__mobile-arrow" aria-hidden="true">&rsaquo;</span>
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                {%- endif -%}
+
+                {%- for submenu_block in section.blocks -%}
+                  {%- liquid
+                    assign is_matching_submenu_item = false
+                    assign submenu_parent_handle = submenu_block.settings.parent_title | handleize
+                    if submenu_block.type == 'mobile_submenu_item' and submenu_block.settings.title != blank
+                      if submenu_parent_handle == mobile_card_title_handle
+                        assign is_matching_submenu_item = true
+                      endif
+                    endif
+
+                    assign submenu_item_style = submenu_block.settings.item_style | default: 'card'
+                  -%}
+
+                  {%- if is_matching_submenu_item and submenu_item_style != 'button' -%}
+                    {%- liquid
+                      assign child_title = submenu_block.settings.title
+                      assign child_link = submenu_block.settings.link
+                      assign child_image = submenu_block.settings.image
+                      assign child_image_asset = submenu_block.settings.image_asset | strip
+                      assign child_badge = submenu_block.settings.badge
+                      assign child_badge_normalized = child_badge | upcase
+                      assign child_badge_style = 'new'
+                      if child_badge_normalized contains 'HOT'
+                        assign child_badge_style = 'hot'
+                      elsif child_badge_normalized contains 'SALE' or child_badge_normalized contains 'FEATURED'
+                        assign child_badge_style = 'sale'
+                      endif
+                    -%}
+                    <li {{ submenu_block.shopify_attributes }}>
+                      <a class="xstrape-header__mobile-card" {% if child_link != blank %}href="{{ child_link }}"{% endif %}>
+                        <span class="xstrape-header__mobile-thumb {% if child_image == blank and child_image_asset == blank %}xstrape-header__mobile-thumb--placeholder{% endif %}">
+                          {%- if child_image != blank -%}
+                            {{ child_image | image_url: width: 320 | image_tag: loading: 'lazy', sizes: '74px' }}
+                          {%- elsif child_image_asset != blank -%}
+                            <img src="{{ child_image_asset | asset_url }}" alt="" loading="lazy" width="74" height="74">
+                          {%- endif -%}
+                        </span>
+                        <span class="xstrape-header__mobile-body">
+                          <span class="xstrape-header__mobile-title">
+                            {{ child_title | escape }}
+                            {%- if child_badge != blank -%}
+                              <span class="xstrape-header__badge xstrape-header__badge--{{ child_badge_style }}">{{ child_badge | escape }}</span>
+                            {%- endif -%}
+                          </span>
+                        </span>
+                        <span class="xstrape-header__mobile-arrow" aria-hidden="true">&rsaquo;</span>
+                      </a>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+
+                {%- for submenu_block in section.blocks -%}
+                  {%- liquid
+                    assign is_matching_submenu_item = false
+                    assign submenu_parent_handle = submenu_block.settings.parent_title | handleize
+                    if submenu_block.type == 'mobile_submenu_item' and submenu_block.settings.title != blank
+                      if submenu_parent_handle == mobile_card_title_handle
+                        assign is_matching_submenu_item = true
+                      endif
+                    endif
+
+                    assign submenu_item_style = submenu_block.settings.item_style | default: 'card'
+                  -%}
+
+                  {%- if is_matching_submenu_item and submenu_item_style == 'button' -%}
+                    <li {{ submenu_block.shopify_attributes }}>
+                      <a class="xstrape-header__mobile-all-link" {% if submenu_block.settings.link != blank %}href="{{ submenu_block.settings.link }}"{% endif %}>{{ submenu_block.settings.title | escape }}</a>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section) return;
+
+    const bar = section.querySelector('[data-xstrape-header-bar]');
+    const panel = section.querySelector('#xstrape-mobile-panel-{{ section.id }}');
+    const mobileSurface = panel?.querySelector('.xstrape-header__mobile-surface');
+    const mobileMain = panel?.querySelector('[data-xstrape-mobile-main]');
+    const mobileSubmenus = panel?.querySelectorAll('[data-xstrape-mobile-submenu]');
+    const toggles = section.querySelectorAll('[data-xstrape-mobile-menu-toggle]');
+    const desktopQuery = window.matchMedia('(min-width: 1150px)');
+    let closeTimer;
+    let heightTimer;
+    const desktopCloseTimers = new WeakMap();
+
+    const updateMetrics = () => {
+      if (!bar) return;
+      const rect = bar.getBoundingClientRect();
+      const sectionStyle = window.getComputedStyle(section);
+      const bottomGap = Number.parseFloat(sectionStyle.getPropertyValue('--xstrape-header-mobile-top-gap')) || 0;
+      const viewportHeight = window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight;
+      const panelMaxHeight = Math.max(rect.height, Math.round(viewportHeight - rect.top - bottomGap));
+
+      section.style.setProperty('--xstrape-header-bar-real-height', `${Math.round(rect.height)}px`);
+      section.style.setProperty('--xstrape-mobile-panel-top', `${Math.round(rect.top)}px`);
+      section.style.setProperty('--xstrape-mobile-panel-closed-height', `${Math.round(rect.height)}px`);
+      section.style.setProperty('--xstrape-mobile-panel-max-height', `${panelMaxHeight}px`);
+      document.documentElement.style.setProperty('--header-height', `${Math.round(section.clientHeight)}px`);
+    };
+
+    const getActiveMobileLevel = () => {
+      if (mobileMain && !mobileMain.hidden) return mobileMain;
+      return Array.from(mobileSubmenus || []).find((submenu) => !submenu.hidden) || mobileMain;
+    };
+
+    const updateMobilePanelHeight = () => {
+      if (!mobileSurface || !panel?.classList.contains('is-open')) return;
+
+      updateMetrics();
+
+      const activeLevel = getActiveMobileLevel();
+      const surfaceStyle = window.getComputedStyle(mobileSurface);
+      const paddingTop = Number.parseFloat(surfaceStyle.paddingTop) || 0;
+      const paddingBottom = Number.parseFloat(surfaceStyle.paddingBottom) || 0;
+      const maxHeight = Number.parseFloat(window.getComputedStyle(section).getPropertyValue('--xstrape-mobile-panel-max-height')) || window.innerHeight;
+      const contentHeight = Math.ceil((activeLevel?.scrollHeight || 0) + paddingTop + paddingBottom);
+      const targetHeight = Math.min(contentHeight, maxHeight);
+
+      section.style.setProperty('--xstrape-mobile-panel-content-height', `${contentHeight}px`);
+      section.style.setProperty('--xstrape-mobile-panel-target-height', `${targetHeight}px`);
+      mobileSurface.style.height = `${targetHeight}px`;
+      mobileSurface.style.maxHeight = `${maxHeight}px`;
+    };
+
+    const scheduleMobilePanelHeightUpdate = () => {
+      window.clearTimeout(heightTimer);
+      window.requestAnimationFrame(updateMobilePanelHeight);
+      heightTimer = window.setTimeout(updateMobilePanelHeight, 90);
+    };
+
+    const clearDesktopCloseTimer = (item) => {
+      const timer = desktopCloseTimers.get(item);
+      if (timer) window.clearTimeout(timer);
+      desktopCloseTimers.delete(item);
+    };
+
+    const scheduleDesktopClose = (item) => {
+      clearDesktopCloseTimer(item);
+      desktopCloseTimers.set(item, window.setTimeout(() => {
+        item.removeAttribute('open');
+        item.querySelector('[data-xstrape-mega-trigger]')?.setAttribute('aria-expanded', 'false');
+        desktopCloseTimers.delete(item);
+      }, 360));
+    };
+
+    const closeDesktopItems = (activeItem) => {
+      section.querySelectorAll('[data-xstrape-mega-item]').forEach((item) => {
+        clearDesktopCloseTimer(item);
+        if (item !== activeItem) {
+          item.removeAttribute('open');
+          item.querySelector('[data-xstrape-mega-trigger]')?.setAttribute('aria-expanded', 'false');
+        }
+      });
+    };
+
+    const positionSimpleDesktopPanel = (item) => {
+      const panel = item.querySelector('.xstrape-header__mega-panel--simple');
+      const trigger = item.querySelector('[data-xstrape-mega-trigger]');
+      const bar = section.querySelector('[data-xstrape-header-bar]');
+      if (!panel || !trigger || !bar) return;
+
+      const barRect = bar.getBoundingClientRect();
+      const triggerRect = trigger.getBoundingClientRect();
+      const panelWidth = Math.min(panel.getBoundingClientRect().width || 360, window.innerWidth - 56);
+      const minCenter = panelWidth / 2 + 18;
+      const maxCenter = window.innerWidth - panelWidth / 2 - 18;
+      const desiredCenter = triggerRect.left + triggerRect.width / 2;
+      const center = Math.min(Math.max(desiredCenter, minCenter), maxCenter);
+
+      panel.style.setProperty('--xstrape-header-simple-left', `${center - barRect.left}px`);
+    };
+
+    section.querySelectorAll('[data-xstrape-mega-item]').forEach((item) => {
+      const desktopPanel = item.querySelector('.xstrape-header__mega-panel');
+      const desktopTrigger = item.querySelector('[data-xstrape-mega-trigger]');
+
+      const openDesktopItem = () => {
+        clearDesktopCloseTimer(item);
+        closeDesktopItems(item);
+        item.setAttribute('open', '');
+        desktopTrigger?.setAttribute('aria-expanded', 'true');
+        positionSimpleDesktopPanel(item);
+      };
+
+      const closeDesktopItem = () => {
+        item.removeAttribute('open');
+        desktopTrigger?.setAttribute('aria-expanded', 'false');
+      };
+
+      item.addEventListener('mouseenter', () => {
+        if (!desktopQuery.matches) return;
+        openDesktopItem();
+      });
+
+      item.addEventListener('pointerenter', () => {
+        if (!desktopQuery.matches) return;
+        openDesktopItem();
+      });
+
+      item.addEventListener('mouseover', (event) => {
+        if (!desktopQuery.matches || !item.contains(event.target)) return;
+        openDesktopItem();
+      });
+
+      item.addEventListener('mouseleave', () => {
+        if (!desktopQuery.matches) return;
+        scheduleDesktopClose(item);
+      });
+
+      desktopPanel?.addEventListener('mouseenter', () => {
+        if (!desktopQuery.matches) return;
+        clearDesktopCloseTimer(item);
+        item.setAttribute('open', '');
+        desktopTrigger?.setAttribute('aria-expanded', 'true');
+      });
+
+      desktopPanel?.addEventListener('pointerenter', () => {
+        if (!desktopQuery.matches) return;
+        clearDesktopCloseTimer(item);
+        item.setAttribute('open', '');
+        desktopTrigger?.setAttribute('aria-expanded', 'true');
+      });
+
+      desktopTrigger?.addEventListener('click', (event) => {
+        if (!desktopQuery.matches) return;
+        if (desktopTrigger.tagName === 'A' && desktopTrigger.getAttribute('href')) {
+          closeDesktopItems();
+          return;
+        }
+
+        event.preventDefault();
+
+        if (item.hasAttribute('open')) {
+          closeDesktopItem();
+        } else {
+          openDesktopItem();
+        }
+      });
+    });
+
+    const resetMobileSubmenus = () => {
+      if (mobileMain) mobileMain.hidden = false;
+      mobileSubmenus?.forEach((submenu) => {
+        submenu.hidden = true;
+      });
+      mobileSurface?.scrollTo({ top: 0, behavior: 'auto' });
+      scheduleMobilePanelHeightUpdate();
+    };
+
+    const openMobileSubmenu = (id) => {
+      const submenu = Array.from(mobileSubmenus || []).find((item) => item.getAttribute('data-xstrape-mobile-submenu') === id);
+      if (!submenu || !mobileMain) return;
+
+      mobileMain.hidden = true;
+      mobileSubmenus?.forEach((item) => {
+        item.hidden = item !== submenu;
+      });
+      mobileSurface?.scrollTo({ top: 0, behavior: 'auto' });
+      scheduleMobilePanelHeightUpdate();
+    };
+
+    const setOpen = (open) => {
+      if (!panel || toggles.length === 0) return;
+      window.clearTimeout(closeTimer);
+
+      toggles.forEach((toggle) => {
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+
+      document.documentElement.classList.toggle('xstrape-mobile-menu-open', open);
+
+      if (open) {
+        updateMetrics();
+        resetMobileSubmenus();
+        panel.hidden = false;
+        panel.offsetHeight;
+        panel.classList.add('is-open');
+        scheduleMobilePanelHeightUpdate();
+        panel.querySelector('.xstrape-header__mobile-surface')?.focus({ preventScroll: true });
+      } else {
+        panel.classList.remove('is-open');
+        if (mobileSurface) {
+          mobileSurface.style.removeProperty('height');
+          mobileSurface.style.removeProperty('max-height');
+        }
+        resetMobileSubmenus();
+        closeTimer = window.setTimeout(() => {
+          panel.hidden = true;
+        }, 430);
+      }
+    };
+
+    toggles.forEach((toggle) => {
+      toggle.addEventListener('click', (event) => {
+        if (desktopQuery.matches) return;
+        event.preventDefault();
+        event.stopPropagation();
+        setOpen(!panel?.classList.contains('is-open'));
+      });
+    });
+
+    panel?.addEventListener('click', (event) => {
+      const submenuTrigger = event.target.closest('[data-xstrape-mobile-submenu-open]');
+      if (submenuTrigger) {
+        event.preventDefault();
+        event.stopPropagation();
+        openMobileSubmenu(submenuTrigger.getAttribute('data-xstrape-mobile-submenu-open'));
+        return;
+      }
+
+      if (event.target.closest('[data-xstrape-mobile-submenu-back]')) {
+        event.preventDefault();
+        event.stopPropagation();
+        resetMobileSubmenus();
+        return;
+      }
+
+      if (event.target.closest('[data-xstrape-mobile-menu-close]') || event.target.closest('a')) {
+        setOpen(false);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeDesktopItems();
+        if (panel?.classList.contains('is-open')) setOpen(false);
+      }
+    });
+
+    const onDesktopChange = (event) => {
+      if (event.matches) setOpen(false);
+    };
+
+    updateMetrics();
+    window.addEventListener('resize', updateMetrics, { passive: true });
+    window.visualViewport?.addEventListener('resize', updateMetrics, { passive: true });
+    window.addEventListener('resize', scheduleMobilePanelHeightUpdate, { passive: true });
+    window.visualViewport?.addEventListener('resize', scheduleMobilePanelHeightUpdate, { passive: true });
+    panel?.querySelectorAll('img').forEach((image) => {
+      if (!image.complete) image.addEventListener('load', scheduleMobilePanelHeightUpdate, { once: true });
+    });
+
+    if (desktopQuery.addEventListener) {
+      desktopQuery.addEventListener('change', onDesktopChange);
+    } else {
+      desktopQuery.addListener(onDesktopChange);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "自定义顶部导航",
+  "class": "shopify-section--xstrape-header",
+  "tag": "header",
+  "enabled_on": {
+    "groups": [
+      "header"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "overlay_on_homepage",
+      "label": "叠加在首页主视觉上",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "非首页启用吸顶",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "标志"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "标志图片"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "标志文字",
+      "default": "Store Name"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 80,
+      "max": 320,
+      "step": 5,
+      "unit": "px",
+      "label": "桌面标志宽度",
+      "default": 190
+    },
+    {
+      "type": "range",
+      "id": "logo_mobile_width",
+      "min": 80,
+      "max": 220,
+      "step": 5,
+      "unit": "px",
+      "label": "移动端标志宽度",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "logo_vertical_offset",
+      "min": -8,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "桌面标志垂直微调",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "logo_mobile_vertical_offset",
+      "min": -8,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端标志垂直微调",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "桌面导航"
+    },
+    {
+      "type": "text",
+      "id": "desktop_menu_label",
+      "label": "导航无障碍标签",
+      "default": "主菜单"
+    },
+    {
+      "type": "range",
+      "id": "nav_gap",
+      "min": 12,
+      "max": 54,
+      "step": 2,
+      "unit": "px",
+      "label": "导航间距",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "nav_font_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "导航字号",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "公告栏"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "显示公告栏",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "文字",
+      "default": "Free Shipping on U.S. Orders $50+"
+    },
+    {
+      "type": "text",
+      "id": "announcement_link_text",
+      "label": "链接文字",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "链接"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement_info_icon",
+      "label": "显示信息图标",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "announcement_background",
+      "label": "背景",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "announcement_text_color",
+      "label": "文字颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "操作按钮"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "显示搜索",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "显示购物车",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "显示账户",
+      "default": true
+    },
+    {
+      "type": "link_list",
+      "id": "customer_account_menu",
+      "label": "账户菜单",
+      "default": "customer-account-main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "显示国家/地区选择器",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_flag",
+      "label": "显示国旗",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_name",
+      "label": "显示国家名称",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "布局"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1200,
+      "max": 2000,
+      "step": 20,
+      "unit": "px",
+      "label": "最大宽度",
+      "default": 1920
+    },
+    {
+      "type": "range",
+      "id": "side_gap",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "两侧间距",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_top_gap",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "桌面顶部间距",
+      "default": 21
+    },
+    {
+      "type": "range",
+      "id": "mobile_top_gap",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端顶部间距",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 64,
+      "max": 110,
+      "step": 2,
+      "unit": "px",
+      "label": "桌面导航高度",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 44,
+      "max": 92,
+      "step": 2,
+      "unit": "px",
+      "label": "移动端导航高度",
+      "default": 72
+    },
+    {
+      "type": "header",
+      "content": "移动端导航"
+    },
+    {
+      "type": "range",
+      "id": "mobile_side_gap",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端左右边距",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "mobile_bar_radius",
+      "min": 0,
+      "max": 42,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端导航圆角",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_logo_left_padding",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端标志左侧间距",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "mobile_logo_height_gap",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端标志高度留白",
+      "default": 27
+    },
+    {
+      "type": "range",
+      "id": "mobile_icon_width",
+      "min": 32,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端图标按钮宽度",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_icon_width",
+      "min": 32,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端菜单按钮宽度",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "bar_radius",
+      "min": 18,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "导航圆角",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_panel_radius",
+      "min": 18,
+      "max": 42,
+      "step": 1,
+      "unit": "px",
+      "label": "移动端面板圆角",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "移动端展开菜单"
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_top_spacing",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "菜单顶部间距",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_padding_x",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "菜单左右内边距",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_padding_bottom",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "菜单底部内边距",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_menu_gap",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "菜单卡片间距",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_height",
+      "min": 60,
+      "max": 140,
+      "step": 1,
+      "unit": "px",
+      "label": "卡片高度",
+      "default": 82
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_padding",
+      "min": 0,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "卡片内边距",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "卡片圆角",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_image_size",
+      "min": 44,
+      "max": 110,
+      "step": 1,
+      "unit": "px",
+      "label": "卡片图片大小",
+      "default": 74
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_image_radius",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "卡片图片圆角",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_content_gap",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "卡片内容间距",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "mobile_title_font_size",
+      "min": 10,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "卡片标题字号",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_subtitle_font_size",
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "卡片副标题字号",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "mobile_badge_font_size",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "标签字号",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "mobile_arrow_size",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "label": "箭头区域大小",
+      "default": 23
+    },
+    {
+      "type": "header",
+      "content": "颜色"
+    },
+    {
+      "type": "color",
+      "id": "bar_background",
+      "label": "导航背景",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "panel_background",
+      "label": "超级菜单/移动面板背景",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "超级菜单卡片背景",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字颜色",
+      "default": "#050505"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "强调色",
+      "default": "#0048ff"
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "min": 0,
+      "max": 35,
+      "step": 1,
+      "unit": "%",
+      "label": "阴影透明度",
+      "default": 18
+    }
+  ],
+  "blocks": [
+    {
+      "type": "desktop_item",
+      "name": "桌面菜单项",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Menu item"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        },
+        {
+          "type": "checkbox",
+          "id": "split_title",
+          "label": "标题分两行显示",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "高亮链接",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_dropdown",
+          "label": "显示超级菜单",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "desktop_card_columns",
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "label": "桌面菜单卡片列数",
+          "default": 1,
+          "info": "控制所属桌面菜单卡片在超级菜单中的排列列数。"
+        },
+        {
+          "type": "header",
+          "content": "链接列"
+        },
+        {
+          "type": "text",
+          "id": "link_heading_1",
+          "label": "第 1 列标题"
+        },
+        {
+          "type": "link_list",
+          "id": "link_list_1",
+          "label": "第 1 列菜单"
+        },
+        {
+          "type": "text",
+          "id": "link_heading_2",
+          "label": "第 2 列标题"
+        },
+        {
+          "type": "link_list",
+          "id": "link_list_2",
+          "label": "第 2 列菜单"
+        },
+        {
+          "type": "text",
+          "id": "link_heading_3",
+          "label": "第 3 列标题"
+        },
+        {
+          "type": "link_list",
+          "id": "link_list_3",
+          "label": "第 3 列菜单"
+        },
+        {
+          "type": "header",
+          "content": "特色卡片"
+        },
+        {
+          "type": "image_picker",
+          "id": "feature_image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "feature_image_asset",
+          "label": "主题资产图片文件名",
+          "info": "留空，或填写你自己的主题资产图片文件名。优先使用上方选择的图片。"
+        },
+        {
+          "type": "text",
+          "id": "feature_kicker",
+          "label": "小标题",
+          "default": "Featured products"
+        },
+        {
+          "type": "text",
+          "id": "feature_title",
+          "label": "标题",
+          "default": "Find your everyday strap"
+        },
+        {
+          "type": "text",
+          "id": "feature_button_text",
+          "label": "按钮文字",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "feature_link",
+          "label": "链接"
+        }
+      ]
+    },
+    {
+      "type": "mobile_card",
+      "name": "移动菜单卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "菜单卡片"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "副标题",
+          "default": "添加简短说明"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        },
+        {
+          "type": "link_list",
+          "id": "auto_submenu_menu",
+          "label": "自动二级菜单",
+          "info": "选择一个 Shopify 菜单后，会把这个菜单里的链接自动以移动端卡片展示。菜单项链接到产品系列时，图片会优先使用该产品系列图片。"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "image_asset",
+          "label": "主题资产图片文件名",
+          "info": "留空，或填写你自己的主题资产图片文件名。优先使用上方选择的图片。"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "标签"
+        },
+        {
+          "type": "select",
+          "id": "badge_style",
+          "label": "标签样式",
+          "options": [
+            {
+              "value": "new",
+              "label": "蓝色"
+            },
+            {
+              "value": "hot",
+              "label": "红色"
+            },
+            {
+              "value": "sale",
+              "label": "促销"
+            }
+          ],
+          "default": "new"
+        }
+      ]
+    },
+    {
+      "type": "desktop_menu_card",
+      "name": "桌面菜单卡片",
+      "settings": [
+        {
+          "type": "text",
+          "id": "parent_title",
+          "label": "所属桌面菜单标题",
+          "info": "必须和上方桌面菜单项标题完全一致，例如 Style、Material。"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Card title"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "副标题"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "image_asset",
+          "label": "主题资产图片文件名",
+          "info": "留空，或填写你自己的主题资产图片文件名。优先使用上方选择的图片。"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "标签",
+          "info": "填写 HOT 会显示红色；填写 SALE 或 FEATURED 会显示促销红色；其他默认蓝色。"
+        }
+      ]
+    },
+    {
+      "type": "mobile_submenu_item",
+      "name": "移动二级菜单项",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "二级菜单项"
+        },
+        {
+          "type": "text",
+          "id": "parent_title",
+          "label": "所属一级菜单标题",
+          "info": "必须和一级移动菜单卡片标题完全一致，例如 Shop Bands、Materials、Collections。"
+        },
+        {
+          "type": "select",
+          "id": "item_style",
+          "label": "显示样式",
+          "options": [
+            {
+              "value": "card",
+              "label": "卡片"
+            },
+            {
+              "value": "button",
+              "label": "底部按钮"
+            }
+          ],
+          "default": "card"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "text",
+          "id": "image_asset",
+          "label": "主题资产图片文件名",
+          "info": "留空，或填写你自己的主题资产图片文件名。优先使用上方选择的图片。"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "标签",
+          "info": "填写 HOT 会显示红色；填写 SALE 或 FEATURED 会显示促销红色；其他默认蓝色。"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "自定义顶部导航",
+      "blocks": [
+        {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Shop Bands",
+            "split_title": true,
+            "enable_dropdown": true,
+            "feature_title": "Find the right strap for every day",
+            "feature_image_asset": ""
+          }
+        },
+        {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Shop Bands",
+            "title": "All Products",
+            "text": "Browse this collection",
+            "image_asset": "",
+            "badge": "New"
+          }
+        },
+        {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Shop Bands",
+            "title": "Card title",
+            "text": "Polished everyday wear",
+            "image_asset": ""
+          }
+        },
+        {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Shop Bands",
+            "title": "Card title",
+            "text": "Soft, durable sport straps",
+            "image_asset": ""
+          }
+        },
+        {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Styles",
+            "enable_dropdown": true,
+            "feature_title": "Switch from gym to dinner in seconds",
+            "feature_image_asset": ""
+          }
+        },
+        {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Styles",
+            "title": "Stainless Steel",
+            "text": "Sharp metal bracelet styles",
+            "image_asset": ""
+          }
+        },
+        {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Styles",
+            "title": "Woven Magnetic",
+            "text": "Flexible magnetic comfort",
+            "image_asset": "",
+            "badge": "Hot"
+          }
+        },
+        {
+          "type": "desktop_menu_card",
+          "settings": {
+            "parent_title": "Styles",
+            "title": "Colorful Transparent",
+            "text": "Bright statement bands",
+            "image_asset": ""
+          }
+        },
+        {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Women’s Bands"
+          }
+        },
+        {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Men’s Business"
+          }
+        },
+        {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Blog"
+          }
+        },
+        {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Contact"
+          }
+        },
+        {
+          "type": "desktop_item",
+          "settings": {
+            "title": "Sale",
+            "highlight": true
+          }
+        },
+        {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Shop Bands",
+            "subtitle": "All product styles",
+            "image_asset": "",
+            "badge": "New"
+          }
+        },
+        {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Materials",
+            "subtitle": "Leather, silicone and metal",
+            "image_asset": ""
+          }
+        },
+        {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Collections",
+            "subtitle": "Shop by look and occasion",
+            "image_asset": ""
+          }
+        },
+        {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Best Picks",
+            "subtitle": "Customer favorite straps",
+            "image_asset": "",
+            "badge": "Hot",
+            "badge_style": "hot"
+          }
+        },
+        {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Blog",
+            "subtitle": "Care tips and styling ideas",
+            "image_asset": ""
+          }
+        },
+        {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Contact",
+            "subtitle": "Sizing, order and return help",
+            "image_asset": ""
+          }
+        },
+        {
+          "type": "mobile_card",
+          "settings": {
+            "title": "Sale",
+            "subtitle": "Featured discounts",
+            "badge": "Featured",
+            "badge_style": "sale"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

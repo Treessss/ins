@@ -1,0 +1,734 @@
+<div class="container">
+  {%- if cart.item_count == 0 -%}
+    <div class="empty-state">
+      <div class="empty-state__icon-wrapper">
+        {%- render 'icon' with 'cart', width: 32, height: 32, stroke_width: 1 -%}
+        <span class="count-bubble count-bubble--lg">0</span>
+      </div>
+
+      <div class="prose">
+        <p class="h4">{{ 'cart.general.empty' | t }}</p>
+
+        {%- assign button_content = 'cart.general.continue_shopping' | t -%}
+        {%- render 'button', href: settings.cart_empty_button_link, size: 'xl', content: button_content -%}
+      </div>
+    </div>
+  {%- else -%}
+    <div class="page-spacer">
+      <div class="cart">
+        <div class="cart-header">
+          <h1 class="h2">{{ 'cart.general.title' | t }}</h1>
+
+          {%- if settings.cart_show_free_shipping_threshold -%}
+            {%- render 'free-shipping-bar' -%}
+          {%- endif -%}
+
+          {%- if section.settings.show_volume_discount_reminder -%}
+            {%- render 'cart-volume-discount-reminder',
+              title_template: section.settings.volume_discount_title_template,
+              first_quantity: section.settings.volume_discount_first_quantity,
+              first_percent: section.settings.volume_discount_first_percent,
+              second_quantity: section.settings.volume_discount_second_quantity,
+              second_percent: section.settings.volume_discount_second_percent,
+              before_first_message: section.settings.volume_discount_before_first_message,
+              between_message: section.settings.volume_discount_between_message,
+              complete_message: section.settings.volume_discount_complete_message
+            -%}
+          {%- endif -%}
+        </div>
+
+        <div class="cart-order">
+          <div class="cart-order__summary">
+            {%- comment -%}
+            ----------------------------------------------------------------------------------------------------------------
+            ORDER SUMMARY
+            ----------------------------------------------------------------------------------------------------------------
+            {%- endcomment -%}
+            <table class="order-summary">
+              <thead class="order-summary__header">
+                <tr>
+                  <th>{{ 'customer.order.product' | t }}</th>
+                  <th class="w-0">{{ 'customer.order.quantity' | t }}</th>
+                  <th class="text-end">{{ 'customer.order.total' | t }}</th>
+                </tr>
+              </thead>
+
+              <tbody class="order-summary__body">
+                {%- for line_item in cart.items -%}
+                  {% liquid
+                    assign max_quantity = nil
+                  
+                    if line_item.variant.quantity_rule.max != nil
+                      assign max_quantity = max_quantity | default: 999999 | at_most: line_item.variant.quantity_rule.max
+                    endif
+                  %}
+
+                  <tr>
+                    <td>{%- render 'line-item', line_item: line_item -%}</td>
+
+                    <td class="hidden align-center text-center text-subdued sm:table-cell">
+                      <line-item-quantity class="v-stack justify-center gap-2">
+                        <input class="quantity-input" type="number" is="quantity-input" inputmode="numeric" min="{{ line_item.variant.quantity_rule.min }}" step="{{ line_item.variant.quantity_rule.increment }}" {% if max_quantity != nil %}max="{{ max_quantity }}"{% endif %} data-line-key="{{ line_item.key }}" aria-label="{{ 'cart.order.change_quantity' | t | escape }}" value="{{ line_item.quantity }}">
+
+                        <span class="text-xs">
+                          <a href="{{ line_item.url_to_remove }}" class="link" data-no-instant aria-label="{{ 'cart.order.remove_with_title' | t: title: line_item.title | escape }}">
+                            {{- 'cart.order.remove' | t -}}
+                          </a>
+                        </span>
+                      </line-item-quantity>
+                    </td>
+
+                    <td class="hidden align-center text-subdued text-end sm:table-cell">{{ line_item.final_line_price | money }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+
+            {%- comment -%}
+            ----------------------------------------------------------------------------------------------------------------
+            SHIPPING ESTIMATOR
+            ----------------------------------------------------------------------------------------------------------------
+            {%- endcomment -%}
+
+            {%- if section.settings.show_shipping_estimator and cart.requires_shipping -%}
+              {%- assign accordion_title = 'cart.shipping_estimator.estimate_shipping' | t -%}
+              {%- capture accordion_content -%}{%- render 'shipping-estimator' -%}{%- endcapture -%}
+
+              {%- render 'accordion', title: accordion_title, icon: 'picto-box', content: accordion_content, size: 'lg' -%}
+            {%- endif -%}
+          </div>
+
+          <safe-sticky class="cart-order__recap v-stack gap-6">
+            <form action="{{ routes.cart_url }}" method="POST" class="cart-form rounded">
+              {%- for block in section.blocks -%}
+                {%- case block.type -%}
+                  {%- when '@app' -%}
+                    {%- render block -%}
+
+                  {%- when 'totals' -%}
+                    <div class="cart-form__totals v-stack gap-2" {{ block.shopify_attributes }}>
+                      {%- if section.settings.allow_discount_application or cart.cart_level_discount_applications.size > 0 -%}
+                        <div class="v-stack gap-2.5">
+                          {%- if section.settings.allow_discount_application -%}
+                            {%- render 'cart-discount' -%}
+                          {%- endif -%}
+
+                          {%- if cart.cart_level_discount_applications.size > 0 -%}
+                            <div class="h-stack gap-2">
+                              {%- for discount_application in cart.cart_level_discount_applications -%}
+                                <div class="h-stack gap-4 justify-between">
+                                  <div class="badge">
+                                    {%- render 'icon' with 'discount' -%} {{ discount_application.title }} (-{{ discount_application.total_allocated_amount | money }})
+
+                                    {%- if section.settings.allow_discount_application and discount_application.type != '' -%}
+                                      <cart-discount-remove-button discount-code="{{ discount_application.title | escape }}" class="h-stack align-center">
+                                        <button type="button">{%- render 'icon' with 'delete', width: 8, stroke_width: 3 -%}</button>
+                                      </cart-discount-remove-button>
+                                    {%- endif -%}
+                                  </div>
+                                </div>
+                              {%- endfor -%}
+                            </div>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+
+                      {%- if block.settings.show_order_weight -%}
+                        <div class="h-stack gap-4 justify-between">
+                          <span class="text-subdued">{{ 'cart.general.weight' | t }}</span>
+                          <span class="text-subdued">{{ cart.total_weight | weight_with_unit }}</span>
+                        </div>
+                      {%- endif -%}
+
+                      <div class="h-stack gap-4 justify-between">
+                        <span class="text-subdued">{{ 'cart.general.subtotal' | t }}</span>
+                        <span class="text-subdued">{{ cart.items_subtotal_price | money }}</span>
+                      </div>
+
+                      <div class="h-stack gap-4 justify-between">
+                        <span class="h5">{{ 'cart.general.total' | t }}</span>
+                        <span class="h5">{{- cart.total_price | money_with_currency -}}</span>
+                      </div>
+
+                      {%- if block.settings.show_shipping_text -%}
+                        {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                          <span class="text-subdued text-sm">{{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}</span>
+                        {%- elsif cart.taxes_included -%}
+                          <span class="text-subdued text-sm">{{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}</span>
+                        {%- elsif shop.shipping_policy.body != blank -%}
+                          <span class="text-subdued text-sm">{{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}</span>
+                        {%- else -%}
+                          <span class="text-subdued text-sm">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</span>
+                        {%- endif -%}
+                      {%- endif -%}
+                    </div>
+
+                  {%- when 'cart_note' -%}
+                    <cart-note class="cart-form__note block" {{ block.shopify_attributes }}>
+                      {%- assign order_note = 'cart.general.order_note' | t -%}
+                      {%- render 'input', name: 'note', multiline: 3, label: order_note, value: cart.note, maxlength: block.settings.maxlength -%}
+                    </cart-note>
+
+                  {%- when 'text' -%}
+                    {%- if block.settings.content != blank -%}
+                      <div class="prose text-subdued" {{ block.shopify_attributes }}>
+                        {{- block.settings.content -}}
+                      </div>
+                    {%- endif -%}
+
+                  {%- when 'offer' -%}
+                    {%- assign previous_block_index = forloop.index0 | minus: 1 -%}
+                    {%- assign next_block_index = forloop.index0 | plus: 1 -%}
+
+                    {%- if section.blocks[next_block_index].type == 'offer' -%}
+                      <div class="v-stack gap-4">
+                    {%- endif -%}
+
+                    {%- render 'offer', block: block -%}
+
+                    {%- if section.blocks[previous_block_index].type == 'offer' -%}
+                      </div>
+                    {%- endif -%}
+
+                  {%- when 'accelerated_buttons' -%}
+                    {% if additional_checkout_buttons %}
+                      <div class="additional-checkout-buttons additional-checkout-buttons--vertical" {{ block.shopify_attributes }}>
+                        {{- content_for_additional_checkout_buttons -}}
+                      </div>
+                    {% endif %}
+
+                  {%- when 'checkout_button' -%}
+                    {%- assign checkout_button = 'cart.general.checkout' | t -%}
+                    {%- render 'button', type: 'submit', icon: 'picto-lock', content: checkout_button, size: 'xl', name: 'checkout', stretch: true, block: block -%}
+                {%- endcase -%}
+              {%- endfor -%}
+            </form>
+
+            {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+              <div class="v-stack gap-4">
+                <span class="text-xs text-subdued text-center">{{ 'cart.general.we_accept' | t }}</span>
+
+                <ul class="h-stack gap-2 wrap justify-center">
+                  {%- for type in shop.enabled_payment_types -%}
+                    <li class="contents">{{ type | payment_type_svg_tag }}</li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            {%- endif -%}
+          </safe-sticky>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "购物车",
+  "class": "shopify-section--main-cart",
+  "tag": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "totals",
+      "name": "合计",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_order_weight",
+          "label": "显示订单重量",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_shipping_text",
+          "label": "显示配送/税费文本",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "cart_note",
+      "name": "购物车备注",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "number",
+          "id": "max_length",
+          "label": "最大字符数"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "文本",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容"
+        }
+      ]
+    },
+    {
+      "type": "checkout_button",
+      "name": "结账按钮",
+      "limit": 1
+    },
+    {
+      "type": "accelerated_buttons",
+      "name": "快捷支付按钮",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "请在[支付设置](https://www.shopify.com/admin/settings/payments)中配置快捷支付按钮。"
+        }
+      ]
+    },
+    {
+      "type": "offer",
+      "name": "优惠信息",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "文本对齐方式",
+          "options": [
+            {
+              "value": "start",
+              "label": "左侧"
+            },
+            {
+              "value": "center",
+              "label": "居中"
+            }
+          ],
+          "default": "start"
+        },
+        {
+          "type": "select",
+          "id": "icon_position",
+          "label": "图标位置",
+          "options": [
+            {
+              "value": "aligned",
+              "label": "水平对齐"
+            },
+            {
+              "value": "stacked",
+              "label": "堆叠"
+            }
+          ],
+          "default": "aligned"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "picto-coupon",
+              "label": "优惠券",
+              "group": "购物"
+            },
+            {
+              "value": "picto-percent",
+              "label": "百分比",
+              "group": "购物"
+            },
+            {
+              "value": "picto-gift",
+              "label": "礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-star",
+              "label": "星星",
+              "group": "购物"
+            },
+            {
+              "value": "picto-like",
+              "label": "点赞",
+              "group": "购物"
+            },
+            {
+              "value": "picto-building",
+              "label": "建筑",
+              "group": "购物"
+            },
+            {
+              "value": "picto-love",
+              "label": "爱心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-award-gift",
+              "label": "获奖礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-happy",
+              "label": "开心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子",
+              "group": "配送"
+            },
+            {
+              "value": "picto-pin",
+              "label": "图钉",
+              "group": "配送"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器",
+              "group": "配送"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证",
+              "group": "配送"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车",
+              "group": "配送"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货",
+              "group": "配送"
+            },
+            {
+              "value": "picto-earth",
+              "label": "地球",
+              "group": "配送"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机",
+              "group": "配送"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "信用卡",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "安全资料",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-money",
+              "label": "金钱",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "回收",
+              "group": "环保"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "叶子",
+              "group": "环保"
+            },
+            {
+              "value": "picto-tree",
+              "label": "树",
+              "group": "环保"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "手机",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-phone",
+              "label": "电话",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-chat",
+              "label": "聊天",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "客户支持",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-operator",
+              "label": "客服",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "邮箱箱",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-envelope",
+              "label": "信封",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-comment",
+              "label": "评论",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-send",
+              "label": "发送",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "@ 符号",
+              "group": "科技"
+            },
+            {
+              "value": "picto-camera",
+              "label": "相机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "WiFi",
+              "group": "科技"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "蓝牙",
+              "group": "科技"
+            },
+            {
+              "value": "picto-printer",
+              "label": "打印机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表",
+              "group": "科技"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "咖啡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-burger",
+              "label": "汉堡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-beer",
+              "label": "啤酒",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-target",
+              "label": "目标",
+              "group": "其他"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档",
+              "group": "其他"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "珠宝",
+              "group": "其他"
+            },
+            {
+              "value": "picto-music",
+              "label": "音乐",
+              "group": "其他"
+            },
+            {
+              "value": "picto-file",
+              "label": "文件",
+              "group": "其他"
+            },
+            {
+              "value": "picto-mask",
+              "label": "遮罩",
+              "group": "其他"
+            },
+            {
+              "value": "picto-stop",
+              "label": "停止",
+              "group": "其他"
+            }
+          ],
+          "default": "picto-coupon"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标",
+          "info": "建议使用 240 x 240px .png"
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 20,
+          "max": 100,
+          "step": 4,
+          "unit": "px",
+          "label": "图标宽度",
+          "default": 24
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Shipping"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Short content about your shipping rates or discounts.</p>"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "背景"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "allow_discount_application",
+      "label": "允许使用折扣",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_estimator",
+      "label": "显示运费估算器",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "显示支付图标",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "加购优惠提醒"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_volume_discount_reminder",
+      "label": "显示加购优惠提醒",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "volume_discount_title_template",
+      "label": "标题模板",
+      "default": "[first_percent]% Off [first_quantity] Items, [second_percent]% Off [second_quantity]+ Items!",
+      "info": "可用占位符：[first_percent]、[first_quantity]、[second_percent]、[second_quantity]"
+    },
+    {
+      "type": "range",
+      "id": "volume_discount_first_quantity",
+      "label": "第一档数量",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "volume_discount_first_percent",
+      "label": "第一档折扣百分比",
+      "min": 1,
+      "max": 99,
+      "step": 1,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "volume_discount_second_quantity",
+      "label": "第二档数量",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "volume_discount_second_percent",
+      "label": "第二档折扣百分比",
+      "min": 1,
+      "max": 99,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "text",
+      "id": "volume_discount_before_first_message",
+      "label": "未达第一档提示",
+      "default": "Add [count] more item(s) to unlock [percent]% off.",
+      "info": "可用占位符：[count]、[percent]"
+    },
+    {
+      "type": "text",
+      "id": "volume_discount_between_message",
+      "label": "已达第一档提示",
+      "default": "[percent]% off unlocked. Add [count] more item(s) to unlock [next_percent]% off.",
+      "info": "可用占位符：[percent]、[count]、[next_percent]"
+    },
+    {
+      "type": "text",
+      "id": "volume_discount_complete_message",
+      "label": "已达最高档提示",
+      "default": "[percent]% off unlocked.",
+      "info": "可用占位符：[percent]"
+    }
+  ]
+}
+{% endschema %}

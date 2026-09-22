@@ -1,0 +1,56 @@
+<section
+  class="xstrape-home-scope xh-nomad-heading {% if section.settings.kicker == blank %}xh-nomad-heading--solo{% endif %}"
+  style="--xh-page-bg: {{ section.settings.page_background | default: '#f3f3f3' }}; --xh-text: {{ section.settings.text_color | default: '#000000' }};"
+>
+  <div class="xh-nomad-heading__content">
+    {% if section.settings.kicker != blank %}
+      <h3>{{ section.settings.kicker | escape }}</h3>
+    {% endif %}
+    {% if section.settings.heading != blank %}
+      <h2>{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "标题分区",
+  "class": "shopify-section--xstrape-nomad-heading",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "小标题",
+      "default": "Quality. Character. Tradition."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "大标题",
+      "default": "Horween Leather"
+    },
+    {
+      "type": "header",
+      "content": "颜色"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "背景",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "标题分区"
+    }
+  ]
+}
+{% endschema %}

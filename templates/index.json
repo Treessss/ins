@@ -1,0 +1,450 @@
+{
+  "sections": {
+    "xstrape_home_hero_prdr7m": {
+      "type": "xstrape-home-hero",
+      "blocks": {
+        "slide_wnmNjd": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/01-hero-play-desktop-2560x1440.jpg",
+            "mobile_image": "shopify://shop_images/02-hero-play-mobile-1200x1600.jpg",
+            "kicker": "MOVE • PLAY • BOND",
+            "heading": "Play better. Feel closer.",
+            "subheading": "Thoughtful toys and everyday essentials for happier pets and calmer homes.",
+            "button_text": "Shop Pet Favorites",
+            "button_link": "shopify://collections/all",
+            "text_color": "#F2F9ED",
+            "overlay_opacity": 35,
+            "text_position": "center",
+            "mobile_text_position": "center",
+            "kicker_font_size": 33,
+            "heading_font_size": 68,
+            "subheading_font_size": 20,
+            "mobile_kicker_font_size": 22,
+            "mobile_heading_font_size": 38,
+            "mobile_subheading_font_size": 18
+          }
+        },
+        "slide_iV7FkN": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/03-hero-cat-desktop-2560x1440.jpg",
+            "mobile_image": "shopify://shop_images/04-hero-cat-mobile-1200x1600.jpg",
+            "kicker": "CURIOUS PETS, HAPPIER HOMES",
+            "heading": "Made for pounces, pauses and everything between.",
+            "subheading": "Texture-rich play designed to keep everyday moments engaging.",
+            "button_text": "Explore Enrichment Toys",
+            "button_link": "shopify://collections/all",
+            "text_color": "#F2F9ED",
+            "overlay_opacity": 40,
+            "text_position": "center",
+            "mobile_text_position": "center",
+            "kicker_font_size": 33,
+            "heading_font_size": 68,
+            "subheading_font_size": 20,
+            "mobile_kicker_font_size": 22,
+            "mobile_heading_font_size": 38,
+            "mobile_subheading_font_size": 18
+          }
+        }
+      },
+      "block_order": [
+        "slide_wnmNjd",
+        "slide_iV7FkN"
+      ],
+      "name": "首页主视觉",
+      "settings": {
+        "enable_autoplay": true,
+        "autoplay_interval": 5,
+        "show_dots": true,
+        "show_arrows": false,
+        "hero_image": "shopify://shop_images/01-hero-play-desktop-2560x1440.jpg",
+        "hero_mobile_image": "shopify://shop_images/02-hero-play-mobile-1200x1600.jpg",
+        "hero_kicker": "MOVE • PLAY • BOND",
+        "hero_heading": "Play better. Feel closer.",
+        "hero_subheading": "Thoughtful toys and everyday essentials for happier pets and calmer homes.",
+        "hero_button_text": "Shop Pet Favorites",
+        "hero_button_link": "shopify://collections/all",
+        "hero_text_color": "#F2F9ED",
+        "hero_overlay_opacity": 35,
+        "hero_text_position": "center",
+        "hero_mobile_text_position": "center",
+        "hero_kicker_font_size": 33,
+        "hero_heading_font_size": 77,
+        "hero_subheading_font_size": 20,
+        "hero_mobile_kicker_font_size": 22,
+        "hero_mobile_heading_font_size": 47,
+        "hero_mobile_subheading_font_size": 18
+      }
+    },
+    "xstrape_home_favorites_GTEHBC": {
+      "type": "xstrape-home-favorites",
+      "blocks": {
+        "favorite_MjhRqT": {
+          "type": "favorite",
+          "settings": {
+            "title": "Cotton Chew Ropes",
+            "text": "Flexible texture for curious cats",
+            "price": "Shop now",
+            "image": "shopify://shop_images/05-favorite-cotton-rope-1000x1252.jpg",
+            "link": "shopify://products/cotton-cat-chew-ropes-3-pack"
+          }
+        },
+        "favorite_dddt74": {
+          "type": "favorite",
+          "settings": {
+            "title": "Sisal Kicker Toys",
+            "text": "Kick, hug, scratch and wrestle",
+            "price": "Shop now",
+            "image": "shopify://shop_images/06-favorite-sisal-kicker-1000x1252.jpg",
+            "link": "shopify://products/natural-sisal-cat-kicker-toys-2-pack"
+          }
+        },
+        "favorite_3heNNx": {
+          "type": "favorite",
+          "settings": {
+            "title": "Crinkle Hideout",
+            "text": "A roomy place to hide and pounce",
+            "price": "Shop now",
+            "image": "shopify://shop_images/07-favorite-hideout-1000x1252.jpg",
+            "link": "shopify://products/crinkle-cat-hideout-bag"
+          }
+        },
+        "favorite_dwPTVq": {
+          "type": "favorite",
+          "settings": {
+            "title": "Carrot Dental Chew Toy",
+            "text": "Stuffable texture for rewarding chew time",
+            "price": "Shop now",
+            "image": "shopify://shop_images/08-favorite-carrot-1000x1252.jpg",
+            "link": "shopify://products/stuffable-carrot-dog-chew-toy"
+          }
+        },
+        "favorite_dypLn6": {
+          "type": "favorite",
+          "settings": {
+            "title": "Interactive Herding Ball",
+            "text": "Push-and-chase exercise for active dogs",
+            "price": "Shop now",
+            "image": "shopify://shop_images/09-favorite-herding-ball-1000x1252.jpg",
+            "link": "shopify://products/inflatable-herding-ball-for-dogs"
+          }
+        },
+        "favorite_h4DFrg": {
+          "type": "favorite",
+          "settings": {
+            "title": "Heartbeat Plush Toy",
+            "text": "Gentle comfort for calmer rest",
+            "price": "Shop now",
+            "image": "shopify://shop_images/10-favorite-heartbeat-1000x1252.jpg",
+            "link": "shopify://products/heartbeat-plush-dog-toy"
+          }
+        },
+        "favorite_4BEUMd": {
+          "type": "favorite",
+          "settings": {
+            "title": "Everyday Enrichment",
+            "text": "Small moments that make play feel special",
+            "price": "Shop all",
+            "image": "shopify://shop_images/11-favorite-play-system-1000x1252.jpg",
+            "link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "favorite_MjhRqT",
+        "favorite_dddt74",
+        "favorite_3heNNx",
+        "favorite_dwPTVq",
+        "favorite_dypLn6",
+        "favorite_h4DFrg",
+        "favorite_4BEUMd"
+      ],
+      "name": "热卖推荐",
+      "settings": {
+        "products_kicker": "SHOP BY PLAY STYLE",
+        "products_title": "Pet favorites, picked for play",
+        "products_collection": "all",
+        "products_count": 8,
+        "products_link_text": "",
+        "products_link_url": "",
+        "page_background": "#F2F9ED",
+        "text_color": "#17132F",
+        "muted_text_color": "#5C566E",
+        "accent_color": "#FF4F88"
+      }
+    },
+    "xstrape_home_review_banner_tFBMXV": {
+      "type": "xstrape-home-review-banner",
+      "name": "评价横幅",
+      "settings": {
+        "review_image": "shopify://shop_images/12-review-banner-desktop-2800x900.jpg",
+        "review_mobile_image": "shopify://shop_images/13-review-banner-mobile-1200x1600.jpg",
+        "image_overlay_opacity": 35,
+        "review_stars": "PLAY • EXPLORE • REST",
+        "review_title": "Made for everyday pet joy",
+        "review_text": "Thoughtful play for dogs, cats and the people who love them.",
+        "review_button_text": "Shop Pet Favorites",
+        "review_link": "shopify://collections/all",
+        "page_background": "#F2F9ED",
+        "text_color": "#F2F9ED",
+        "muted_text_color": "#F2F9ED"
+      }
+    },
+    "xstrape_home_categories_6KxaGb": {
+      "type": "xstrape-home-categories",
+      "blocks": {
+        "category_WLpPbG": {
+          "type": "category",
+          "settings": {
+            "badge": "",
+            "title": "Active Play",
+            "text": "",
+            "image": "shopify://shop_images/14-category-active-play-1200x400.jpg",
+            "image_position_x": 50,
+            "image_position_y": 50,
+            "asset_image": "xstrape-category-best-sellers.jpg",
+            "link": "shopify://collections/all"
+          }
+        },
+        "category_T3ptd7": {
+          "type": "category",
+          "settings": {
+            "badge": "",
+            "title": "Chew & Explore",
+            "text": "",
+            "image": "shopify://shop_images/15-category-chew-explore-1200x400.jpg",
+            "image_position_x": 50,
+            "image_position_y": 50,
+            "asset_image": "xstrape-category-power.jpg",
+            "link": "shopify://collections/all"
+          }
+        },
+        "category_EemCFz": {
+          "type": "category",
+          "settings": {
+            "badge": "",
+            "title": "Kick & Scratch",
+            "text": "",
+            "image": "shopify://shop_images/16-category-kick-scratch-1200x400.jpg",
+            "image_position_x": 50,
+            "image_position_y": 50,
+            "asset_image": "xstrape-category-accessories.jpg",
+            "link": "shopify://collections/all"
+          }
+        },
+        "category_HcRVPr": {
+          "type": "category",
+          "settings": {
+            "badge": "",
+            "title": "Hide & Rest",
+            "text": "",
+            "image": "shopify://shop_images/17-category-hide-rest-1200x400.jpg",
+            "image_position_x": 50,
+            "image_position_y": 50,
+            "asset_image": "xstrape-category-bands.jpg",
+            "link": "shopify://collections/all"
+          }
+        },
+        "feature_banner_KHiFN7": {
+          "type": "feature_banner",
+          "settings": {
+            "image": "shopify://shop_images/18-category-feature-1600x1200.jpg",
+            "asset_image": "xstrape-category-feature-leather-case.jpg",
+            "image_side": "right",
+            "image_position_x": 50,
+            "image_position_y": 50,
+            "kicker": "ENRICHMENT FOR EVERYDAY LIFE",
+            "heading": "More ways to move, explore and unwind.",
+            "button_text": "Explore All Toys",
+            "link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "category_WLpPbG",
+        "category_T3ptd7",
+        "category_EemCFz",
+        "category_HcRVPr",
+        "feature_banner_KHiFN7"
+      ],
+      "name": "分类入口",
+      "settings": {
+        "categories_kicker": "FIND THEIR KIND OF FUN",
+        "categories_title": "Shop by play style",
+        "show_feature_banner": true,
+        "feature_asset_image": "xstrape-category-feature-leather-case.jpg",
+        "feature_image_side": "right",
+        "feature_kicker": "ENRICHMENT FOR EVERYDAY LIFE",
+        "feature_heading": "More ways to move, explore and unwind.",
+        "feature_button_text": "Explore All Toys",
+        "feature_link": "shopify://collections/all",
+        "feature_kicker_font_size": 28,
+        "feature_heading_font_size": 52,
+        "feature_button_font_size": 16,
+        "feature_mobile_kicker_font_size": 16,
+        "feature_mobile_heading_font_size": 32,
+        "feature_mobile_button_font_size": 15,
+        "page_background": "#F2F9ED",
+        "text_color": "#17132F",
+        "muted_text_color": "#5C566E",
+        "card_text_color": "#F2F9ED"
+      }
+    },
+    "xstrape_home_collection_carousel_tLQfN8": {
+      "type": "xstrape-home-collection-carousel",
+      "name": "系列产品轮播",
+      "settings": {
+        "kicker": "PLAY STARTS HERE",
+        "heading": "Built for real-life play",
+        "collection": "all",
+        "products": [],
+        "fallback_product_handles": "cotton-cat-chew-ropes-3-pack\nnatural-sisal-cat-kicker-toys-2-pack\ncrinkle-cat-hideout-bag",
+        "products_count": 8,
+        "products_per_row_mobile": "1",
+        "products_per_row_desktop": 5,
+        "link_text": "Shop All",
+        "link_url": "shopify://collections/all",
+        "enable_quick_buy": true,
+        "show_badges": true,
+        "show_rating": false,
+        "show_secondary_image": false,
+        "page_background": "#F2F9ED",
+        "text_color": "#17132F",
+        "muted_text_color": "#5C566E",
+        "card_background": "#FBFFF7",
+        "card_text_color": "#17132F"
+      }
+    },
+    "xstrape_home_quote_m7kPcg": {
+      "type": "xstrape-home-quote",
+      "name": "引用文案",
+      "settings": {
+        "quote_text": "We make playful, practical pet essentials that turn ordinary moments into better time together.",
+        "quote_author": "xstrapetm",
+        "page_background": "#DFFF32",
+        "text_color": "#17132F",
+        "muted_text_color": "#17132F"
+      }
+    },
+    "xstrape_home_community_VdzKXa": {
+      "type": "xstrape-home-community",
+      "blocks": {
+        "community_637c33": {
+          "type": "community",
+          "settings": {
+            "label": "",
+            "video": "shopify://files/videos/下载 (6).mp4",
+            "link": "shopify://collections/all"
+          }
+        },
+        "community_n8fQCA": {
+          "type": "community",
+          "settings": {
+            "label": "",
+            "video": "shopify://files/videos/下载 (7).mp4",
+            "link": "shopify://collections/all"
+          }
+        },
+        "community_6E8RNM": {
+          "type": "community",
+          "settings": {
+            "label": "",
+            "video": "shopify://files/videos/下载 (5).mp4",
+            "link": "shopify://collections/all"
+          }
+        },
+        "community_Lyj8pr": {
+          "type": "community",
+          "settings": {
+            "label": "",
+            "video": "shopify://files/videos/下载 (3).mp4",
+            "link": "shopify://collections/all"
+          }
+        },
+        "community_xPi8qf": {
+          "type": "community",
+          "settings": {
+            "label": "",
+            "video": "shopify://files/videos/下载 (4).mp4",
+            "link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "community_637c33",
+        "community_n8fQCA",
+        "community_6E8RNM",
+        "community_Lyj8pr",
+        "community_xPi8qf"
+      ],
+      "name": "社区展示",
+      "settings": {
+        "community_kicker": "PLAY IN THE WILD",
+        "community_title": "Pets in their element",
+        "page_background": "#F2F9ED",
+        "text_color": "#17132F",
+        "muted_text_color": "#5C566E"
+      }
+    },
+    "xstrape_home_nomad_heading_ycc37y": {
+      "type": "xstrape-home-nomad-heading",
+      "name": "品牌工艺标题",
+      "settings": {
+        "kicker": "",
+        "heading": "Thoughtful by design. Joyful by nature.",
+        "page_background": "#F2F9ED",
+        "text_color": "#17132F"
+      }
+    },
+    "xstrape_home_nomad_split_mdLYgC": {
+      "type": "xstrape-home-nomad-split",
+      "blocks": {
+        "tile_C8zCFq": {
+          "type": "tile",
+          "settings": {
+            "kicker": "TEXTURE-RICH PLAY",
+            "heading": "Designed for everyday curiosity",
+            "button_text": "Shop Cat Toys",
+            "image": "shopify://shop_images/19-story-dog-play-1600x1200.jpg",
+            "link": "shopify://collections/all",
+            "text_color": "#F2F9ED",
+            "overlay_opacity": 35
+          }
+        },
+        "tile_eJYqJJ": {
+          "type": "tile",
+          "settings": {
+            "kicker": "ROOM TO EXPLORE",
+            "heading": "Hide, pounce and settle in",
+            "button_text": "Shop Hideouts",
+            "image": "shopify://shop_images/20-story-cat-play-1600x1200.jpg",
+            "link": "shopify://collections/all",
+            "text_color": "#F2F9ED",
+            "overlay_opacity": 35
+          }
+        }
+      },
+      "block_order": [
+        "tile_C8zCFq",
+        "tile_eJYqJJ"
+      ],
+      "name": "品牌工艺双图",
+      "settings": {
+        "card_height": 650,
+        "card_height_mobile": 250,
+        "page_background": "#F2F9ED"
+      }
+    }
+  },
+  "order": [
+    "xstrape_home_hero_prdr7m",
+    "xstrape_home_favorites_GTEHBC",
+    "xstrape_home_review_banner_tFBMXV",
+    "xstrape_home_categories_6KxaGb",
+    "xstrape_home_collection_carousel_tLQfN8",
+    "xstrape_home_quote_m7kPcg",
+    "xstrape_home_nomad_heading_ycc37y",
+    "xstrape_home_nomad_split_mdLYgC"
+  ]
+}

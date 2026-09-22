@@ -1,0 +1,47 @@
+{%- if block.settings.text != blank -%}
+  {%- assign alignment = block.settings.alignment | replace: 'left', 'start' | replace: 'right', 'end' -%}
+
+  <div class="justify-items-{{ alignment }}" {{ block.shopify_attributes }}>
+    <span class="badge" style="background-color: {{ block.settings.background }}; color: {{ block.settings.text_color }};">
+      {{- block.settings.text -}}
+    </span>
+  </div>
+{%- endif -%}
+  
+{% schema %}
+{
+  "name": "徽章",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "文本",
+      "default": "Text"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "徽章对齐方式",
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "徽章"
+    }
+  ]
+}
+{% endschema %}

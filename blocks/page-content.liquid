@@ -1,0 +1,22 @@
+{%- if block.settings.page.content != blank -%}
+  <div class="prose" {{ block.shopify_attributes }}>{{- block.settings.page.content -}}</div>
+{%- endif -%}
+  
+{% schema %}
+{
+  "name": "页面",
+  "tag": null,
+  "settings": [
+    {
+      "type": "page",
+      "id": "page",
+      "label": "页面"
+    }
+  ],
+  "presets": [
+    {
+      "name": "页面"
+    }
+  ]
+}
+{% endschema %}

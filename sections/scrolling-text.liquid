@@ -1,0 +1,172 @@
+{%- if section.settings.text != blank -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      --section-spacing-inline: 0;
+      --scrolling-text-font-size: {% if section.settings.text_size == 'xsmall' %}1.125rem{% elsif section.settings.text_size == 'small' %}2.5rem{% elsif section.settings.text_size == 'medium' %}3.75rem{% elsif section.settings.text_size == 'large' %}5rem{% else %}7.5rem{% endif %};
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} {
+        --scrolling-text-font-size: {% if section.settings.text_size == 'xsmall' %}1.5rem{% elsif section.settings.text_size == 'small' %}3.75rem{% elsif section.settings.text_size == 'medium' %}5rem{% elsif section.settings.text_size == 'large' %}8.75rem{% else %}12.5rem{% endif %};
+      }
+    }
+  </style>
+
+  {%- if section.settings.text_size == 'xsmall' -%}
+    {%- assign is_tight = true -%}
+  {%- endif -%}
+
+  <div {% render 'section-properties', tight: is_tight %}>
+    {%- capture section_content -%}
+      {%- for i in (1..10) -%}
+        <span class="scrolling-text__text heading {% unless forloop.first %}motion-reduce:hidden{% endunless %}" {% unless forloop.first %}aria-hidden="true"{% endunless %}>
+          {%- render 'styled-text', content: section.settings.text, gradient: section.settings.text_gradient, style: section.settings.text_style -%}
+        </span>
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    <div class="scrolling-text {% if section.settings.scrolling_mode == 'scroll' %}scrolling-text--scroll{% else %}scrolling-text--auto{% endif %}">
+      {%- if section.settings.scrolling_mode == 'scroll' -%}
+        <scrolling-text class="scrolling-text__wrapper">
+          {{- section_content -}}
+        </scrolling-text>
+       {%- else -%}
+         <marquee-text scrolling-speed="{{ section.settings.scrolling_speed }}" class="scrolling-text__wrapper">
+           {{- section_content -}}
+         </marquee-text>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "滚动文字",
+  "class": "shopify-section--scrolling-text",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "文本",
+      "default": "Promotion text"
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": "文本大小",
+      "options": [
+        {
+          "value": "xsmall",
+          "label": "特小"
+        },
+        {
+          "value": "small",
+          "label": "小"
+        },
+        {
+          "value": "medium",
+          "label": "中"
+        },
+        {
+          "value": "large",
+          "label": "大"
+        },
+        {
+          "value": "xlarge",
+          "label": "特大"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select",
+      "id": "text_style",
+      "label": "文本样式",
+      "options": [
+        {
+          "value": "outline",
+          "label": "描边"
+        },
+        {
+          "value": "fill",
+          "label": "填充"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "select",
+      "id": "scrolling_mode",
+      "label": "滚动模式",
+      "options": [
+        {
+          "value": "auto",
+          "label": "自动"
+        },
+        {
+          "value": "scroll",
+          "label": "滚动时"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "range",
+      "id": "scrolling_speed",
+      "min": 3,
+      "max": 20,
+      "step": 1,
+      "unit": "s",
+      "label": "自动滚动速度",
+      "default": 10,
+      "visible_if": "{{ section.settings.scrolling_mode == 'auto' }}"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。渐变文字描边不能与渐变背景同时使用。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color_background",
+      "id": "text_gradient",
+      "label": "文本渐变"
+    }
+  ],
+  "presets": [
+    {
+      "name": "滚动文字",
+      "category": "Content"
+    }
+  ]
+}
+{% endschema %}

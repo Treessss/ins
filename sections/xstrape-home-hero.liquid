@@ -1,0 +1,805 @@
+{%- liquid
+  assign slide_count = section.blocks.size
+  assign has_blocks = false
+  if slide_count > 0
+    assign has_blocks = true
+  endif
+
+  assign autoplay_ms = section.settings.autoplay_interval | times: 1000
+-%}
+
+<section
+  class="xstrape-home-scope xh-hero{% if has_blocks %} xh-hero--carousel{% elsif section.settings.hero_overlay_opacity == 0 %} xh-hero--no-overlay{% endif %}"
+  data-xh-hero-carousel
+  data-autoplay="{{ section.settings.enable_autoplay }}"
+  data-interval="{{ autoplay_ms }}"
+>
+  <div class="xh-hero__slides">
+    {%- if has_blocks -%}
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign slide_image = block.settings.image
+          assign slide_mobile_image = block.settings.mobile_image
+          assign slide_text_color = block.settings.text_color | default: '#ffffff'
+          assign slide_overlay = block.settings.overlay_opacity | divided_by: 100.0
+          assign slide_text_position = block.settings.text_position | default: 'center'
+          assign slide_mobile_text_position = block.settings.mobile_text_position | default: slide_text_position
+          assign slide_content_y = 'center'
+          assign slide_content_items = 'center'
+          assign slide_text_align = 'center'
+          assign slide_content_width = 'min(879px, calc(100vw - 40px))'
+          assign slide_content_padding = 'clamp(104px, 9vw, 132px) 0 0'
+          assign slide_mobile_content_y = 'center'
+          assign slide_mobile_content_items = 'center'
+          assign slide_mobile_text_align = 'center'
+          assign slide_mobile_content_width = 'min(361px, calc(100vw - 40px))'
+          assign slide_mobile_content_padding = '102px 0 0'
+
+          if slide_text_position contains 'top'
+            assign slide_content_y = 'flex-start'
+            assign slide_content_padding = 'clamp(104px, 9vw, 132px) 0 56px'
+          elsif slide_text_position contains 'bottom'
+            assign slide_content_y = 'flex-end'
+            assign slide_content_padding = 'clamp(104px, 9vw, 132px) 0 94px'
+          endif
+
+          if slide_text_position contains 'left'
+            assign slide_content_items = 'flex-start'
+            assign slide_text_align = 'left'
+            assign slide_content_width = 'min(var(--xh-max), calc(100vw - 40px))'
+          elsif slide_text_position contains 'right'
+            assign slide_content_items = 'flex-end'
+            assign slide_text_align = 'right'
+            assign slide_content_width = 'min(var(--xh-max), calc(100vw - 40px))'
+          endif
+
+          if slide_mobile_text_position contains 'top'
+            assign slide_mobile_content_y = 'flex-start'
+            assign slide_mobile_content_padding = '88px 0 40px'
+          elsif slide_mobile_text_position contains 'bottom'
+            assign slide_mobile_content_y = 'flex-end'
+            assign slide_mobile_content_padding = '88px 0 68px'
+          endif
+
+          if slide_mobile_text_position contains 'left'
+            assign slide_mobile_content_items = 'flex-start'
+            assign slide_mobile_text_align = 'left'
+            assign slide_mobile_content_width = 'calc(100vw - 40px)'
+          elsif slide_mobile_text_position contains 'right'
+            assign slide_mobile_content_items = 'flex-end'
+            assign slide_mobile_text_align = 'right'
+            assign slide_mobile_content_width = 'calc(100vw - 40px)'
+          endif
+
+          assign slide_fetchpriority = 'low'
+          assign slide_loading_strategy = 'lazy'
+          if forloop.first
+            assign slide_fetchpriority = 'high'
+            assign slide_loading_strategy = 'eager'
+          endif
+        -%}
+
+        <div
+          class="xh-hero__slide{% if forloop.first %} is-active{% endif %}{% if block.settings.overlay_opacity == 0 %} xh-hero__slide--no-overlay{% endif %}"
+          style="--xh-hero-text: {{ slide_text_color }}; --xh-hero-overlay-opacity: {{ slide_overlay }}; --xh-hero-content-y: {{ slide_content_y }}; --xh-hero-content-items: {{ slide_content_items }}; --xh-hero-text-align: {{ slide_text_align }}; --xh-hero-content-width: {{ slide_content_width }}; --xh-hero-content-padding: {{ slide_content_padding }}; --xh-hero-mobile-content-y: {{ slide_mobile_content_y }}; --xh-hero-mobile-content-items: {{ slide_mobile_content_items }}; --xh-hero-mobile-text-align: {{ slide_mobile_text_align }}; --xh-hero-mobile-content-width: {{ slide_mobile_content_width }}; --xh-hero-mobile-content-padding: {{ slide_mobile_content_padding }}; --xh-hero-kicker-size: {{ block.settings.kicker_font_size | default: 33 }}px; --xh-hero-heading-size: {{ block.settings.heading_font_size | default: 77 }}px; --xh-hero-subheading-size: {{ block.settings.subheading_font_size | default: 20 }}px; --xh-hero-mobile-kicker-size: {{ block.settings.mobile_kicker_font_size | default: 22 }}px; --xh-hero-mobile-heading-size: {{ block.settings.mobile_heading_font_size | default: 47 }}px; --xh-hero-mobile-subheading-size: {{ block.settings.mobile_subheading_font_size | default: 18 }}px;"
+          data-xh-hero-slide
+          {{ block.shopify_attributes }}
+        >
+          <div class="xh-hero__media">
+            {%- if slide_image != blank -%}
+              <picture>
+                {%- if slide_mobile_image != blank -%}
+                  <source
+                    media="(max-width: 699px)"
+                    srcset="{{ slide_mobile_image | image_url: width: 480 }} 480w, {{ slide_mobile_image | image_url: width: 640 }} 640w, {{ slide_mobile_image | image_url: width: 800 }} 800w, {{ slide_mobile_image | image_url: width: 1000 }} 1000w, {{ slide_mobile_image | image_url: width: 1200 }} 1200w, {{ slide_mobile_image | image_url: width: 1400 }} 1400w"
+                  >
+                {%- endif -%}
+                {{
+                  slide_image
+                  | image_url: width: 2600
+                  | image_tag: loading: slide_loading_strategy, fetchpriority: slide_fetchpriority, sizes: '100vw', widths: '480,640,800,1000,1200,1400,1600,1800,2200,2600'
+                }}
+              </picture>
+            {%- else -%}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'xh-hero__placeholder' }}
+            {%- endif -%}
+          </div>
+
+          <div class="xh-hero__content">
+            {%- if block.settings.kicker != blank -%}
+              <p class="xh-eyebrow">{{ block.settings.kicker | escape }}</p>
+            {%- endif -%}
+            {%- if block.settings.heading != blank -%}
+              <h1 class="xh-heading">{{ block.settings.heading | escape }}</h1>
+            {%- endif -%}
+            {%- if block.settings.subheading != blank -%}
+              <p class="xh-subheading">{{ block.settings.subheading | escape }}</p>
+            {%- endif -%}
+            {%- if block.settings.button_text != blank -%}
+              <div class="xh-hero__actions">
+                <a class="xh-pill-button" {% if block.settings.button_link != blank %}href="{{ block.settings.button_link }}"{% endif %}>{{ block.settings.button_text | escape }}</a>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+      {%- liquid
+        assign hero_text_position = section.settings.hero_text_position | default: 'center'
+        assign hero_mobile_text_position = section.settings.hero_mobile_text_position | default: hero_text_position
+        assign hero_content_y = 'center'
+        assign hero_content_items = 'center'
+        assign hero_text_align = 'center'
+        assign hero_content_width = 'min(879px, calc(100vw - 40px))'
+        assign hero_content_padding = 'clamp(104px, 9vw, 132px) 0 0'
+        assign hero_mobile_content_y = 'center'
+        assign hero_mobile_content_items = 'center'
+        assign hero_mobile_text_align = 'center'
+        assign hero_mobile_content_width = 'min(361px, calc(100vw - 40px))'
+        assign hero_mobile_content_padding = '102px 0 0'
+
+        if hero_text_position contains 'top'
+          assign hero_content_y = 'flex-start'
+          assign hero_content_padding = 'clamp(104px, 9vw, 132px) 0 56px'
+        elsif hero_text_position contains 'bottom'
+          assign hero_content_y = 'flex-end'
+          assign hero_content_padding = 'clamp(104px, 9vw, 132px) 0 94px'
+        endif
+
+        if hero_text_position contains 'left'
+          assign hero_content_items = 'flex-start'
+          assign hero_text_align = 'left'
+          assign hero_content_width = 'min(var(--xh-max), calc(100vw - 40px))'
+        elsif hero_text_position contains 'right'
+          assign hero_content_items = 'flex-end'
+          assign hero_text_align = 'right'
+          assign hero_content_width = 'min(var(--xh-max), calc(100vw - 40px))'
+        endif
+
+        if hero_mobile_text_position contains 'top'
+          assign hero_mobile_content_y = 'flex-start'
+          assign hero_mobile_content_padding = '88px 0 40px'
+        elsif hero_mobile_text_position contains 'bottom'
+          assign hero_mobile_content_y = 'flex-end'
+          assign hero_mobile_content_padding = '88px 0 68px'
+        endif
+
+        if hero_mobile_text_position contains 'left'
+          assign hero_mobile_content_items = 'flex-start'
+          assign hero_mobile_text_align = 'left'
+          assign hero_mobile_content_width = 'calc(100vw - 40px)'
+        elsif hero_mobile_text_position contains 'right'
+          assign hero_mobile_content_items = 'flex-end'
+          assign hero_mobile_text_align = 'right'
+          assign hero_mobile_content_width = 'calc(100vw - 40px)'
+        endif
+      -%}
+
+      <div
+        class="xh-hero__slide is-active{% if section.settings.hero_overlay_opacity == 0 %} xh-hero__slide--no-overlay{% endif %}"
+        style="--xh-hero-text: {{ section.settings.hero_text_color | default: '#ffffff' }}; --xh-hero-overlay-opacity: {{ section.settings.hero_overlay_opacity | divided_by: 100.0 }}; --xh-hero-content-y: {{ hero_content_y }}; --xh-hero-content-items: {{ hero_content_items }}; --xh-hero-text-align: {{ hero_text_align }}; --xh-hero-content-width: {{ hero_content_width }}; --xh-hero-content-padding: {{ hero_content_padding }}; --xh-hero-mobile-content-y: {{ hero_mobile_content_y }}; --xh-hero-mobile-content-items: {{ hero_mobile_content_items }}; --xh-hero-mobile-text-align: {{ hero_mobile_text_align }}; --xh-hero-mobile-content-width: {{ hero_mobile_content_width }}; --xh-hero-mobile-content-padding: {{ hero_mobile_content_padding }}; --xh-hero-kicker-size: {{ section.settings.hero_kicker_font_size | default: 33 }}px; --xh-hero-heading-size: {{ section.settings.hero_heading_font_size | default: 77 }}px; --xh-hero-subheading-size: {{ section.settings.hero_subheading_font_size | default: 20 }}px; --xh-hero-mobile-kicker-size: {{ section.settings.hero_mobile_kicker_font_size | default: 22 }}px; --xh-hero-mobile-heading-size: {{ section.settings.hero_mobile_heading_font_size | default: 47 }}px; --xh-hero-mobile-subheading-size: {{ section.settings.hero_mobile_subheading_font_size | default: 18 }}px;"
+        data-xh-hero-slide
+      >
+        <div class="xh-hero__media">
+          {%- if section.settings.hero_image != blank -%}
+            <picture>
+              {%- if section.settings.hero_mobile_image != blank -%}
+                <source
+                  media="(max-width: 699px)"
+                  srcset="{{ section.settings.hero_mobile_image | image_url: width: 480 }} 480w, {{ section.settings.hero_mobile_image | image_url: width: 640 }} 640w, {{ section.settings.hero_mobile_image | image_url: width: 800 }} 800w, {{ section.settings.hero_mobile_image | image_url: width: 1000 }} 1000w, {{ section.settings.hero_mobile_image | image_url: width: 1200 }} 1200w, {{ section.settings.hero_mobile_image | image_url: width: 1400 }} 1400w"
+                >
+              {%- endif -%}
+              {{
+                section.settings.hero_image
+                | image_url: width: 2600
+                | image_tag: loading: 'eager', fetchpriority: 'high', sizes: '100vw', widths: '480,640,800,1000,1200,1400,1600,1800,2200,2600'
+              }}
+            </picture>
+          {%- else -%}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'xh-hero__placeholder' }}
+          {%- endif -%}
+        </div>
+
+        <div class="xh-hero__content">
+          {%- if section.settings.hero_kicker != blank -%}
+            <p class="xh-eyebrow">{{ section.settings.hero_kicker | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.hero_heading != blank -%}
+            <h1 class="xh-heading">{{ section.settings.hero_heading | escape }}</h1>
+          {%- endif -%}
+          {%- if section.settings.hero_subheading != blank -%}
+            <p class="xh-subheading">{{ section.settings.hero_subheading | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.hero_button_text != blank -%}
+            <div class="xh-hero__actions">
+              <a class="xh-pill-button" {% if section.settings.hero_button_link != blank %}href="{{ section.settings.hero_button_link }}"{% endif %}>{{ section.settings.hero_button_text | escape }}</a>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if slide_count > 1 -%}
+    <div class="xh-hero__controls" aria-label="首页主视觉轮播控制">
+      {%- if section.settings.show_arrows -%}
+        <button class="xh-hero__arrow xh-hero__arrow--prev" type="button" aria-label="上一张" data-xh-hero-prev></button>
+      {%- endif -%}
+
+      {%- if section.settings.show_dots -%}
+        <div class="xh-hero__dots" role="tablist" aria-label="首页主视觉轮播">
+          {%- for block in section.blocks -%}
+            <button
+              class="xh-hero__dot{% if forloop.first %} is-active{% endif %}"
+              type="button"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-label="切换到第 {{ forloop.index }} 张"
+              data-xh-hero-dot="{{ forloop.index0 }}"
+            ></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_arrows -%}
+        <button class="xh-hero__arrow xh-hero__arrow--next" type="button" aria-label="下一张" data-xh-hero-next></button>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</section>
+
+<script>
+  (() => {
+    const section = document.currentScript.previousElementSibling;
+    if (!section?.matches('[data-xh-hero-carousel]')) return;
+
+    const slides = Array.from(section.querySelectorAll('[data-xh-hero-slide]'));
+    const dots = Array.from(section.querySelectorAll('[data-xh-hero-dot]'));
+    const previous = section.querySelector('[data-xh-hero-prev]');
+    const next = section.querySelector('[data-xh-hero-next]');
+    const shouldAutoplay = section.getAttribute('data-autoplay') === 'true';
+    const interval = Number(section.getAttribute('data-interval')) || 5000;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let activeIndex = Math.max(0, slides.findIndex((slide) => slide.classList.contains('is-active')));
+    let timer;
+
+    if (slides.length <= 1) return;
+
+    const setSlide = (index) => {
+      activeIndex = (index + slides.length) % slides.length;
+
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle('is-active', slideIndex === activeIndex);
+      });
+
+      dots.forEach((dot, dotIndex) => {
+        const isActive = dotIndex === activeIndex;
+        dot.classList.toggle('is-active', isActive);
+        dot.setAttribute('aria-selected', String(isActive));
+      });
+    };
+
+    const stopAutoplay = () => {
+      window.clearInterval(timer);
+    };
+
+    const startAutoplay = () => {
+      stopAutoplay();
+      if (!shouldAutoplay || reduceMotion.matches) return;
+      timer = window.setInterval(() => setSlide(activeIndex + 1), interval);
+    };
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        setSlide(Number(dot.getAttribute('data-xh-hero-dot')) || 0);
+        startAutoplay();
+      });
+    });
+
+    previous?.addEventListener('click', () => {
+      setSlide(activeIndex - 1);
+      startAutoplay();
+    });
+
+    next?.addEventListener('click', () => {
+      setSlide(activeIndex + 1);
+      startAutoplay();
+    });
+
+    section.addEventListener('mouseenter', stopAutoplay);
+    section.addEventListener('mouseleave', startAutoplay);
+    section.addEventListener('focusin', stopAutoplay);
+    section.addEventListener('focusout', startAutoplay);
+
+    startAutoplay();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "首页主视觉",
+  "class": "shopify-section--xstrape-hero",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "轮播设置"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "自动轮播",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "label": "轮播间隔",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "秒",
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "显示圆点",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "显示左右箭头",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "旧版单图兜底"
+    },
+    {
+      "type": "paragraph",
+      "content": "如果没有添加“轮播图”区块，会继续使用下面这些旧版设置。"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "桌面图片"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_mobile_image",
+      "label": "移动端图片"
+    },
+    {
+      "type": "text",
+      "id": "hero_kicker",
+      "label": "小标题",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "text",
+      "id": "hero_heading",
+      "label": "标题",
+      "default": "Gear That Goes The Distance"
+    },
+    {
+      "type": "text",
+      "id": "hero_subheading",
+      "label": "副标题",
+      "default": "Add your supporting copy here."
+    },
+    {
+      "type": "text",
+      "id": "hero_button_text",
+      "label": "按钮文字",
+      "default": "Shop Travel Gear"
+    },
+    {
+      "type": "url",
+      "id": "hero_button_link",
+      "label": "按钮链接"
+    },
+    {
+      "type": "color",
+      "id": "hero_text_color",
+      "label": "文字颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "hero_overlay_opacity",
+      "label": "遮罩透明度",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 45
+    },
+    {
+      "type": "header",
+      "content": "旧版文字位置"
+    },
+    {
+      "type": "select",
+      "id": "hero_text_position",
+      "label": "桌面端文字位置",
+      "options": [
+        {
+          "value": "top_left",
+          "label": "顶部左侧"
+        },
+        {
+          "value": "top_center",
+          "label": "顶部居中"
+        },
+        {
+          "value": "top_right",
+          "label": "顶部右侧"
+        },
+        {
+          "value": "center_left",
+          "label": "中部左侧"
+        },
+        {
+          "value": "center",
+          "label": "中部居中"
+        },
+        {
+          "value": "center_right",
+          "label": "中部右侧"
+        },
+        {
+          "value": "bottom_left",
+          "label": "底部左侧"
+        },
+        {
+          "value": "bottom_center",
+          "label": "底部居中"
+        },
+        {
+          "value": "bottom_right",
+          "label": "底部右侧"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "hero_mobile_text_position",
+      "label": "移动端文字位置",
+      "options": [
+        {
+          "value": "top_left",
+          "label": "顶部左侧"
+        },
+        {
+          "value": "top_center",
+          "label": "顶部居中"
+        },
+        {
+          "value": "top_right",
+          "label": "顶部右侧"
+        },
+        {
+          "value": "center_left",
+          "label": "中部左侧"
+        },
+        {
+          "value": "center",
+          "label": "中部居中"
+        },
+        {
+          "value": "center_right",
+          "label": "中部右侧"
+        },
+        {
+          "value": "bottom_left",
+          "label": "底部左侧"
+        },
+        {
+          "value": "bottom_center",
+          "label": "底部居中"
+        },
+        {
+          "value": "bottom_right",
+          "label": "底部右侧"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "旧版字号"
+    },
+    {
+      "type": "range",
+      "id": "hero_kicker_font_size",
+      "label": "小标题字号（桌面端）",
+      "min": 12,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 33
+    },
+    {
+      "type": "range",
+      "id": "hero_heading_font_size",
+      "label": "标题字号（桌面端）",
+      "min": 28,
+      "max": 110,
+      "step": 1,
+      "unit": "px",
+      "default": 77
+    },
+    {
+      "type": "range",
+      "id": "hero_subheading_font_size",
+      "label": "副标题字号（桌面端）",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "hero_mobile_kicker_font_size",
+      "label": "小标题字号（移动端）",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "hero_mobile_heading_font_size",
+      "label": "标题字号（移动端）",
+      "min": 24,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 47
+    },
+    {
+      "type": "range",
+      "id": "hero_mobile_subheading_font_size",
+      "label": "副标题字号（移动端）",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "轮播图",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "桌面图片"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "移动端图片"
+        },
+        {
+          "type": "text",
+          "id": "kicker",
+          "label": "小标题",
+          "default": "Featured Collection"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "标题",
+          "default": "Gear That Goes The Distance"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "副标题"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "按钮文字",
+          "default": "Shop Travel Gear"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "按钮链接"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文字颜色",
+          "default": "#ffffff"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "遮罩透明度",
+          "min": 0,
+          "max": 80,
+          "step": 5,
+          "unit": "%",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "文字位置"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "桌面端文字位置",
+          "options": [
+            {
+              "value": "top_left",
+              "label": "顶部左侧"
+            },
+            {
+              "value": "top_center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "top_right",
+              "label": "顶部右侧"
+            },
+            {
+              "value": "center_left",
+              "label": "中部左侧"
+            },
+            {
+              "value": "center",
+              "label": "中部居中"
+            },
+            {
+              "value": "center_right",
+              "label": "中部右侧"
+            },
+            {
+              "value": "bottom_left",
+              "label": "底部左侧"
+            },
+            {
+              "value": "bottom_center",
+              "label": "底部居中"
+            },
+            {
+              "value": "bottom_right",
+              "label": "底部右侧"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_position",
+          "label": "移动端文字位置",
+          "options": [
+            {
+              "value": "top_left",
+              "label": "顶部左侧"
+            },
+            {
+              "value": "top_center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "top_right",
+              "label": "顶部右侧"
+            },
+            {
+              "value": "center_left",
+              "label": "中部左侧"
+            },
+            {
+              "value": "center",
+              "label": "中部居中"
+            },
+            {
+              "value": "center_right",
+              "label": "中部右侧"
+            },
+            {
+              "value": "bottom_left",
+              "label": "底部左侧"
+            },
+            {
+              "value": "bottom_center",
+              "label": "底部居中"
+            },
+            {
+              "value": "bottom_right",
+              "label": "底部右侧"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "header",
+          "content": "字号"
+        },
+        {
+          "type": "range",
+          "id": "kicker_font_size",
+          "label": "小标题字号（桌面端）",
+          "min": 12,
+          "max": 56,
+          "step": 1,
+          "unit": "px",
+          "default": 33
+        },
+        {
+          "type": "range",
+          "id": "heading_font_size",
+          "label": "标题字号（桌面端）",
+          "min": 28,
+          "max": 110,
+          "step": 1,
+          "unit": "px",
+          "default": 77
+        },
+        {
+          "type": "range",
+          "id": "subheading_font_size",
+          "label": "副标题字号（桌面端）",
+          "min": 12,
+          "max": 36,
+          "step": 1,
+          "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "mobile_kicker_font_size",
+          "label": "小标题字号（移动端）",
+          "min": 12,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "default": 22
+        },
+        {
+          "type": "range",
+          "id": "mobile_heading_font_size",
+          "label": "标题字号（移动端）",
+          "min": 24,
+          "max": 72,
+          "step": 1,
+          "unit": "px",
+          "default": 47
+        },
+        {
+          "type": "range",
+          "id": "mobile_subheading_font_size",
+          "label": "副标题字号（移动端）",
+          "min": 12,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "default": 18
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "首页主视觉",
+      "blocks": [
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

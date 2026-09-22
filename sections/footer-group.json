@@ -1,0 +1,62 @@
+{
+  "type": "footer",
+  "name": "页脚组件组",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "links_HwaiAz": {
+          "type": "links",
+          "settings": {
+            "menu": "styles",
+            "show_menu_title": true,
+            "menu_title": "Shop"
+          }
+        },
+        "links_3ihUfB": {
+          "type": "links",
+          "settings": {
+            "menu": "policy",
+            "show_menu_title": true,
+            "menu_title": ""
+          }
+        },
+        "newsletter_fRPE4y": {
+          "type": "newsletter",
+          "settings": {
+            "image_width": 150,
+            "heading_size": "h5",
+            "title": "Join the pack",
+            "content": "<p>New play ideas, product drops and pet-friendly offers—sent occasionally.</p>",
+            "show_social": false
+          }
+        }
+      },
+      "block_order": [
+        "links_3ihUfB",
+        "newsletter_fRPE4y"
+      ],
+      "custom_css": [
+        "{border-radius: 48px 48px 0 0; overflow: hidden;}"
+      ],
+      "settings": {
+        "show_social_media": false,
+        "show_payment_icons": true,
+        "show_powered_by_shopify": false,
+        "show_policy_links": false,
+        "show_country_selector": true,
+        "show_country_flag": true,
+        "show_country_name": true,
+        "show_locale_selector": true,
+        "show_contact_bar": false,
+        "contact_phone": "",
+        "contact_email": "",
+        "contact_address": "",
+        "contact_hours": ""
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

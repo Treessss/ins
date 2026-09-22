@@ -1,0 +1,264 @@
+{%- if section.blocks.size > 0 -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} {
+        --tabs-max-width: {% if section.settings.content_size == 'small' %}760{% elsif section.settings.content_size == 'medium' %}1000{% elsif section.settings.content_size == 'large' %}1260{% endif %}px;
+        --section-stack-spacing-block: var(--spacing-8);
+      }
+    }
+
+    @media screen and (min-width: 1400px) {
+      #shopify-section-{{ section.id }} {
+        --section-stack-spacing-block: var(--spacing-10);
+      }
+    }
+  </style>
+
+  <div {% render 'section-properties' %}>
+    <div class="tabs">
+      <div class="section-stack">
+        {%- if section.settings.subheading != blank or section.settings.title != blank -%}
+          <div class="prose text-center">
+            {%- if section.settings.subheading != blank -%}
+              <p class="subheading">{{ section.settings.subheading | escape }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.title != blank -%}
+              <p class="h2">{%- render 'styled-text', content: section.settings.title, text_color: section.settings.heading_color, gradient: section.settings.heading_gradient -%}</p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        <div class="tabs-container">
+          <div class="sm:hidden">
+            {%- for block in section.blocks -%}
+              {%- liquid
+                assign title = block.settings.title | default: block.settings.page.title
+
+                if block.type == 'tab'
+                  assign content = block.settings.page.content | default: block.settings.content
+                elsif block.type == 'liquid'
+                  assign content = block.settings.liquid
+                endif
+              -%}
+
+              {%- if title and content -%}
+                {%- assign open = false -%}
+
+                {%- if forloop.first and section.settings.first_tab_open -%}
+                  {%- assign open = true -%}
+                {%- endif -%}
+
+                {%- capture accordion_content -%}
+                  <div class="prose">{{ content }}</div>
+                {%- endcapture -%}
+
+                {%- render 'accordion', title: title, content: accordion_content, open: open -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          <x-tabs class="tabs-inner sm:text-{{ section.settings.text_alignment | replace: 'left', 'start' | replace: 'right', 'end' }}">
+            <template shadowrootmode="open">
+              <slot role="tablist" part="tab-list" name="title"></slot>
+              <slot part="tab-panels" name="content"></slot>
+            </template>
+
+            {%- for block in section.blocks -%}
+              {%- liquid
+                assign title = block.settings.title | default: block.settings.page.title
+
+                if block.type == 'tab'
+                  assign content = block.settings.page.content | default: block.settings.content
+                elsif block.type == 'liquid'
+                  assign content = block.settings.liquid
+                endif
+              -%}
+
+              {%- if title != blank and content != blank -%}
+                <button type="button" slot="title" class="tabs-nav__button bold text-subdued text-center" {{ block.shopify_attributes }}>{{ title | escape }}</button>
+                <div role="tabpanel" class="tab-content prose" slot="content" {% cycle '', 'hidden', 'hidden', 'hidden', 'hidden' %}>
+                  {{ content }}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </x-tabs>
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "标签页",
+  "class": "shopify-section--tabs",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "content_size",
+      "label": "内容大小",
+      "options": [
+        {
+          "value": "small",
+          "label": "小"
+        },
+        {
+          "value": "medium",
+          "label": "中"
+        },
+        {
+          "value": "large",
+          "label": "大"
+        },
+        {
+          "value": "fill",
+          "label": "填满页面"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "副标题",
+      "default": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Heading"
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "label": "桌面端文本对齐方式",
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "first_tab_open",
+      "label": "移动端默认打开第一个标签页"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "富文本内容",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Tab"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "页面",
+          "info": "指定后会替代内联内容。"
+        }
+      ]
+    },
+    {
+      "type": "liquid",
+      "name": "Liquid 代码",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Tab"
+        },
+        {
+          "type": "liquid",
+          "id": "liquid",
+          "label": "Liquid 代码",
+          "default": "<p>Write Liquid code to create advanced customizations.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "标签页",
+      "category": "Content",
+      "blocks": [
+        {
+          "type": "tab",
+          "settings": {
+            "title": "Tab 1",
+            "content": "<p>Use this text to share information about your brand with your customers.</p>"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "title": "Tab 2",
+            "content": "<p>Describe a product, share announcements, or welcome customers to your store.</p>"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "title": "Tab 3",
+            "content": "<p>Share information about your shipping rates, return policy or contact information.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

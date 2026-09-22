@@ -1,0 +1,775 @@
+{%- render 'section-spacing-collapsing' -%}
+
+{%- liquid
+  assign has_custom_subcollections = false
+
+  for i in (1..10)
+    assign name_key = 'sub_collection_' | append: i | append: '_name'
+    assign list_key = 'sub_collection_' | append: i | append: '_list'
+
+    assign group_name = collection.metafields.custom[name_key].value
+    assign group_list = collection.metafields.custom[list_key].value
+
+    if group_name != blank and group_list != blank and group_list.size > 0
+      assign has_custom_subcollections = true
+      break
+    endif
+  endfor
+-%}
+
+<style>
+  {%- assign card_blends = false -%}
+
+  {%- unless settings.background != 'rgba(0,0,0,0)' and settings.product_card_background != 'rgba(0,0,0,0)' and settings.background != settings.product_card_background -%}
+    {%- assign card_blends = true -%}
+  {%- endunless -%}
+
+	  #shopify-section-{{ section.id }} {
+	    --product-list-gap: {% if section.settings.products_per_row_mobile == '2' %}{% if card_blends %}var(--product-list-row-gap){% endif %} var(--spacing-1){% else %}var(--product-list-row-gap) var(--product-list-column-gap){% endif %};
+	    --product-list-items-per-row: {{ section.settings.products_per_row_mobile | times: 1 }};
+	    --product-list-grid: auto-flow dense / repeat(var(--product-list-items-per-row), minmax(0, 1fr));
+	    --product-list-promo-grid-column: span {{ section.settings.products_per_row_mobile }};
+	    --xstrape-collection-page-bg: #f3f3f3;
+	    --xstrape-collection-card-bg: #ffffff;
+	    --xstrape-collection-media-bg: #f3f3f3;
+	    --xstrape-collection-card-shadow: 0 0 0 1px rgb(0 0 0 / 6%), 0 1px 1px -0.5px rgb(0 0 0 / 6%), 0 3px 3px -1.5px rgb(0 0 0 / 6%), 0 6px 6px -3px rgb(0 0 0 / 6%), 0 12px 12px -6px rgb(0 0 0 / 6%), 0 24px 24px -12px rgb(0 0 0 / 6%);
+	    background: var(--xstrape-collection-page-bg);
+
+	    --content-over-media-gap: var(--spacing-8);
+	  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} {
+      --product-list-gap: var(--product-list-row-gap) var(--product-list-column-gap);
+      --product-list-items-per-row: 2;
+      --product-list-promo-grid-column: span 1;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} {
+      --product-list-items-per-row: {{ section.settings.products_per_row_desktop }};
+      --product-list-promo-grid-column: span 2;
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
+    #shopify-section-{{ section.id }} {
+      --product-list-items-per-row: {{ section.settings.products_per_row_desktop }};
+    }
+  }
+
+  @media screen and (min-width: 1400px) {
+    #shopify-section-{{ section.id }} {
+      --product-list-items-per-row: {{ section.settings.products_per_row_desktop }};
+    }
+
+    {%- for block in section.blocks -%}
+      #block-{{ section.id }}-{{ block.id }} {
+        --product-list-promo-grid-column: span {{ block.settings.column_span }};
+
+        {%- if block.settings.column_span == '2' -%}
+          --content-over-media-column-gap: var(--spacing-12);
+        {%- endif -%}
+      }
+    {%- endfor -%}
+  }
+</style>
+
+<div class="container">
+  {%- if collection.all_products_count == 0 -%}
+    <div class="empty-state">
+      <div class="empty-state__icon-wrapper">
+        {%- render 'icon' with 'picto-stop', width: 32, height: 32, stroke_width: 1 -%}
+        <span class="count-bubble count-bubble--lg">0</span>
+      </div>
+
+      <div class="prose">
+        <p class="h4">{{ 'collection.general.empty_collection' | t }}</p>
+
+        {%- assign button_content = 'collection.general.continue_shopping' | t -%}
+        {%- render 'button', href: routes.all_products_collection_url, size: 'xl', content: button_content -%}
+      </div>
+    </div>
+  {%- else -%}
+    {%- if has_custom_subcollections -%}
+	      <div class="collection collection-subcollections collection--xstrape-nomad-cards">
+        <div class="collection-subcollections__layout">
+          <div class="collection-subcollections__mobile">
+            <button type="button" class="collection-subcollections__mobile-toggle" aria-controls="subcollections-drawer" aria-expanded="false">
+              <span class="sr-only">Open section navigation</span>
+              {%- render 'icon' with 'hamburger' -%}
+            </button>
+
+            <div class="collection-subcollections__mobile-overlay" data-subcollections-close hidden></div>
+            <aside id="subcollections-drawer" class="collection-subcollections__mobile-drawer" role="dialog" aria-modal="true" aria-label="Section navigation" hidden>
+              <div class="collection-subcollections__mobile-drawer-header">
+                <p class="bold">Menu</p>
+                <button type="button" class="tap-area" data-subcollections-close aria-label="Close menu">
+                  {%- render 'icon' with 'close' -%}
+                </button>
+              </div>
+              <div class="collection-subcollections__mobile-menu">
+                <nav class="collection-subcollections__nav collection-subcollections__nav--mobile">
+                  {%- for i in (1..10) -%}
+                    {%- assign name_key = 'sub_collection_' | append: i | append: '_name' -%}
+                    {%- assign list_key = 'sub_collection_' | append: i | append: '_list' -%}
+
+                    {%- assign group_name = collection.metafields.custom[name_key].value -%}
+                    {%- assign group_list = collection.metafields.custom[list_key].value -%}
+
+                    {%- if group_name == blank or group_list == blank -%}
+                      {%- continue -%}
+                    {%- endif -%}
+
+                    <a class="collection-subcollections__nav-link" href="#sub-{{ i }}">{{ group_name | escape }}</a>
+                  {%- endfor -%}
+                </nav>
+
+                <div class="collection-subcollections__dots" aria-hidden="true">
+                  {%- for i in (1..10) -%}
+                    {%- assign name_key = 'sub_collection_' | append: i | append: '_name' -%}
+                    {%- assign list_key = 'sub_collection_' | append: i | append: '_list' -%}
+
+                    {%- assign group_name = collection.metafields.custom[name_key].value -%}
+                    {%- assign group_list = collection.metafields.custom[list_key].value -%}
+
+                    {%- if group_name == blank or group_list == blank -%}
+                      {%- continue -%}
+                    {%- endif -%}
+
+                    <span class="collection-subcollections__dot" data-subcollections-dot="#sub-{{ i }}"></span>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <div class="collection-subcollections__main">
+            {%- for i in (1..10) -%}
+              {%- assign name_key = 'sub_collection_' | append: i | append: '_name' -%}
+              {%- assign list_key = 'sub_collection_' | append: i | append: '_list' -%}
+
+              {%- assign group_name = collection.metafields.custom[name_key].value -%}
+              {%- assign group_list = collection.metafields.custom[list_key].value -%}
+
+              {%- if group_name == blank or group_list == blank -%}
+                {%- continue -%}
+              {%- endif -%}
+
+              <section id="sub-{{ i }}" class="collection-subcollections__group">
+                <h2 class="collection-subcollections__title">{{ group_name | escape }}</h2>
+
+                <reveal-items selector=".product-list > *">
+                  <product-list class="product-list" role="region" aria-live="polite">
+                    {%- assign position = 0 -%}
+
+                    {%- for item in group_list -%}
+                      {%- if item.products != blank -%}
+                        {%- for product in item.products -%}
+                          {%- assign position = position | plus: 1 -%}
+	                          {%- render 'product-card', product: product, stacked: true, position: position, show_badges: true, show_rating: false, show_vendor: false, show_secondary_image: false, show_swatches: false, show_quick_buy: false -%}
+                        {%- endfor -%}
+                      {%- else -%}
+                        {%- assign position = position | plus: 1 -%}
+	                        {%- render 'product-card', product: item, stacked: true, position: position, show_badges: true, show_rating: false, show_vendor: false, show_secondary_image: false, show_swatches: false, show_quick_buy: false -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </product-list>
+                </reveal-items>
+              </section>
+            {%- endfor -%}
+          </div>
+
+          <aside class="collection-subcollections__sidebar" aria-label="Collection navigation">
+            <div class="collection-subcollections__sidebar-inner">
+              <div class="collection-subcollections__sidebar-menu">
+                <nav class="collection-subcollections__nav">
+                  {%- for i in (1..10) -%}
+                    {%- assign name_key = 'sub_collection_' | append: i | append: '_name' -%}
+                    {%- assign list_key = 'sub_collection_' | append: i | append: '_list' -%}
+
+                    {%- assign group_name = collection.metafields.custom[name_key].value -%}
+                    {%- assign group_list = collection.metafields.custom[list_key].value -%}
+
+                    {%- if group_name == blank or group_list == blank -%}
+                      {%- continue -%}
+                    {%- endif -%}
+
+                    <a class="collection-subcollections__nav-link" href="#sub-{{ i }}">{{ group_name | escape }}</a>
+                  {%- endfor -%}
+                </nav>
+
+                <div class="collection-subcollections__dots collection-subcollections__dots--desktop" aria-hidden="true">
+                  {%- for i in (1..10) -%}
+                    {%- assign name_key = 'sub_collection_' | append: i | append: '_name' -%}
+                    {%- assign list_key = 'sub_collection_' | append: i | append: '_list' -%}
+
+                    {%- assign group_name = collection.metafields.custom[name_key].value -%}
+                    {%- assign group_list = collection.metafields.custom[list_key].value -%}
+
+                    {%- if group_name == blank or group_list == blank -%}
+                      {%- continue -%}
+                    {%- endif -%}
+
+                    <span class="collection-subcollections__dot" data-subcollections-dot="#sub-{{ i }}"></span>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    {%- else -%}
+      {%- liquid
+        if section.settings.show_filters and collection.filters.size > 0
+          assign show_filters = true
+        else
+          assign show_filters = false
+        endif
+      -%}
+
+      {%- paginate collection.products by section.settings.products_per_page -%}
+	        <div class="collection collection--xstrape-nomad-cards {% if show_filters %}collection--filters-{{ section.settings.filter_layout | escape }}{% endif %}">
+          {%- if show_filters or section.settings.show_sort_by -%}
+            <facet-drawer header-bordered id="facets-drawer" class="facets-drawer drawer" open-from="left">
+              <p class="h5" slot="header">{{ 'collection.faceting.filters' | t }}</p>
+              {%- render 'facets-vertical', results: collection, show_filters: show_filters, show_sort_by: section.settings.show_sort_by, update_on_change: false -%}
+            </facet-drawer>
+
+            {%- if section.settings.filter_layout == 'horizontal' -%}
+              {%- render 'collection-top-bar', results: collection, show_filters: show_filters, show_active_filters: show_filters, show_sort_by: section.settings.show_sort_by -%}
+            {%- else -%}
+              {%- render 'collection-top-bar', results: collection, show_filters: false, show_active_filters: show_filters, show_sort_by: section.settings.show_sort_by -%}
+            {%- endif -%}
+
+            {%- unless section.settings.filter_layout == 'drawer' -%}
+              {%- if show_filters or section.settings.show_sort_by -%}
+              {%- capture content_key -%}
+                {%- if show_filters and section.settings.show_sort_by -%}
+                  collection.faceting.filter_and_sort
+                {%- elsif show_filters and section.settings.show_sort_by == false -%}
+                  collection.faceting.filter_button
+                {%- elsif show_filters == false and section.settings.show_sort_by -%}
+                  collection.faceting.sort_by
+                {%- endif -%}
+              {%- endcapture -%}
+
+              <facet-floating-filter class="facets__floating-filter md:hidden">
+                {%- assign filter_label = content_key | t -%}
+                {%- render 'button', size: 'xl', content: filter_label, icon: 'filter', style: 'fill', background: settings.text_color, text_color: settings.background, aria_controls: 'facets-drawer' -%}
+              </facet-floating-filter>
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endif -%}
+
+          {%- if show_filters and section.settings.filter_layout == 'sidebar' -%}
+            <div class="collection__facets">
+              <safe-sticky class="collection__facets-scroller">
+                {%- render 'facets-vertical', results: collection, show_filters: true, show_sort_by: false, update_on_change: true -%}
+              </safe-sticky>
+            </div>
+          {%- endif -%}
+
+          <div class="collection__results">
+            {%- if collection.products_count == 0 -%}
+              <div class="empty-state">
+                <div class="empty-state__icon-wrapper">
+                  {%- render 'icon' with 'picto-stop', width: 32, height: 32, stroke_width: 1 -%}
+                  <span class="count-bubble count-bubble--lg">0</span>
+                </div>
+
+                <div class="prose">
+                  <p class="h5">{{ 'collection.faceting.no_results' | t }}</p>
+
+                  {%- assign button_content = 'collection.faceting.clear_filters' | t -%}
+                  {%- render 'button', href: collection.url, is: 'facet-link', size: 'xl', content: button_content -%}
+                </div>
+              </div>
+            {%- else -%}
+              {%- capture active_facets_mobile -%}
+                {%- render 'active-facets', results: collection -%}
+              {%- endcapture -%}
+              <div class="v-stack gap-3 sm:gap-6">
+                {%- if active_facets_mobile != blank -%}
+                  <div class="v-stack gap-4 md:hidden">
+                    {{- active_facets_mobile -}}
+                  </div>
+                {%- endif -%}
+
+                <reveal-items selector=".product-list > *">
+                  <product-list class="product-list" role="region" aria-live="polite">
+                    {%- for product in collection.products -%}
+	                      {%- render 'product-card', product: product, stacked: true, position: forloop.index, show_badges: true, show_rating: false, show_vendor: false, show_secondary_image: false, show_swatches: false, show_quick_buy: false -%}
+                    {%- endfor -%}
+                  </product-list>
+                </reveal-items>
+              </div>
+            {%- endif -%}
+          </div>
+
+          <collection-infinite-scroll class="collection-infinite-scroll collection__pagination" data-section-id="{{ section.id }}">
+            {%- render 'pagination', paginate: paginate, facet: true -%}
+
+            <div class="collection-infinite-scroll__status" aria-live="polite">
+              <span class="collection-infinite-scroll__spinner" aria-hidden="true"></span>
+              <span>正在加载...</span>
+            </div>
+          </collection-infinite-scroll>
+        </div>
+      {%- endpaginate -%}
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "系列页",
+  "class": "shopify-section--main-collection",
+  "tag": "section",
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "promotion_image",
+      "name": "推广图片",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "如果可见商品不足，部分块可能会隐藏。"
+        },
+        {
+          "type": "range",
+          "id": "position",
+          "min": 1,
+          "max": 50,
+          "label": "网格中的位置",
+          "default": 4
+        },
+        {
+          "type": "select",
+          "id": "column_span",
+          "label": "桌面端项目尺寸",
+          "info": "在较小屏幕上会自动调整尺寸以提升用户体验。",
+          "options": [
+            {
+              "value": "1",
+              "label": "1 列"
+            },
+            {
+              "value": "2",
+              "label": "2 列"
+            }
+          ],
+          "default": "1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片",
+          "info": "建议使用 1600 x 1000px .jpg"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "移动端图片",
+          "info": "建议使用 1000 x 1000px .jpg。默认使用桌面端图片。"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Promote a product or a temporary offer"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "链接网址"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "链接文本",
+          "default": "View all"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "标题样式",
+          "options": [
+            {
+              "value": "h1",
+              "label": "特大"
+            },
+            {
+              "value": "h2",
+              "label": "大"
+            },
+            {
+              "value": "h3",
+              "label": "中"
+            },
+            {
+              "value": "h4",
+              "label": "小"
+            },
+            {
+              "value": "h5",
+              "label": "特小"
+            },
+            {
+              "value": "h6",
+              "label": "超小"
+            }
+          ],
+          "default": "h4"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "内容位置",
+          "options": [
+            {
+              "value": "place-self-start text-start",
+              "label": "左上"
+            },
+            {
+              "value": "place-self-start-center text-center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "place-self-start-end text-end",
+              "label": "右上"
+            },
+            {
+              "value": "place-self-center-start text-start",
+              "label": "中部左侧"
+            },
+            {
+              "value": "place-self-center text-center",
+              "label": "中部居中"
+            },
+            {
+              "value": "place-self-center-end text-end",
+              "label": "中部右侧"
+            },
+            {
+              "value": "place-self-end-start text-start",
+              "label": "左下"
+            },
+            {
+              "value": "place-self-end-center text-center",
+              "label": "底部居中"
+            },
+            {
+              "value": "place-self-end text-end",
+              "label": "右下"
+            }
+          ],
+          "default": "place-self-end-start text-start"
+        },
+        {
+          "type": "header",
+          "content": "颜色"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "叠加层",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "叠加层不透明度",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 30
+        }
+      ]
+    },
+    {
+      "type": "promotion_video",
+      "name": "推广视频",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "如果可见商品不足，部分块可能会隐藏。视频会静音以允许自动播放。为了获得最佳视觉效果并避免平台品牌露出，建议上传 MP4 文件。"
+        },
+        {
+          "type": "range",
+          "id": "position",
+          "min": 1,
+          "max": 50,
+          "label": "网格中的位置",
+          "default": 4
+        },
+        {
+          "type": "select",
+          "id": "column_span",
+          "label": "桌面端项目尺寸",
+          "info": "在较小屏幕上会自动调整尺寸以提升用户体验。",
+          "options": [
+            {
+              "value": "1",
+              "label": "1 列"
+            },
+            {
+              "value": "2",
+              "label": "2 列"
+            }
+          ],
+          "default": "1"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "视频",
+          "info": "如果同时设置，会替代外部视频。"
+        },
+        {
+          "type": "video_url",
+          "id": "external_video_url",
+          "accept": [
+            "vimeo",
+            "youtube"
+          ],
+          "label": "外部视频网址"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Promote a product or a temporary offer"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "链接网址"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "链接文本",
+          "default": "View all"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "标题样式",
+          "options": [
+            {
+              "value": "h1",
+              "label": "特大"
+            },
+            {
+              "value": "h2",
+              "label": "大"
+            },
+            {
+              "value": "h3",
+              "label": "中"
+            },
+            {
+              "value": "h4",
+              "label": "小"
+            },
+            {
+              "value": "h5",
+              "label": "特小"
+            },
+            {
+              "value": "h6",
+              "label": "超小"
+            }
+          ],
+          "default": "h4"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "内容位置",
+          "options": [
+            {
+              "value": "place-self-start text-start",
+              "label": "左上"
+            },
+            {
+              "value": "place-self-start-center text-center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "place-self-start-end text-end",
+              "label": "右上"
+            },
+            {
+              "value": "place-self-center-start text-start",
+              "label": "中部左侧"
+            },
+            {
+              "value": "place-self-center text-center",
+              "label": "中部居中"
+            },
+            {
+              "value": "place-self-center-end text-end",
+              "label": "中部右侧"
+            },
+            {
+              "value": "place-self-end-start text-start",
+              "label": "左下"
+            },
+            {
+              "value": "place-self-end-center text-center",
+              "label": "底部居中"
+            },
+            {
+              "value": "place-self-end text-end",
+              "label": "右下"
+            }
+          ],
+          "default": "place-self-end-start text-start"
+        },
+        {
+          "type": "header",
+          "content": "颜色"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "叠加层",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "叠加层不透明度",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 30
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "每页商品数",
+      "min": 8,
+      "max": 50,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "布局"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "每行商品数（移动端）",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "min": 2,
+      "max": 5,
+      "id": "products_per_row_desktop",
+      "label": "每行商品数（桌面端）",
+      "info": "控制产品网格在桌面端每行显示的商品数量。",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "筛选与排序"
+    },
+    {
+      "type": "select",
+      "id": "filter_layout",
+      "label": "桌面端布局",
+      "options": [
+        {
+          "value": "sidebar",
+          "label": "侧边栏"
+        },
+        {
+          "value": "horizontal",
+          "label": "水平"
+        },
+        {
+          "value": "drawer",
+          "label": "抽屉"
+        }
+      ],
+      "default": "drawer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort_by",
+      "label": "显示排序",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "显示筛选器",
+      "info": "[自定义筛选器](https://help.shopify.com/manual/online-store/search-and-discovery/filters)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filter_group_name",
+      "label": "显示组名",
+      "info": "组名会显示在已选筛选器中。",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filter_values_count",
+      "label": "显示筛选值数量",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first_filter_group",
+      "label": "默认打开第一组",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

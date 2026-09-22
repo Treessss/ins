@@ -1,0 +1,91 @@
+{%- render 'button', 
+  content: block.settings.text, 
+  href: block.settings.url,
+  size: block.settings.size,
+  style: block.settings.style,
+  background: block.settings.background,
+  text_color: block.settings.text_color,
+  external: block.settings.open_in_new_tab,
+  block: block
+-%}
+
+{% schema %}
+{
+  "name": "按钮",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "文本",
+      "default": "Button"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "链接"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "在新标签页打开",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "样式",
+      "options": [
+        {
+          "value": "outline",
+          "label": "描边"
+        },
+        {
+          "value": "fill",
+          "label": "纯色"
+        }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "尺寸",
+      "options": [
+        {
+          "value": "sm",
+          "label": "小"
+        },
+        {
+          "value": "base",
+          "label": "中"
+        },
+        {
+          "value": "lg",
+          "label": "大"
+        },
+        {
+          "value": "xl",
+          "label": "特大"
+        }
+      ],
+      "default": "xl"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "按钮"
+    }
+  ]
+}
+{% endschema %}

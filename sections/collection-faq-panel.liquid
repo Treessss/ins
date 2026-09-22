@@ -1,0 +1,313 @@
+{%- render 'section-spacing-collapsing' -%}
+
+{%- liquid
+  assign title = section.settings.title | default: 'FAQ'
+  assign open_by_default = section.settings.open_by_default
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} .collection-faq-panel {
+    max-width: {{ section.settings.max_width }}px;
+    margin-inline: auto;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__details {
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 26px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__title {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #191919;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__close {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    color: #191919;
+    border-radius: 10px;
+    position: relative;
+    transition: transform 0.5s ease;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__close::before,
+  #shopify-section-{{ section.id }} .collection-faq-panel__close::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 999px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+
+  /* plus by default */
+  #shopify-section-{{ section.id }} .collection-faq-panel__close::before {
+    transform: rotate(0deg);
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__close::after {
+    transform: rotate(90deg);
+  }
+
+  /* rotate plus to become X when expanded */
+  #shopify-section-{{ section.id }} details[open] .collection-faq-panel__close {
+    transform: rotate(45deg);
+  }
+
+
+
+  /* smooth open/close */
+  #shopify-section-{{ section.id }} .collection-faq-panel__content {
+    height: 0px;
+    overflow: hidden;
+    transition: height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+  }
+
+  #shopify-section-{{ section.id }} details[open] .collection-faq-panel__content {
+    opacity: 1;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__content-inner {
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__body {
+    padding: 18px 28px 28px;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__item + .collection-faq-panel__item {
+    margin-top: 18px;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__q {
+    margin: 0 0 8px;
+    font-size: 16px;
+    line-height: 1.35;
+    font-weight: 700;
+    color: #191919;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__a {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #666666;
+  }
+
+  #shopify-section-{{ section.id }} .collection-faq-panel__a .prose {
+    color: inherit;
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .collection-faq-panel__summary {
+      padding: 18px 16px;
+    }
+
+  
+
+    #shopify-section-{{ section.id }} .collection-faq-panel__body {
+      padding: 14px 16px 18px;
+    }
+  }
+</style>
+
+<div {% render 'section-properties' %}>
+  <div class="collection-faq-panel">
+    <details class="collection-faq-panel__details" {% if open_by_default %}open{% endif %} data-collection-faq-panel>
+      <summary class="collection-faq-panel__summary">
+        <h2 class="collection-faq-panel__title">{{ title | escape }}</h2>
+        <span class="collection-faq-panel__close" aria-hidden="true"></span>
+      </summary>
+
+      <div class="collection-faq-panel__content">
+        <div class="collection-faq-panel__content-inner">
+          <div class="collection-faq-panel__body">
+            {%- for block in section.blocks -%}
+              {%- if block.settings.question != blank and block.settings.answer != blank -%}
+                <div class="collection-faq-panel__item" {{ block.shopify_attributes }}>
+                  <p class="collection-faq-panel__q">{{ block.settings.question | escape }}</p>
+                  <div class="collection-faq-panel__a prose">
+                    {{- block.settings.answer -}}
+                  </div>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const details = document.querySelector('[data-collection-faq-panel][id="{{ 'shopify-section-' | append: section.id }}"]')?.querySelector('[data-collection-faq-panel]') || document.querySelector('#shopify-section-{{ section.id }} [data-collection-faq-panel]');
+    if (!details) return;
+    if (details.hasAttribute('data-enhanced')) return;
+    details.setAttribute('data-enhanced', 'true');
+
+    const summary = details.querySelector('summary');
+    const content = details.querySelector('.collection-faq-panel__content');
+    if (!summary || !content) return;
+
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    // Ensure correct initial height when open by default
+    if (details.open) {
+      content.style.height = content.scrollHeight + 'px';
+      // Allow future animations by resetting to auto after paint
+      requestAnimationFrame(() => {
+        content.style.height = 'auto';
+      });
+    }
+
+    let animating = false;
+
+    summary.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (animating) return;
+      animating = true;
+
+      const isOpening = !details.open;
+
+      if (isOpening) {
+        details.open = true;
+        // Start from 0
+        content.style.height = '0px';
+        requestAnimationFrame(() => {
+          const target = content.scrollHeight;
+          content.style.height = target + 'px';
+        });
+      } else {
+        // From current height to 0
+        const start = content.offsetHeight;
+        content.style.height = start + 'px';
+        requestAnimationFrame(() => {
+          content.style.height = '0px';
+        });
+      }
+
+      const onEnd = () => {
+        content.removeEventListener('transitionend', onEnd);
+        if (details.open) {
+          // Allow natural height after opening
+          content.style.height = 'auto';
+        } else {
+          details.open = false;
+        }
+        animating = false;
+      };
+
+      content.addEventListener('transitionend', onEnd, { once: true });
+
+      // If closing, flip open state at end of animation
+      if (!isOpening) {
+        // We keep details.open true until animation ends for CSS (opacity, icon) consistency
+        details.open = true;
+        // but we must set it false after transition
+        content.addEventListener('transitionend', () => { details.open = false; }, { once: true });
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "系列常见问题面板",
+  "class": "shopify-section--collection-faq-panel",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "FAQ"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_by_default",
+      "label": "默认打开",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "最大宽度",
+      "min": 600,
+      "max": 1920,
+      "step": 20,
+      "unit": "px",
+      "default": 1440
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "项目",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "问题",
+          "default": "question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "回答",
+          "default": "<p>answer</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "系列常见问题面板",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,60 @@
+{% if section.settings.quote_text != blank %}
+  <section
+    class="xstrape-home-scope xh-quote"
+    style="--xh-page-bg: {{ section.settings.page_background | default: '#f3f3f3' }}; --xh-text: {{ section.settings.text_color | default: '#111111' }}; --xh-muted: {{ section.settings.muted_text_color | default: '#6c6c6c' }};"
+  >
+    <p class="xh-quote__text">“{{ section.settings.quote_text | escape }}”</p>
+    {% if section.settings.quote_author != blank %}
+      <p class="xh-quote__author">{{ section.settings.quote_author | escape }}</p>
+    {% endif %}
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "引用文案",
+  "class": "shopify-section--xstrape-quote",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "quote_text",
+      "label": "引用内容",
+      "default": "Add your brand quote here."
+    },
+    {
+      "type": "text",
+      "id": "quote_author",
+      "label": "作者",
+      "default": "Team"
+    },
+    {
+      "type": "header",
+      "content": "颜色"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "背景",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "次要文字",
+      "default": "#6c6c6c"
+    }
+  ],
+  "presets": [
+    {
+      "name": "引用文案"
+    }
+  ]
+}
+{% endschema %}

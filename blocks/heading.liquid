@@ -1,0 +1,106 @@
+{%- if block.settings.text != blank -%}
+  {%- assign html_tag = block.settings.html_tag -%}
+
+  <{{ html_tag }} class="{{ block.settings.size }}" {{ block.shopify_attributes }}>
+    {%- render 'styled-text', content: block.settings.text, text_color: block.settings.text_color, gradient: block.settings.gradient -%}
+  </{{ html_tag }}>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "标题",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "文本",
+      "default": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "尺寸",
+      "options": [
+        {
+          "value": "h1",
+          "label": "特大"
+        },
+        {
+          "value": "h2",
+          "label": "大"
+        },
+        {
+          "value": "h3",
+          "label": "中"
+        },
+        {
+          "value": "h4",
+          "label": "小"
+        },
+        {
+          "value": "h5",
+          "label": "特小"
+        },
+        {
+          "value": "h6",
+          "label": "超小"
+        }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "select",
+      "id": "html_tag",
+      "label": "HTML 标签",
+      "info": "请用 hX 标签保持合理层级（例如不要在 h1 前使用 h3）。不确定时请使用段落标签。",
+      "options": [
+        {
+          "value": "p",
+          "label": "段落"
+        },
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        }
+      ],
+      "default": "p"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "gradient",
+      "label": "渐变"
+    }
+  ],
+  "presets": [
+    {
+      "name": "标题"
+    }
+  ]
+}
+{% endschema %}

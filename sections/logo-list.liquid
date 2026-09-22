@@ -1,0 +1,240 @@
+{%- if section.blocks.size > 0 -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      --logo-list-item-max-size: 280px;
+      --logo-list-grid: {% if section.settings.stack_mobile %}auto-flow 1fr / repeat(var(--logo-list-items-per-row), minmax(0, var(--logo-list-item-max-size))){% else %}1fr / auto-flow 52vw{% endif %};
+      --logo-list-items-per-row: {{ 2 | at_most : section.blocks.size }};
+      --logo-list-items-border: {{ section.settings.logo_item_border.rgb }} / {{ section.settings.logo_item_border.alpha }};
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} {
+        --logo-list-grid: auto-flow 1fr / repeat(var(--logo-list-items-per-row), minmax(0, var(--logo-list-item-max-size)));
+        --logo-list-items-per-row: {{ 3 | at_most : section.blocks.size }};
+      }
+    }
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} {
+        --logo-list-items-per-row: {{ 4 | at_most: section.settings.items_per_row | at_most: section.blocks.size }};
+      }
+    }
+
+    @media screen and (min-width: 1150px) {
+      #shopify-section-{{ section.id }} {
+        --logo-list-items-per-row: {{ section.settings.items_per_row | at_most: section.blocks.size }};
+      }
+    }
+  </style>
+
+  <div {% render 'section-properties' %}>
+    <div class="section-stack {% if section.settings.text_alignment == 'center' %}sm:justify-items-center{% endif %}">
+      <div class="prose {% if section.settings.text_alignment == 'center' %}text-center{% endif %}">
+        {%- if section.settings.title != blank -%}
+          <h2 class="h2">
+            {%- render 'styled-text', content: section.settings.title, text_color: section.settings.heading_color, gradient: section.settings.heading_gradient -%}
+          </h2>
+        {%- endif -%}
+
+        {{- section.settings.content -}}
+      </div>
+
+      <reveal-items class="logo-list {% unless section.settings.stack_mobile %}scroll-area bleed sm:unbleed{% endunless %}">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign loading_strategy = nil
+  
+            if section.index > 3 or forloop.index > 3
+              assign loading_strategy = 'lazy'
+            endif
+          -%}
+
+          {%- capture block_content -%}
+            {%- if block.settings.logo != blank -%}
+              {%- capture sizes -%}{{ block.settings.logo_width }}px{%- endcapture -%}
+              {%- capture widths -%}{{ block.settings.logo_width }}, {{ block.settings.logo_width | times: 2 | at_most: block.settings.logo.width }}{%- endcapture -%}
+              {%- capture max_width -%}--logo-list-image-max-width: {{ block.settings.logo_width }}px{%- endcapture -%}
+              {{- block.settings.logo | image_url: width: block.settings.logo.width | image_tag: style: max_width, loading: loading_strategy, widths: widths, class: 'logo-list__image', sizes: sizes -}}
+            {%- else -%}
+              {{- 'image' | placeholder_svg_tag: 'logo-list__image' -}}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {% capture item_attribute %}
+           {%- render 'surface', class: 'logo-list__item', background: section.settings.logo_item_background, background_fallback: 'bg-secondary' -%}
+          {%- endcapture -%}
+
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}" {{ item_attribute }} {{ block.shopify_attributes }}>
+              {{- block_content -}}
+            </a>
+          {%- else -%}
+            <div {{ item_attribute }} {{ block.shopify_attributes }}>
+              {{- block_content -}}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </reveal-items>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "品牌标志列表",
+  "class": "shopify-section--logo-list",
+  "tag": "section",
+  "disabled_on": {
+    "templates": [
+      "password"
+    ],
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "移动端堆叠",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Logo list"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "内容"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "文本对齐方式",
+      "options": [
+        {
+          "value": "start",
+          "label": "左侧"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "range",
+      "id": "items_per_row",
+      "min": 3,
+      "max": 7,
+      "label": "每行项目数（桌面端）",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "标题颜色"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "标题渐变"
+    },
+    {
+      "type": "color",
+      "id": "logo_item_background",
+      "label": "品牌标志背景"
+    },
+    {
+      "type": "color",
+      "id": "logo_item_border",
+      "label": "品牌标志边框"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "品牌标志",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "品牌标志",
+          "info": "建议使用 300 x 90px .jpg"
+        },
+        {
+          "type": "range",
+          "id": "logo_width",
+          "min": 50,
+          "max": 300,
+          "unit": "px",
+          "step": 10,
+          "label": "品牌标志宽度",
+          "default": 120
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "链接"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "品牌标志列表",
+      "category": "Media",
+      "blocks": [
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

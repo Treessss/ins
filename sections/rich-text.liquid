@@ -1,0 +1,782 @@
+{%- if section.blocks.size > 0 -%}
+  {%- render 'section-spacing-collapsing' -%}
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      --rich-text-max-width: {% if section.settings.content_width == 'small' %}650px{% elsif section.settings.content_width == 'medium' %}780px{% else %}100%{% endif %}
+    }
+  </style>
+
+  <div {% render 'section-properties' %}>
+    {%- assign text_position = section.settings.text_position -%}
+    {%- assign blocks_before_divider = '' -%}
+    {%- assign blocks_after_divider = '' -%}
+
+    {%- for block in section.blocks -%}
+      {%- capture block_content -%}
+        {%- case block.type -%}
+          {%- when 'subheading' -%}
+            {%- if block.settings.text != blank -%}
+              <p class="subheading" {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</p>
+            {%- endif -%}
+
+          {%- when 'heading' -%}
+            {%- if block.settings.text != blank -%}
+              <p class="{{ block.settings.heading_tag }} hyphenate" {{ block.shopify_attributes }}>
+                {%- render 'styled-text', content: block.settings.text, text_color: block.settings.text_color, gradient: block.settings.gradient -%}
+              </p>
+            {%- endif -%}
+
+          {%- when 'richtext' -%}
+            {%- if block.settings.content != blank -%}
+              <div {{ block.shopify_attributes }}>
+                {{- block.settings.content -}}
+              </div>
+            {%- endif -%}
+
+          {%- when 'page' -%}
+            {%- if block.settings.page.content != blank -%}
+              <div {{ block.shopify_attributes }}>
+                {{- block.settings.page.content -}}
+              </div>
+            {%- endif -%}
+
+          {%- when 'liquid' -%}
+            {%- if block.settings.liquid != blank -%}
+              <div {{ block.shopify_attributes }}>
+                {{- block.settings.liquid -}}
+              </div>
+            {%- endif -%}
+
+          {%- when 'image' -%}
+            {%- if block.settings.image != blank -%}
+              <div {{ block.shopify_attributes }} style="margin-block-start: 0">
+                {%- capture image_style_attribute -%}{% if section.settings.text_position == 'center' %}margin-inline: auto;{% endif %}{%- endcapture -%}
+
+                {%- if block.settings.width_mode == 'custom' -%}
+                  {%- capture image_style_attribute -%}{{ image_style_attribute }} --image-max-width: {{ block.settings.max_width }}px; --image-mobile-max-width: {{ block.settings.mobile_max_width }}px{%- endcapture -%}
+                  {%- capture image_sizes_attribute -%}(max-width: 699px) min({{ block.settings.mobile_max_width }}px, 100vw), min({{ block.settings.max_width }}px, 100vw){%- endcapture -%}
+                {%- else -%}
+                  {%- capture image_sizes_attribute -%}min(100vw, var(--page-width)){%- endcapture -%}
+                {%- endif -%}
+
+                {{- block.settings.image | image_url: width: block.settings.image.width | image_tag: sizes: image_sizes_attribute, widths: '200,300,400,500,600,800,1000,1200,1400,1600', style: image_style_attribute -}}
+              </div>
+            {%- endif -%}
+
+          {%- when 'button' -%}
+            {%- if block.settings.text != blank -%}
+              {% render 'button', content: block.settings.text, href: block.settings.url, size: block.settings.size, style: block.settings.style, background: block.settings.background, text_color: block.settings.text_color, block: block %}
+            {%- endif -%}
+
+          {%- when 'icon' -%}
+            {%- capture icon -%}
+              {%- if block.settings.custom_icon != blank -%}
+                {%- capture sizes -%}{{ block.settings.icon_width }}px{%- endcapture -%}
+                {%- capture widths -%}{{ block.settings.icon_width }}, {{ block.settings.icon_width | times: 2 | at_most: block.settings.custom_icon.width }}{%- endcapture -%}
+                {%- capture style -%}--icon-max-width: {{ block.settings.icon_width }}px{%- endcapture -%}
+                {{- block.settings.custom_icon | image_url: width: block.settings.custom_icon.width | image_tag: sizes: sizes, widths: widths, style: style, class: 'image-icon' -}}
+              {%- else -%}
+                {%- render 'icon' with block.settings.icon, width: block.settings.icon_width, height: block.settings.icon_width -%}
+              {%- endif -%}
+            {%- endcapture -%}
+
+            {%- if icon != blank -%}
+              <div {{ block.shopify_attributes }}>
+                {%- if block.settings.icon_background_type == 'none' -%}
+                  <div {% render 'surface', text_color: block.settings.icon_color %}>
+                    {{- icon -}}
+                  </div>
+                {%- else -%}
+                  {%- capture surface_class -%}icon-block {% if block.settings.icon_background_type == 'circle' %}rounded-full{% endif %}{%- endcapture -%}
+                  <div {% render 'surface', class: surface_class, background: block.settings.icon_background, text_color: block.settings.icon_color, background_fallback: 'bg-secondary' %}>
+                    {{- icon -}}
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+          {%- when 'divider' -%}
+            {%- assign divider_index = forloop.index -%}
+        {%- endcase -%}
+      {%- endcapture -%}
+
+      {%- if divider_index == blank or forloop.index < divider_index -%}
+        {%- assign blocks_before_divider = blocks_before_divider | append: block_content -%}
+      {%- else -%}
+        {%- assign blocks_after_divider = blocks_after_divider | append: block_content -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if blocks_before_divider != blank and blocks_after_divider != blank -%}
+      <div class="split-rich-text">
+        <div class="prose justify-items-{{ text_position }} text-{{ text_position }}">
+          {{- blocks_before_divider -}}
+        </div>
+
+        <div class="prose justify-items-{{ text_position }} text-{{ text_position }}">
+          {{- blocks_after_divider -}}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div class="rich-text justify-{{ text_position }} {% if blocks_before_divider != blank and blocks_after_divider != blank %}md:hidden{% endif %}">
+      <div class="rich-text__wrapper">
+        <div class="prose justify-items-{{ text_position }} text-{{ text_position }}">
+          {{- blocks_before_divider -}}
+          {{- blocks_after_divider -}}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "富文本",
+  "class": "shopify-section--rich-text",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "内容宽度",
+      "options": [
+        {
+          "value": "small",
+          "label": "小"
+        },
+        {
+          "value": "medium",
+          "label": "中"
+        },
+        {
+          "value": "large",
+          "label": "大"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "文本位置",
+      "options": [
+        {
+          "value": "start",
+          "label": "左侧"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "end",
+          "label": "右侧"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "颜色",
+      "info": "设置渐变后会替代纯色。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "subheading",
+      "name": "副标题",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "文本",
+          "default": "Subheading"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "标题",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "文本",
+          "default": "Heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "样式",
+          "options": [
+            {
+              "value": "h1",
+              "label": "特大"
+            },
+            {
+              "value": "h2",
+              "label": "大"
+            },
+            {
+              "value": "h3",
+              "label": "中"
+            },
+            {
+              "value": "h4",
+              "label": "小"
+            },
+            {
+              "value": "h5",
+              "label": "特小"
+            },
+            {
+              "value": "h6",
+              "label": "超小"
+            }
+          ],
+          "default": "h1"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本"
+        },
+        {
+          "type": "color_background",
+          "id": "gradient",
+          "label": "渐变"
+        }
+      ]
+    },
+    {
+      "type": "richtext",
+      "name": "段落",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "内容",
+          "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "name": "页面",
+      "settings": [
+        {
+          "type": "page",
+          "id": "page",
+          "label": "页面"
+        }
+      ]
+    },
+    {
+      "type": "liquid",
+      "name": "Liquid 代码",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "liquid",
+          "label": "Liquid 代码",
+          "default": "<p>Write custom Liquid code to include widget or dynamic code.</p>"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "图片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片",
+          "info": "建议使用 1600 x 800px .jpg"
+        },
+        {
+          "type": "radio",
+          "id": "width_mode",
+          "label": "图片宽度",
+          "options": [
+            {
+              "value": "full_width",
+              "label": "全宽"
+            },
+            {
+              "value": "custom",
+              "label": "自定义"
+            }
+          ],
+          "default": "custom"
+        },
+        {
+          "type": "range",
+          "id": "max_width",
+          "min": 100,
+          "max": 1000,
+          "step": 10,
+          "unit": "px",
+          "label": "最大宽度",
+          "default": 600
+        },
+        {
+          "type": "range",
+          "id": "mobile_max_width",
+          "min": 100,
+          "max": 600,
+          "step": 10,
+          "unit": "px",
+          "label": "移动端最大宽度",
+          "default": 400
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "按钮",
+      "settings": [
+        {
+          "type": "select",
+          "id": "style",
+          "label": "样式",
+          "options": [
+            {
+              "value": "outline",
+              "label": "描边"
+            },
+            {
+              "value": "fill",
+              "label": "填充"
+            }
+          ],
+          "default": "fill"
+        },
+        {
+          "type": "select",
+          "id": "size",
+          "label": "尺寸",
+          "options": [
+            {
+              "value": "sm",
+              "label": "小"
+            },
+            {
+              "value": "base",
+              "label": "中"
+            },
+            {
+              "value": "lg",
+              "label": "大"
+            },
+            {
+              "value": "xl",
+              "label": "特大"
+            }
+          ],
+          "default": "xl"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "文本",
+          "default": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "链接"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "背景"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本"
+        }
+      ]
+    },
+    {
+      "type": "icon",
+      "name": "图标",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "图标",
+          "options": [
+            {
+              "value": "picto-coupon",
+              "label": "优惠券",
+              "group": "购物"
+            },
+            {
+              "value": "picto-percent",
+              "label": "百分比",
+              "group": "购物"
+            },
+            {
+              "value": "picto-gift",
+              "label": "礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-star",
+              "label": "星星",
+              "group": "购物"
+            },
+            {
+              "value": "picto-like",
+              "label": "点赞",
+              "group": "购物"
+            },
+            {
+              "value": "picto-building",
+              "label": "建筑",
+              "group": "购物"
+            },
+            {
+              "value": "picto-love",
+              "label": "爱心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-award-gift",
+              "label": "获奖礼物",
+              "group": "购物"
+            },
+            {
+              "value": "picto-happy",
+              "label": "开心",
+              "group": "购物"
+            },
+            {
+              "value": "picto-box",
+              "label": "盒子",
+              "group": "配送"
+            },
+            {
+              "value": "picto-pin",
+              "label": "图钉",
+              "group": "配送"
+            },
+            {
+              "value": "picto-timer",
+              "label": "计时器",
+              "group": "配送"
+            },
+            {
+              "value": "picto-validation",
+              "label": "验证",
+              "group": "配送"
+            },
+            {
+              "value": "picto-truck",
+              "label": "卡车",
+              "group": "配送"
+            },
+            {
+              "value": "picto-return",
+              "label": "退货",
+              "group": "配送"
+            },
+            {
+              "value": "picto-earth",
+              "label": "地球",
+              "group": "配送"
+            },
+            {
+              "value": "picto-plane",
+              "label": "飞机",
+              "group": "配送"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "信用卡",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-lock",
+              "label": "锁",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-shield",
+              "label": "盾牌",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "安全资料",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-money",
+              "label": "金钱",
+              "group": "支付与安全"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "回收",
+              "group": "环保"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "叶子",
+              "group": "环保"
+            },
+            {
+              "value": "picto-tree",
+              "label": "树",
+              "group": "环保"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "手机",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-phone",
+              "label": "电话",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-chat",
+              "label": "聊天",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "客户支持",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-operator",
+              "label": "客服",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "邮箱箱",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-envelope",
+              "label": "信封",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-comment",
+              "label": "评论",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-question",
+              "label": "问题",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-send",
+              "label": "发送",
+              "group": "沟通"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "@ 符号",
+              "group": "科技"
+            },
+            {
+              "value": "picto-camera",
+              "label": "相机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "WiFi",
+              "group": "科技"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "蓝牙",
+              "group": "科技"
+            },
+            {
+              "value": "picto-printer",
+              "label": "打印机",
+              "group": "科技"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "智能手表",
+              "group": "科技"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "咖啡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-burger",
+              "label": "汉堡",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-beer",
+              "label": "啤酒",
+              "group": "餐饮"
+            },
+            {
+              "value": "picto-target",
+              "label": "目标",
+              "group": "其他"
+            },
+            {
+              "value": "picto-document",
+              "label": "文档",
+              "group": "其他"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "珠宝",
+              "group": "其他"
+            },
+            {
+              "value": "picto-music",
+              "label": "音乐",
+              "group": "其他"
+            },
+            {
+              "value": "picto-file",
+              "label": "文件",
+              "group": "其他"
+            },
+            {
+              "value": "picto-mask",
+              "label": "遮罩",
+              "group": "其他"
+            },
+            {
+              "value": "picto-stop",
+              "label": "停止",
+              "group": "其他"
+            }
+          ],
+          "default": "picto-coupon"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "自定义图标",
+          "info": "建议使用 240 x 240px .png"
+        },
+        {
+          "type": "range",
+          "id": "icon_width",
+          "min": 24,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "label": "图标宽度",
+          "default": 32
+        },
+        {
+          "type": "select",
+          "id": "icon_background_type",
+          "label": "图标背景类型",
+          "options": [
+            {
+              "value": "none",
+              "label": "无"
+            },
+            {
+              "value": "square",
+              "label": "正方形"
+            },
+            {
+              "value": "circle",
+              "label": "圆形"
+            }
+          ],
+          "default": "circle"
+        },
+        {
+          "type": "color",
+          "id": "icon_background",
+          "label": "图标背景"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "图标颜色"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "列分隔线",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "此块前后的内容会分为两列（仅桌面端）。"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "富文本",
+      "category": "Content",
+      "blocks": [
+        {
+          "type": "subheading",
+          "settings": {
+            "text": "Subheading"
+          }
+        },
+        {
+          "type": "heading",
+          "settings": {
+            "text": "Heading",
+            "heading_tag": "tw-text-h1"
+          }
+        },
+        {
+          "type": "richtext"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

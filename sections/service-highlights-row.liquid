@@ -1,0 +1,230 @@
+{%- render 'section-spacing-collapsing' -%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --service-highlights-gap: 2rem;
+  }
+  #shopify-section-{{ section.id }} .section {
+    padding-block-start:0;
+  }
+  #shopify-section-{{ section.id }} .service-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--service-highlights-gap);
+    align-items: stretch;
+  }
+
+  #shopify-section-{{ section.id }} .service-highlights__item {
+    flex: 1 1 calc((100% - (var(--service-highlights-gap) * 2)) / 3);
+    min-width: 220px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.9rem;
+  }
+
+  #shopify-section-{{ section.id }} .service-highlights__icon {
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    flex: 0 0 {{ section.settings.icon_size }}px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.1rem;
+  }
+
+  #shopify-section-{{ section.id }} .service-highlights__icon img,
+  #shopify-section-{{ section.id }} .service-highlights__icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+  }
+
+  #shopify-section-{{ section.id }} .service-highlights__content {
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .service-highlights__title {
+    margin: 0 0 0.15rem;
+    font-size: 1.55rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: rgb(var(--text-color));
+  }
+
+  #shopify-section-{{ section.id }} .service-highlights__text {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: rgb(var(--text-color) / 0.68);
+  }
+
+  @media screen and (max-width: 1023px) {
+     #shopify-section-{{ section.id }} .service-highlights {
+     flex-direction: column;
+     align-items: flex-start;
+  }
+    #shopify-section-{{ section.id }} .service-highlights__item {
+          flex-basis: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .service-highlights__title {
+      font-size: 1.35rem;
+    }
+  }
+
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .service-highlights__item {
+      flex-basis: 100%;
+      gap: 0.75rem;
+    }
+
+    #shopify-section-{{ section.id }} .service-highlights__title {
+      font-size: 1.2rem;
+    }
+
+    #shopify-section-{{ section.id }} .service-highlights__text {
+      font-size: 0.95rem;
+    }
+  }
+</style>
+
+<div {% render 'section-properties' %}>
+  <div class="service-highlights">
+    {%- for block in section.blocks -%}
+      <div class="service-highlights__item" {{ block.shopify_attributes }}>
+        <div class="service-highlights__icon">
+          {%- if block.settings.icon_image != blank -%}
+            {%- assign icon_width_2x = section.settings.icon_size | times: 2 -%}
+            {%- capture icon_sizes -%}{{ section.settings.icon_size }}px{%- endcapture -%}
+            {%- capture icon_widths -%}{{ section.settings.icon_size }}, {{ icon_width_2x }}{%- endcapture -%}
+            {{
+              block.settings.icon_image
+              | image_url: width: icon_width_2x
+              | image_tag:
+                loading: 'lazy',
+                sizes: icon_sizes,
+                widths: icon_widths,
+                alt: block.settings.title
+            }}
+          {%- else -%}
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          {%- endif -%}
+        </div>
+
+        <div class="service-highlights__content">
+          {%- if block.settings.title != blank -%}
+            <h3 class="service-highlights__title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+
+          {%- if block.settings.text != blank -%}
+            <p class="service-highlights__text">{{ block.settings.text }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "服务亮点行",
+  "class": "shopify-section--service-highlights-row",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "项目",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "图标图片"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Free Shipping"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "描述",
+          "default": "Free Shipping on orders over $59"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "图标尺寸",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "分区背景"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "分区背景渐变"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本"
+    }
+  ],
+  "presets": [
+    {
+      "name": "服务亮点行",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "Free Shipping",
+            "text": "Free Shipping on orders over $59"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Free Refund",
+            "text": "Free refund within 30 days of receiving the package"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Quick Customer Service",
+            "text": "Reply to customer messages within 24 hours"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

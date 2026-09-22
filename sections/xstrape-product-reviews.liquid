@@ -1,0 +1,2119 @@
+{%- liquid
+  assign total_reviews = section.settings.review_count | plus: 0
+  if product != blank
+    assign product_nomad_review_seed = product.id | modulo: 1001
+    assign total_reviews = 4000 | plus: product_nomad_review_seed
+  endif
+  assign average_rating = section.settings.average_rating | default: '4.8'
+  assign average_rating_fill = average_rating | plus: 0 | times: 100
+  assign recommendation_percent = section.settings.recommendation_percent | plus: 0
+  assign review_blocks = section.blocks | where: 'type', 'review'
+  assign media_blocks = section.blocks | where: 'type', 'media'
+  assign fallback_review_media_blocks = section.blocks | where: 'type', 'fallback_review_image'
+  assign fallback_review_media_count = 0
+  assign fallback_review_media_offset = 0
+  for fallback_review_media_block in fallback_review_media_blocks
+    if fallback_review_media_block.settings.image != blank
+      assign fallback_review_media_count = fallback_review_media_count | plus: 1
+    endif
+  endfor
+  if product != blank and fallback_review_media_count > 0
+    assign fallback_review_media_offset = product.id | modulo: fallback_review_media_count
+  endif
+  assign review_text_pool = section.settings.review_text_pool | strip
+  assign review_text_count = 0
+  if review_text_pool != blank
+    assign review_text_lines = review_text_pool | newline_to_br | split: '<br />'
+    for review_text_line in review_text_lines
+      assign review_text_line_content = review_text_line | strip
+      if review_text_line_content != blank
+        assign review_text_count = review_text_count | plus: 1
+      endif
+    endfor
+  endif
+  assign review_source_count = review_blocks.size
+  if review_text_count > 0
+    assign review_source_count = review_text_count
+  endif
+  assign review_count = review_source_count
+  if review_count > 25
+    assign review_count = 25
+  endif
+  assign review_random_seed_base = 0
+  if product != blank
+    assign review_random_seed_base = product.id | modulo: 100000
+  endif
+  assign review_offset = 0
+  if product != blank and review_source_count > 0
+    assign review_offset = product.id | modulo: review_source_count
+  endif
+
+  assign enable_random_review_dates = true
+  if section.settings.enable_random_review_dates == false
+    assign enable_random_review_dates = false
+  endif
+  assign review_date_min_days_ago = section.settings.review_date_min_days_ago | default: 7 | plus: 0
+  assign review_date_max_days_ago = section.settings.review_date_max_days_ago | default: 180 | plus: 0
+  if review_date_min_days_ago < 0
+    assign review_date_min_days_ago = 0
+  endif
+  if review_date_max_days_ago < 0
+    assign review_date_max_days_ago = 0
+  endif
+  assign review_date_range_start = review_date_min_days_ago
+  assign review_date_range_end = review_date_max_days_ago
+  if review_date_range_start > review_date_range_end
+    assign review_date_range_start = review_date_max_days_ago
+    assign review_date_range_end = review_date_min_days_ago
+  endif
+  assign review_date_range_size = review_date_range_end | minus: review_date_range_start | plus: 1
+  assign review_date_format = section.settings.review_date_format | default: '%b %d, %Y'
+
+  assign enable_random_review_ratings = true
+  if section.settings.enable_random_review_ratings == false
+    assign enable_random_review_ratings = false
+  endif
+  assign review_rating_min = section.settings.review_rating_min | default: '4.5' | plus: 0
+  assign review_rating_max = section.settings.review_rating_max | default: '5' | plus: 0
+  if review_rating_min < 1
+    assign review_rating_min = 1
+  elsif review_rating_min > 5
+    assign review_rating_min = 5
+  endif
+  if review_rating_max < 1
+    assign review_rating_max = 1
+  elsif review_rating_max > 5
+    assign review_rating_max = 5
+  endif
+  if review_rating_min > review_rating_max
+    assign review_rating_swap = review_rating_min
+    assign review_rating_min = review_rating_max
+    assign review_rating_max = review_rating_swap
+  endif
+  assign review_rating_min_halves = review_rating_min | times: 2 | round
+  assign review_rating_max_halves = review_rating_max | times: 2 | round
+  assign review_rating_range_size = review_rating_max_halves | minus: review_rating_min_halves | plus: 1
+
+  assign series_review_media_source = blank
+  assign series_review_media_count = 0
+  assign series_review_media_is_single = false
+  assign series_review_media_is_list = false
+  assign enable_series_review_photos = true
+  if section.settings.enable_series_review_photos == false
+    assign enable_series_review_photos = false
+  endif
+  assign series_review_photo_namespace = section.settings.series_review_photo_namespace | default: 'custom' | strip
+  assign series_review_photo_key = section.settings.series_review_photo_key | default: 'series_reviews_photo' | strip
+  assign review_source_collection_namespace = section.settings.review_source_collection_namespace | default: 'custom' | strip
+  assign review_source_collection_key = section.settings.review_source_collection_key | default: 'review_source_collection' | strip
+
+  if enable_series_review_photos and product != blank and series_review_photo_namespace != blank and series_review_photo_key != blank
+    assign preferred_review_collection = product.metafields[review_source_collection_namespace][review_source_collection_key].value
+
+    if preferred_review_collection != blank
+      assign preferred_review_media_metafield = preferred_review_collection.metafields[series_review_photo_namespace][series_review_photo_key]
+      if preferred_review_media_metafield != blank and preferred_review_media_metafield.value != blank
+        assign series_review_media_source = preferred_review_media_metafield.value
+        if preferred_review_media_metafield.type contains 'list.'
+          assign series_review_media_is_list = true
+        endif
+      endif
+    endif
+
+    if series_review_media_source == blank
+      for candidate_collection in product.collections
+        assign candidate_review_media_metafield = candidate_collection.metafields[series_review_photo_namespace][series_review_photo_key]
+        if candidate_review_media_metafield != blank and candidate_review_media_metafield.value != blank
+          assign series_review_media_source = candidate_review_media_metafield.value
+          if candidate_review_media_metafield.type contains 'list.'
+            assign series_review_media_is_list = true
+          endif
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  if series_review_media_source != blank
+    assign series_review_single_image = series_review_media_source
+    if series_review_single_image.preview_image != blank
+      assign series_review_single_image = series_review_single_image.preview_image
+    endif
+
+    if series_review_single_image.width != blank
+      assign series_review_media_count = 1
+      assign series_review_media_is_single = true
+    elsif series_review_media_is_list
+      for series_review_media in series_review_media_source
+        assign series_review_image_candidate = series_review_media
+        if series_review_image_candidate.preview_image != blank
+          assign series_review_image_candidate = series_review_image_candidate.preview_image
+        endif
+
+        if series_review_image_candidate.width != blank
+          assign series_review_media_count = series_review_media_count | plus: 1
+        endif
+      endfor
+    endif
+  endif
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --xpr-bg: {{ section.settings.background | default: '#f3f3f3' }};
+    --xpr-surface: {{ section.settings.card_background | default: '#ffffff' }};
+    --xpr-text: {{ section.settings.text_color | default: '#000000' }};
+    --xpr-muted: {{ section.settings.muted_text_color | default: '#000000' }};
+    --xpr-star: {{ section.settings.star_color | default: '#000000' }};
+    --xpr-star-empty: #c2c1c0;
+    --xpr-rule: #f3f3f3;
+    --xpr-serif: Aleo, HelveticaNeue, "Helvetica Neue", sans-serif;
+    --xpr-gotham-book: "Gotham-Book", sans-serif;
+    --xpr-gotham-bold: "Gotham-Bold", sans-serif;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-product-reviews {
+    background: var(--xpr-bg);
+    color: var(--xpr-text);
+    padding-block: 44px 64px;
+    padding-inline: 0;
+    font-family: var(--xpr-serif);
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .xstrape-product-reviews,
+  #shopify-section-{{ section.id }} .xstrape-product-reviews * {
+    box-sizing: border-box;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-container {
+    width: calc(100vw - 40px);
+    max-width: 100%;
+    margin-inline: auto;
+    padding: 25px 35px;
+    background: var(--xpr-surface);
+    border: 0;
+    border-radius: 25px;
+    box-shadow: none;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-head {
+    display: flex;
+    gap: 30px 60px;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 30px;
+    border-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-head__copy,
+  #shopify-section-{{ section.id }} .xpr-head__media {
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-head__copy {
+    flex: 1 1 auto;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-head__media {
+    flex: 0 1 auto;
+    max-width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-title-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0 0 10px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-heading {
+    margin: 0 10px 0 0;
+    color: var(--xpr-text);
+    font-family: var(--xpr-gotham-bold);
+    font-size: 40px;
+    line-height: 44.4px;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-heading-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    color: var(--xpr-text);
+    font-family: var(--xpr-gotham-book);
+    font-size: 13px;
+    line-height: normal;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-heading-meta__count {
+    color: var(--xpr-text);
+    text-decoration: underline;
+    text-underline-offset: auto;
+    margin: 2px 0 0 5px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    color: var(--xpr-star);
+    line-height: 0;
+    --xpr-star-size: 15px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-star-icon {
+    width: var(--xpr-star-size);
+    height: var(--xpr-star-size);
+    flex: 0 0 var(--xpr-star-size);
+    background: linear-gradient(90deg, var(--xpr-star) 0 var(--xpr-fill, 100%), var(--xpr-star-empty) var(--xpr-fill, 100%) 100%);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 19' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0l2.94 6.12 6.75.94-4.9 4.74 1.2 6.7L10 15.32 4.01 18.5l1.2-6.7-4.9-4.74 6.75-.94L10 0z'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 19' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 0l2.94 6.12 6.75.94-4.9 4.74 1.2 6.7L10 15.32 4.01 18.5l1.2-6.7-4.9-4.74 6.75-.94L10 0z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-recommendation {
+    margin: 0;
+    color: var(--xpr-muted);
+    font-family: var(--xpr-serif);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-media-strip {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-media-thumb,
+  #shopify-section-{{ section.id }} .xpr-media-more {
+    position: relative;
+    width: 71px;
+    height: 71px;
+    flex: 0 0 71px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} button.xpr-media-thumb,
+  #shopify-section-{{ section.id }} button.xpr-review-media__item {
+    padding: 0;
+    border: 0;
+    appearance: none;
+    cursor: zoom-in;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-media-thumb img,
+  #shopify-section-{{ section.id }} .xpr-media-thumb iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-media-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 2px solid #d9d9d9;
+    background: linear-gradient(181deg, #f3f3f3, #eeeeee);
+    color: var(--xpr-text);
+    font-family: Gotham, var(--xpr-gotham-book);
+    font-size: 14px;
+    line-height: normal;
+    font-weight: 400;
+    text-align: center;
+    cursor: zoom-in;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-media-more:hover,
+  #shopify-section-{{ section.id }} .xpr-media-more:focus-visible,
+  #shopify-section-{{ section.id }} button.xpr-media-thumb:hover,
+  #shopify-section-{{ section.id }} button.xpr-review-media__item:hover,
+  #shopify-section-{{ section.id }} button.xpr-media-thumb:focus-visible,
+  #shopify-section-{{ section.id }} button.xpr-review-media__item:focus-visible {
+    outline: 2px solid rgb(0 0 0 / 0.18);
+    outline-offset: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-summary {
+    width: 600px;
+    max-width: 100%;
+    padding: 20px 0;
+    border-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-summary__heading {
+    margin: 0 0 10px;
+    color: var(--xpr-text);
+    font-family: var(--xpr-gotham-bold);
+    font-size: 20px;
+    line-height: 22.2px;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-summary__body {
+    max-width: 600px;
+    color: var(--xpr-muted);
+    font-family: var(--xpr-serif);
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-summary__body p {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-summary__caption {
+    margin-top: 10px;
+    color: var(--xpr-muted);
+    font-family: var(--xpr-gotham-bold);
+    font-size: 14px;
+    line-height: 17.5px;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 22px 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-toolbar__title {
+    color: var(--xpr-text);
+    font-family: var(--xpr-gotham-bold);
+    font-size: 20px;
+    line-height: 22.2px;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-toolbar__pill {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    border: 1px solid var(--xpr-rule);
+    border-radius: 999px;
+    color: var(--xpr-text);
+    background: var(--xpr-surface);
+    font-family: var(--xpr-gotham-book);
+    font-size: 13px;
+    line-height: normal;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-list {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-row {
+    display: flex;
+    padding: 30px 0;
+    border-top: 2px solid var(--xpr-rule);
+    border-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-row:last-child {
+    padding-bottom: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-row[hidden] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-content {
+    width: min(100%, 696px);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-topline {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 0 0 10px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-topline .xpr-stars {
+    --xpr-star-size: 19px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-date {
+    color: var(--xpr-muted);
+    font-family: var(--xpr-gotham-book);
+    font-size: 14px;
+    line-height: 17.5px;
+    font-weight: 400;
+    padding-top: 3px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-title {
+    margin: 0;
+    color: var(--xpr-text);
+    font-family: var(--xpr-gotham-bold);
+    font-size: 20px;
+    line-height: 22.2px;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-body {
+    color: var(--xpr-text);
+    font-family: var(--xpr-serif);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-body p {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-media {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-media__item {
+    width: 71px;
+    height: 71px;
+    flex: 0 0 71px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-media__item img,
+  #shopify-section-{{ section.id }} .xpr-review-media__item iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox[hidden] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgb(0 0 0 / 0.82);
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__panel {
+    position: relative;
+    width: min(1120px, 100%);
+    max-height: calc(100vh - 48px);
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 14px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__figure {
+    min-height: 0;
+    margin: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__image {
+    max-width: 100%;
+    max-height: min(78vh, 820px);
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    background: #111111;
+    object-fit: contain;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__counter {
+    position: absolute;
+    left: 0;
+    top: -2px;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.14);
+    color: #ffffff;
+    font-family: var(--xpr-gotham-book);
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__close,
+  #shopify-section-{{ section.id }} .xpr-lightbox__arrow {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.92);
+    color: #111111;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__close {
+    top: -2px;
+    right: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__arrow {
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__arrow--prev {
+    left: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__arrow--next {
+    right: 0;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__close:hover,
+  #shopify-section-{{ section.id }} .xpr-lightbox__arrow:hover,
+  #shopify-section-{{ section.id }} .xpr-lightbox__thumb:hover,
+  #shopify-section-{{ section.id }} .xpr-lightbox__close:focus-visible,
+  #shopify-section-{{ section.id }} .xpr-lightbox__arrow:focus-visible,
+  #shopify-section-{{ section.id }} .xpr-lightbox__thumb:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__thumbs {
+    max-width: 100%;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 3px 0;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__thumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__thumb {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__thumb[aria-current="true"] {
+    border-color: #ffffff;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-lightbox__thumb img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-review-meta {
+    display: none;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-top: 18px;
+    color: var(--xpr-muted);
+    font-size: 14px;
+    line-height: 1.25;
+    font-weight: 800;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--xpr-surface);
+    color: var(--xpr-text);
+  }
+
+  #shopify-section-{{ section.id }} .xpr-load-more {
+    margin: 5px 0 0;
+    min-height: 43.75px;
+    padding: 14px 17px 12px 20px;
+    border: 0 solid #e0e0e0;
+    border-radius: 100px;
+    background: #ffffff;
+    color: #000000;
+    font-family: var(--xpr-gotham-bold);
+    font-size: 16px;
+    line-height: 17.76px;
+    font-weight: 400;
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-load-more.is-visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .xpr-empty {
+    padding: 28px 0 0;
+    color: var(--xpr-muted);
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .xstrape-product-reviews {
+      padding-block: 28px 48px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-container {
+      width: min(100% - 20px, 720px);
+      max-width: calc(100vw - 20px);
+      padding: 22px 20px;
+      border-radius: 25px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-head,
+    #shopify-section-{{ section.id }} .xpr-toolbar {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 20px;
+      padding-bottom: 28px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-heading {
+      font-size: 34px;
+      line-height: 37.7px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-heading-meta {
+      font-size: 13px;
+      white-space: normal;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-stars {
+      --xpr-star-size: 15px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-recommendation {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-media-strip {
+      width: 100%;
+      max-width: 100%;
+      justify-content: start;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-media-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-media-thumb,
+    #shopify-section-{{ section.id }} .xpr-media-more {
+      width: 71px;
+      height: 71px;
+      flex-basis: 71px;
+      border-radius: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-media-more {
+      font-size: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-media-thumb--mobile-hidden {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-review-row {
+      min-width: 0;
+      padding-block: 30px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-review-content {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-review-topline {
+      margin-bottom: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-review-topline .xpr-stars {
+      --xpr-star-size: 19px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-review-date {
+      font-size: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-review-title {
+      font-size: 20px;
+      line-height: 22.2px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-review-body {
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-review-media__item {
+      width: 71px;
+      height: 71px;
+      flex-basis: 71px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-lightbox {
+      padding: 14px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-lightbox__panel {
+      max-height: calc(100vh - 28px);
+    }
+
+    #shopify-section-{{ section.id }} .xpr-lightbox__image {
+      max-height: 72vh;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-lightbox__arrow {
+      width: 38px;
+      height: 38px;
+    }
+
+    #shopify-section-{{ section.id }} .xpr-lightbox__thumb {
+      width: 52px;
+      height: 52px;
+      flex-basis: 52px;
+    }
+  }
+</style>
+
+<div
+  id="xstrape-product-reviews-{{ section.id }}"
+  {% render 'section-properties', class: 'xstrape-product-reviews' %}
+  data-xstrape-product-reviews
+>
+  <div class="xpr-container">
+    <div class="xpr-head">
+      <div class="xpr-head__copy">
+        <div class="xpr-title-line">
+          {%- if section.settings.heading != blank -%}
+            <h2 class="xpr-heading">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+
+          <div class="xpr-heading-meta">
+            <span class="xpr-stars" aria-label="{{ average_rating }} out of 5 stars" aria-hidden="true">
+              {%- for i in (1..5) -%}
+                {%- liquid
+                  assign star_start = i | minus: 1 | times: 100
+                  assign star_fill = average_rating_fill | minus: star_start
+                  if star_fill > 100
+                    assign star_fill = 100
+                  elsif star_fill < 0
+                    assign star_fill = 0
+                  endif
+                -%}
+                <span class="xpr-star-icon" style="--xpr-fill: {{ star_fill }}%;"></span>
+              {%- endfor -%}
+            </span>
+            <span class="xpr-heading-meta__count">{{ total_reviews }} {{ section.settings.review_count_label | escape }}</span>
+          </div>
+        </div>
+
+        {%- if section.settings.recommendation_text != blank -%}
+          <p class="xpr-recommendation">
+            {{ recommendation_percent }}% {{ section.settings.recommendation_text | escape }}
+          </p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_media_strip -%}
+        <div class="xpr-head__media">
+          <div class="xpr-media-strip" aria-label="{{ section.settings.media_heading | default: 'Customer review media' | escape }}">
+            {%- assign media_rendered = 0 -%}
+
+            {%- if series_review_media_count > 0 -%}
+              {%- if series_review_media_is_single -%}
+                {%- liquid
+                  assign series_strip_image = series_review_media_source
+                  if series_strip_image.preview_image != blank
+                    assign series_strip_image = series_strip_image.preview_image
+                  endif
+                -%}
+                {%- if series_strip_image.width != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+                  {%- assign series_strip_full_url = series_strip_image | image_url: width: 1800 -%}
+                  <button
+                    type="button"
+	                    class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}"
+                    data-xpr-gallery-trigger
+                    data-xpr-gallery-src="{{ series_strip_full_url }}"
+                    aria-label="Preview customer review photo"
+                  >
+                    {{ series_strip_image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+                  </button>
+                {%- endif -%}
+              {%- else -%}
+                {%- for series_strip_media in series_review_media_source -%}
+                  {%- liquid
+                    assign series_strip_image = series_strip_media
+                    if series_strip_image.preview_image != blank
+                      assign series_strip_image = series_strip_image.preview_image
+                    endif
+                  -%}
+                  {%- if media_rendered < section.settings.media_limit and series_strip_image.width != blank -%}
+                    {%- assign media_rendered = media_rendered | plus: 1 -%}
+                    {%- assign series_strip_full_url = series_strip_image | image_url: width: 1800 -%}
+                    <button
+                      type="button"
+	                      class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}"
+                      data-xpr-gallery-trigger
+                      data-xpr-gallery-src="{{ series_strip_full_url }}"
+                      aria-label="Preview customer review photo"
+                    >
+                      {{ series_strip_image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+                    </button>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+            {%- elsif fallback_review_media_count > 0 -%}
+              {%- for fallback_media_block in fallback_review_media_blocks -%}
+                {%- if media_rendered < section.settings.media_limit and fallback_media_block.settings.image != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+                  {%- assign fallback_strip_full_url = fallback_media_block.settings.image | image_url: width: 1800 -%}
+                  <button
+                    type="button"
+	                    class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}"
+                    data-xpr-gallery-trigger
+                    data-xpr-gallery-src="{{ fallback_strip_full_url }}"
+                    aria-label="Preview customer review photo"
+                    {{ fallback_media_block.shopify_attributes }}
+                  >
+                    {{ fallback_media_block.settings.image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+                  </button>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- else -%}
+              {%- for block in media_blocks -%}
+                {%- if media_rendered < section.settings.media_limit and block.settings.image != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+                  {%- assign media_block_full_url = block.settings.image | image_url: width: 1800 -%}
+                  <button
+                    type="button"
+	                    class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}"
+                    data-xpr-gallery-trigger
+                    data-xpr-gallery-src="{{ media_block_full_url }}"
+                    aria-label="Preview customer review photo"
+                    {{ block.shopify_attributes }}
+                  >
+                    {{ block.settings.image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+                  </button>
+                {%- elsif media_rendered < section.settings.media_limit and block.settings.video_url != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+	                  <div class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}" {{ block.shopify_attributes }}>
+                    {{ block.settings.video_url | external_video_tag }}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- for block in review_blocks -%}
+                {%- if media_rendered < section.settings.media_limit and block.settings.image_1 != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+                  {%- assign review_strip_full_url = block.settings.image_1 | image_url: width: 1800 -%}
+                  <button
+                    type="button"
+	                    class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}"
+                    data-xpr-gallery-trigger
+                    data-xpr-gallery-src="{{ review_strip_full_url }}"
+                    aria-label="Preview customer review photo"
+                  >
+                    {{ block.settings.image_1 | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+                  </button>
+                {%- endif -%}
+                {%- if media_rendered < section.settings.media_limit and block.settings.image_2 != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+                  {%- assign review_strip_full_url = block.settings.image_2 | image_url: width: 1800 -%}
+                  <button
+                    type="button"
+	                    class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}"
+                    data-xpr-gallery-trigger
+                    data-xpr-gallery-src="{{ review_strip_full_url }}"
+                    aria-label="Preview customer review photo"
+                  >
+                    {{ block.settings.image_2 | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+                  </button>
+                {%- endif -%}
+                {%- if media_rendered < section.settings.media_limit and block.settings.image_3 != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+                  {%- assign review_strip_full_url = block.settings.image_3 | image_url: width: 1800 -%}
+                  <button
+                    type="button"
+	                    class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}"
+                    data-xpr-gallery-trigger
+                    data-xpr-gallery-src="{{ review_strip_full_url }}"
+                    aria-label="Preview customer review photo"
+                  >
+                    {{ block.settings.image_3 | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+                  </button>
+                {%- endif -%}
+                {%- if media_rendered < section.settings.media_limit and block.settings.image_4 != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+                  {%- assign review_strip_full_url = block.settings.image_4 | image_url: width: 1800 -%}
+                  <button
+                    type="button"
+	                    class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}"
+                    data-xpr-gallery-trigger
+                    data-xpr-gallery-src="{{ review_strip_full_url }}"
+                    aria-label="Preview customer review photo"
+                  >
+                    {{ block.settings.image_4 | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+                  </button>
+                {%- endif -%}
+                {%- if media_rendered < section.settings.media_limit and block.settings.video_url != blank -%}
+                  {%- assign media_rendered = media_rendered | plus: 1 -%}
+	                  <div class="xpr-media-thumb{% if media_rendered > 3 %} xpr-media-thumb--mobile-hidden{% endif %}">
+                    {{ block.settings.video_url | external_video_tag }}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+
+            {%- if section.settings.media_more_label != blank -%}
+              {%- assign media_more_parts = section.settings.media_more_label | escape | split: ' ' -%}
+              <button class="xpr-media-more" type="button" data-xpr-gallery-more aria-label="Preview all customer review photos">
+                {%- for media_more_part in media_more_parts -%}
+                  {%- unless forloop.first -%}<br>{%- endunless -%}
+                  {{- media_more_part -}}
+                {%- endfor -%}
+              </button>
+            {%- endif -%}
+          </div>
+        </div>
+	      {%- endif -%}
+	    </div>
+
+	    <div class="xpr-gallery-sources" hidden aria-hidden="true">
+	      {%- if series_review_media_count > 0 -%}
+	        {%- if series_review_media_is_single -%}
+	          {%- liquid
+	            assign xpr_gallery_image = series_review_media_source
+	            if xpr_gallery_image.preview_image != blank
+	              assign xpr_gallery_image = xpr_gallery_image.preview_image
+	            endif
+	          -%}
+	          {%- if xpr_gallery_image.width != blank -%}
+	            {%- assign xpr_gallery_full_url = xpr_gallery_image | image_url: width: 1800 -%}
+	            {%- assign xpr_gallery_thumb_url = xpr_gallery_image | image_url: width: 240 -%}
+	            {%- assign xpr_gallery_alt = xpr_gallery_image.alt | default: 'Customer review photo' -%}
+	            <span data-xpr-gallery-image data-xpr-gallery-src="{{ xpr_gallery_full_url }}" data-xpr-gallery-thumb="{{ xpr_gallery_thumb_url }}" data-xpr-gallery-alt="{{ xpr_gallery_alt | escape }}"></span>
+	          {%- endif -%}
+	        {%- else -%}
+	          {%- for series_gallery_media in series_review_media_source -%}
+	            {%- liquid
+	              assign xpr_gallery_image = series_gallery_media
+	              if xpr_gallery_image.preview_image != blank
+	                assign xpr_gallery_image = xpr_gallery_image.preview_image
+	              endif
+	            -%}
+	            {%- if xpr_gallery_image.width != blank -%}
+	              {%- assign xpr_gallery_full_url = xpr_gallery_image | image_url: width: 1800 -%}
+	              {%- assign xpr_gallery_thumb_url = xpr_gallery_image | image_url: width: 240 -%}
+	              {%- assign xpr_gallery_alt = xpr_gallery_image.alt | default: 'Customer review photo' -%}
+	              <span data-xpr-gallery-image data-xpr-gallery-src="{{ xpr_gallery_full_url }}" data-xpr-gallery-thumb="{{ xpr_gallery_thumb_url }}" data-xpr-gallery-alt="{{ xpr_gallery_alt | escape }}"></span>
+	            {%- endif -%}
+	          {%- endfor -%}
+	        {%- endif -%}
+	      {%- elsif fallback_review_media_count > 0 -%}
+	        {%- for fallback_gallery_media_block in fallback_review_media_blocks -%}
+	          {%- if fallback_gallery_media_block.settings.image != blank -%}
+	            {%- assign xpr_gallery_full_url = fallback_gallery_media_block.settings.image | image_url: width: 1800 -%}
+	            {%- assign xpr_gallery_thumb_url = fallback_gallery_media_block.settings.image | image_url: width: 240 -%}
+	            {%- assign xpr_gallery_alt = fallback_gallery_media_block.settings.image.alt | default: 'Customer review photo' -%}
+	            <span data-xpr-gallery-image data-xpr-gallery-src="{{ xpr_gallery_full_url }}" data-xpr-gallery-thumb="{{ xpr_gallery_thumb_url }}" data-xpr-gallery-alt="{{ xpr_gallery_alt | escape }}"></span>
+	          {%- endif -%}
+	        {%- endfor -%}
+	      {%- else -%}
+	        {%- for media_gallery_block in media_blocks -%}
+	          {%- if media_gallery_block.settings.image != blank -%}
+	            {%- assign xpr_gallery_full_url = media_gallery_block.settings.image | image_url: width: 1800 -%}
+	            {%- assign xpr_gallery_thumb_url = media_gallery_block.settings.image | image_url: width: 240 -%}
+	            {%- assign xpr_gallery_alt = media_gallery_block.settings.image.alt | default: 'Customer review photo' -%}
+	            <span data-xpr-gallery-image data-xpr-gallery-src="{{ xpr_gallery_full_url }}" data-xpr-gallery-thumb="{{ xpr_gallery_thumb_url }}" data-xpr-gallery-alt="{{ xpr_gallery_alt | escape }}"></span>
+	          {%- endif -%}
+	        {%- endfor -%}
+
+	        {%- for review_gallery_block in review_blocks -%}
+	          {%- if review_gallery_block.settings.image_1 != blank -%}
+	            {%- assign xpr_gallery_full_url = review_gallery_block.settings.image_1 | image_url: width: 1800 -%}
+	            {%- assign xpr_gallery_thumb_url = review_gallery_block.settings.image_1 | image_url: width: 240 -%}
+	            {%- assign xpr_gallery_alt = review_gallery_block.settings.image_1.alt | default: 'Customer review photo' -%}
+	            <span data-xpr-gallery-image data-xpr-gallery-src="{{ xpr_gallery_full_url }}" data-xpr-gallery-thumb="{{ xpr_gallery_thumb_url }}" data-xpr-gallery-alt="{{ xpr_gallery_alt | escape }}"></span>
+	          {%- endif -%}
+	          {%- if review_gallery_block.settings.image_2 != blank -%}
+	            {%- assign xpr_gallery_full_url = review_gallery_block.settings.image_2 | image_url: width: 1800 -%}
+	            {%- assign xpr_gallery_thumb_url = review_gallery_block.settings.image_2 | image_url: width: 240 -%}
+	            {%- assign xpr_gallery_alt = review_gallery_block.settings.image_2.alt | default: 'Customer review photo' -%}
+	            <span data-xpr-gallery-image data-xpr-gallery-src="{{ xpr_gallery_full_url }}" data-xpr-gallery-thumb="{{ xpr_gallery_thumb_url }}" data-xpr-gallery-alt="{{ xpr_gallery_alt | escape }}"></span>
+	          {%- endif -%}
+	          {%- if review_gallery_block.settings.image_3 != blank -%}
+	            {%- assign xpr_gallery_full_url = review_gallery_block.settings.image_3 | image_url: width: 1800 -%}
+	            {%- assign xpr_gallery_thumb_url = review_gallery_block.settings.image_3 | image_url: width: 240 -%}
+	            {%- assign xpr_gallery_alt = review_gallery_block.settings.image_3.alt | default: 'Customer review photo' -%}
+	            <span data-xpr-gallery-image data-xpr-gallery-src="{{ xpr_gallery_full_url }}" data-xpr-gallery-thumb="{{ xpr_gallery_thumb_url }}" data-xpr-gallery-alt="{{ xpr_gallery_alt | escape }}"></span>
+	          {%- endif -%}
+	          {%- if review_gallery_block.settings.image_4 != blank -%}
+	            {%- assign xpr_gallery_full_url = review_gallery_block.settings.image_4 | image_url: width: 1800 -%}
+	            {%- assign xpr_gallery_thumb_url = review_gallery_block.settings.image_4 | image_url: width: 240 -%}
+	            {%- assign xpr_gallery_alt = review_gallery_block.settings.image_4.alt | default: 'Customer review photo' -%}
+	            <span data-xpr-gallery-image data-xpr-gallery-src="{{ xpr_gallery_full_url }}" data-xpr-gallery-thumb="{{ xpr_gallery_thumb_url }}" data-xpr-gallery-alt="{{ xpr_gallery_alt | escape }}"></span>
+	          {%- endif -%}
+	        {%- endfor -%}
+	      {%- endif -%}
+	    </div>
+
+	    {%- if section.settings.show_summary and section.settings.summary_note != blank -%}
+	      <div class="xpr-summary">
+        {%- if section.settings.summary_heading != blank -%}
+          <h3 class="xpr-summary__heading">{{ section.settings.summary_heading | escape }}</h3>
+        {%- endif -%}
+        <div class="xpr-summary__body">{{ section.settings.summary_note }}</div>
+        {%- if section.settings.summary_caption != blank -%}
+          <div class="xpr-summary__caption">{{ section.settings.summary_caption | escape }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.list_heading != blank or section.settings.sort_label != blank -%}
+      <div class="xpr-toolbar">
+        {%- if section.settings.list_heading != blank -%}
+          <div class="xpr-toolbar__title">{{ section.settings.list_heading | escape }}</div>
+        {%- endif -%}
+        {%- if section.settings.sort_label != blank -%}
+          <div class="xpr-toolbar__pill">{{ section.settings.sort_label | escape }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if review_count > 0 -%}
+      <div class="xpr-list" data-xpr-list>
+        {%- for rendered_review_count in (1..review_count) -%}
+          {%- liquid
+            assign review_source_zero_index = rendered_review_count | minus: 1 | plus: review_offset | modulo: review_source_count
+            assign review_source_number = review_source_zero_index | plus: 1
+            assign fallback_review_block = blank
+
+            if review_blocks.size > 0
+              assign fallback_block_index = review_source_zero_index | modulo: review_blocks.size
+              for candidate_review_block in review_blocks offset: fallback_block_index limit: 1
+                assign fallback_review_block = candidate_review_block
+              endfor
+            endif
+
+            assign display_review_title = blank
+            if review_text_count == 0 and fallback_review_block.settings.title != blank
+              assign display_review_title = fallback_review_block.settings.title
+            endif
+
+            assign display_review_body = fallback_review_block.settings.body
+            assign display_review_body_from_pool = false
+            if review_text_count > 0
+              assign display_review_body = blank
+              assign review_text_seen = 0
+              for review_text_line in review_text_lines
+                assign review_text_line_content = review_text_line | strip
+                if review_text_line_content != blank
+                  assign review_text_seen = review_text_seen | plus: 1
+                  if review_text_seen == review_source_number
+                    assign display_review_body = review_text_line_content
+                    assign display_review_body_from_pool = true
+                    break
+                  endif
+                endif
+              endfor
+            endif
+
+            assign display_review_date = fallback_review_block.settings.date
+            if enable_random_review_dates
+              assign review_date_random_seed = review_random_seed_base | plus: rendered_review_count | times: 37 | plus: 17
+              assign review_date_days_offset = review_date_random_seed | modulo: review_date_range_size | plus: review_date_range_start
+              assign review_date_seconds_offset = review_date_days_offset | times: 86400
+              assign display_review_date_timestamp = 'now' | date: '%s' | minus: review_date_seconds_offset
+              assign display_review_date = display_review_date_timestamp | date: review_date_format
+            endif
+
+            assign display_review_rating = fallback_review_block.settings.rating | default: 5 | plus: 0
+            if enable_random_review_ratings
+              assign review_rating_random_seed = review_random_seed_base | plus: rendered_review_count | times: 53 | plus: 31
+              assign review_rating_halves = review_rating_random_seed | modulo: review_rating_range_size | plus: review_rating_min_halves
+              assign display_review_rating = review_rating_halves | divided_by: 2.0
+            endif
+
+            if display_review_rating > 5
+              assign display_review_rating = 5
+            elsif display_review_rating < 1
+              assign display_review_rating = 5
+            endif
+
+            assign fallback_media_count = 0
+            assign fallback_review_image = blank
+            if series_review_media_count == 0 and fallback_review_media_count > 0
+              assign fallback_review_media_source_number = rendered_review_count | minus: 1 | plus: fallback_review_media_offset | modulo: fallback_review_media_count | plus: 1
+              assign fallback_review_media_seen = 0
+              for fallback_media_block in fallback_review_media_blocks
+                if fallback_media_block.settings.image != blank
+                  assign fallback_review_media_seen = fallback_review_media_seen | plus: 1
+                  if fallback_review_media_seen == fallback_review_media_source_number
+                    assign fallback_review_image = fallback_media_block.settings.image
+                    break
+                  endif
+                endif
+              endfor
+            endif
+
+            if fallback_review_image != blank
+              assign fallback_media_count = 1
+            else
+              if fallback_review_block.settings.image_1 != blank
+                assign fallback_media_count = fallback_media_count | plus: 1
+              endif
+              if fallback_review_block.settings.image_2 != blank
+                assign fallback_media_count = fallback_media_count | plus: 1
+              endif
+              if fallback_review_block.settings.image_3 != blank
+                assign fallback_media_count = fallback_media_count | plus: 1
+              endif
+              if fallback_review_block.settings.image_4 != blank
+                assign fallback_media_count = fallback_media_count | plus: 1
+              endif
+              if fallback_review_block.settings.video_url != blank
+                assign fallback_media_count = fallback_media_count | plus: 1
+              endif
+            endif
+
+            assign series_review_image = blank
+            if series_review_media_count > 0 and rendered_review_count <= series_review_media_count
+              if series_review_media_is_single
+                if rendered_review_count == 1
+                  assign series_review_image = series_review_media_source
+                  if series_review_image.preview_image != blank
+                    assign series_review_image = series_review_image.preview_image
+                  endif
+                endif
+              else
+                assign series_media_seen = 0
+                for series_review_media in series_review_media_source
+                  assign series_review_image_candidate = series_review_media
+                  if series_review_image_candidate.preview_image != blank
+                    assign series_review_image_candidate = series_review_image_candidate.preview_image
+                  endif
+
+                  if series_review_image_candidate.width != blank
+                    assign series_media_seen = series_media_seen | plus: 1
+                    if series_media_seen == rendered_review_count
+                      assign series_review_image = series_review_image_candidate
+                      break
+                    endif
+                  endif
+                endfor
+              endif
+            endif
+
+            assign media_count = fallback_media_count
+            if series_review_image != blank
+              assign media_count = 1
+            endif
+
+            assign media_columns = media_count
+            if media_columns > 4
+              assign media_columns = 4
+            endif
+          -%}
+
+          <article
+            class="xpr-review-row"
+            data-xpr-card
+            {% if rendered_review_count > section.settings.initial_visible_reviews %}hidden{% endif %}
+            {% if review_text_count == 0 and fallback_review_block != blank %}{{ fallback_review_block.shopify_attributes }}{% endif %}
+          >
+            <div class="xpr-review-content">
+              <div class="xpr-review-topline">
+                <div class="xpr-stars" aria-label="{{ display_review_rating }} out of 5 stars" aria-hidden="true">
+                  {%- for i in (1..5) -%}
+                    {%- liquid
+                      assign row_star_start = i | minus: 1
+                      assign row_star_fill = display_review_rating | minus: row_star_start | times: 100
+                      if row_star_fill > 100
+                        assign row_star_fill = 100
+                      elsif row_star_fill < 0
+                        assign row_star_fill = 0
+                      endif
+                    -%}
+                    <span class="xpr-star-icon" style="--xpr-fill: {{ row_star_fill }}%;"></span>
+                  {%- endfor -%}
+                </div>
+                {%- if display_review_date != blank -%}
+                  <div class="xpr-review-date">{{ display_review_date | escape }}</div>
+                {%- endif -%}
+              </div>
+
+              {%- if display_review_title != blank -%}
+                <h3 class="xpr-review-title">{{ display_review_title | escape }}</h3>
+              {%- endif -%}
+
+              {%- if display_review_body != blank -%}
+                <div class="xpr-review-body">
+                  {%- if display_review_body_from_pool -%}
+                    <p>{{ display_review_body | escape }}</p>
+                  {%- else -%}
+                    {{ display_review_body }}
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              {%- if media_count > 0 -%}
+                <div class="xpr-review-media" style="--xpr-media-count: {{ media_columns }};">
+	                  {%- if series_review_image != blank -%}
+	                    {%- assign series_review_full_url = series_review_image | image_url: width: 1800 -%}
+	                    <button
+	                      type="button"
+	                      class="xpr-review-media__item"
+	                      data-xpr-gallery-trigger
+	                      data-xpr-gallery-src="{{ series_review_full_url }}"
+	                      aria-label="Preview customer review photo"
+	                    >
+	                      {{ series_review_image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+	                    </button>
+	                  {%- elsif fallback_review_image != blank -%}
+	                    {%- assign fallback_review_full_url = fallback_review_image | image_url: width: 1800 -%}
+	                    <button
+	                      type="button"
+	                      class="xpr-review-media__item"
+	                      data-xpr-gallery-trigger
+	                      data-xpr-gallery-src="{{ fallback_review_full_url }}"
+	                      aria-label="Preview customer review photo"
+	                    >
+	                      {{ fallback_review_image | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+	                    </button>
+	                  {%- else -%}
+	                    {%- if fallback_review_block.settings.image_1 != blank -%}
+	                      {%- assign fallback_review_full_url = fallback_review_block.settings.image_1 | image_url: width: 1800 -%}
+	                      <button
+	                        type="button"
+	                        class="xpr-review-media__item"
+	                        data-xpr-gallery-trigger
+	                        data-xpr-gallery-src="{{ fallback_review_full_url }}"
+	                        aria-label="Preview customer review photo"
+	                      >
+	                        {{ fallback_review_block.settings.image_1 | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+	                      </button>
+	                    {%- endif -%}
+	                    {%- if fallback_review_block.settings.image_2 != blank -%}
+	                      {%- assign fallback_review_full_url = fallback_review_block.settings.image_2 | image_url: width: 1800 -%}
+	                      <button
+	                        type="button"
+	                        class="xpr-review-media__item"
+	                        data-xpr-gallery-trigger
+	                        data-xpr-gallery-src="{{ fallback_review_full_url }}"
+	                        aria-label="Preview customer review photo"
+	                      >
+	                        {{ fallback_review_block.settings.image_2 | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+	                      </button>
+	                    {%- endif -%}
+	                    {%- if fallback_review_block.settings.image_3 != blank -%}
+	                      {%- assign fallback_review_full_url = fallback_review_block.settings.image_3 | image_url: width: 1800 -%}
+	                      <button
+	                        type="button"
+	                        class="xpr-review-media__item"
+	                        data-xpr-gallery-trigger
+	                        data-xpr-gallery-src="{{ fallback_review_full_url }}"
+	                        aria-label="Preview customer review photo"
+	                      >
+	                        {{ fallback_review_block.settings.image_3 | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+	                      </button>
+	                    {%- endif -%}
+	                    {%- if fallback_review_block.settings.image_4 != blank -%}
+	                      {%- assign fallback_review_full_url = fallback_review_block.settings.image_4 | image_url: width: 1800 -%}
+	                      <button
+	                        type="button"
+	                        class="xpr-review-media__item"
+	                        data-xpr-gallery-trigger
+	                        data-xpr-gallery-src="{{ fallback_review_full_url }}"
+	                        aria-label="Preview customer review photo"
+	                      >
+	                        {{ fallback_review_block.settings.image_4 | image_url: width: 420 | image_tag: loading: 'lazy', sizes: '71px', widths: '142,284,420' }}
+	                      </button>
+	                    {%- endif -%}
+                    {%- if fallback_review_block.settings.video_url != blank -%}
+                      <div class="xpr-review-media__item">
+                        {{ fallback_review_block.settings.video_url | external_video_tag }}
+                      </div>
+                    {%- endif -%}
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              <div class="xpr-review-meta">
+                {%- if fallback_review_block.settings.author != blank -%}
+                  <span>{{ fallback_review_block.settings.author | escape }}</span>
+                {%- endif -%}
+                {%- if fallback_review_block.settings.verified -%}
+                  <span>{{ section.settings.verified_label | escape }}</span>
+                {%- endif -%}
+                {%- if fallback_review_block.settings.tag != blank -%}
+                  <span class="xpr-tag">{{ fallback_review_block.settings.tag | escape }}</span>
+                {%- endif -%}
+              </div>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- if review_count > section.settings.initial_visible_reviews -%}
+        <button class="xpr-load-more is-visible" type="button" data-xpr-load-more>
+          {{ section.settings.load_more_text | escape }}
+        </button>
+      {%- endif -%}
+    {%- else -%}
+      <div class="xpr-empty">{{ section.settings.empty_text | escape }}</div>
+    {%- endif -%}
+	  </div>
+
+	  <div class="xpr-lightbox" data-xpr-lightbox hidden role="dialog" aria-modal="true" aria-label="Customer review photo preview">
+	    <div class="xpr-lightbox__panel">
+	      <span class="xpr-lightbox__counter" data-xpr-lightbox-counter></span>
+	      <button class="xpr-lightbox__close" type="button" data-xpr-lightbox-close aria-label="Close">&times;</button>
+	      <button class="xpr-lightbox__arrow xpr-lightbox__arrow--prev" type="button" data-xpr-lightbox-prev aria-label="Previous photo">&lsaquo;</button>
+	      <figure class="xpr-lightbox__figure">
+	        <img class="xpr-lightbox__image" data-xpr-lightbox-image alt="" width="1200" height="1200">
+	      </figure>
+	      <button class="xpr-lightbox__arrow xpr-lightbox__arrow--next" type="button" data-xpr-lightbox-next aria-label="Next photo">&rsaquo;</button>
+	      <div class="xpr-lightbox__thumbs" data-xpr-lightbox-thumbs aria-label="Customer review photo thumbnails"></div>
+	    </div>
+	  </div>
+	</div>
+
+	<script>
+	  (() => {
+	    const root = document.getElementById({{ 'xstrape-product-reviews-' | append: section.id | json }});
+	    if (!root || root.dataset.xprInitialized === 'true') return;
+
+	    root.dataset.xprInitialized = 'true';
+
+	    const scrollToReviews = (event) => {
+	      const trigger = event.target.closest('a[href^="#pm-reviews-anchor-"], button[data-anchor^="#pm-reviews-anchor-"], [data-scroll-to-reviews]');
+	      if (!trigger) return;
+
+	      event.preventDefault();
+	      root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	    };
+
+	    document.addEventListener('click', scrollToReviews);
+
+	    const loadMore = root.querySelector('[data-xpr-load-more]');
+	    if (loadMore) {
+	      loadMore.addEventListener('click', () => {
+	        root.querySelectorAll('[data-xpr-card][hidden]').forEach((card) => card.removeAttribute('hidden'));
+	        loadMore.classList.remove('is-visible');
+	      });
+	    }
+
+	    const lightbox = root.querySelector('[data-xpr-lightbox]');
+	    const lightboxImage = root.querySelector('[data-xpr-lightbox-image]');
+	    const lightboxCounter = root.querySelector('[data-xpr-lightbox-counter]');
+	    const lightboxThumbs = root.querySelector('[data-xpr-lightbox-thumbs]');
+	    const closeButton = root.querySelector('[data-xpr-lightbox-close]');
+	    const prevButton = root.querySelector('[data-xpr-lightbox-prev]');
+	    const nextButton = root.querySelector('[data-xpr-lightbox-next]');
+	    const galleryItems = [];
+	    const gallerySources = new Set();
+	    let activeGalleryIndex = 0;
+	    let previousDocumentOverflow = '';
+	    let previousActiveElement = null;
+
+	    root.querySelectorAll('[data-xpr-gallery-image]').forEach((item) => {
+	      const src = item.dataset.xprGallerySrc;
+	      if (!src || gallerySources.has(src)) return;
+
+	      gallerySources.add(src);
+	      galleryItems.push({
+	        src,
+	        thumb: item.dataset.xprGalleryThumb || src,
+	        alt: item.dataset.xprGalleryAlt || 'Customer review photo'
+	      });
+	    });
+
+	    const normalizeGalleryIndex = (index) => {
+	      if (!galleryItems.length) return 0;
+	      return ((index % galleryItems.length) + galleryItems.length) % galleryItems.length;
+	    };
+
+	    const findGalleryIndex = (src) => galleryItems.findIndex((item) => item.src === src);
+
+	    const ensureGalleryItem = (trigger) => {
+	      const src = trigger.dataset.xprGallerySrc;
+	      if (!src) return -1;
+
+	      const existingIndex = findGalleryIndex(src);
+	      if (existingIndex >= 0) return existingIndex;
+
+	      const image = trigger.querySelector('img');
+	      gallerySources.add(src);
+	      galleryItems.push({
+	        src,
+	        thumb: image ? image.currentSrc || image.src || src : src,
+	        alt: image ? image.alt || 'Customer review photo' : 'Customer review photo'
+	      });
+
+	      return galleryItems.length - 1;
+	    };
+
+	    const renderGalleryThumbs = () => {
+	      if (!lightboxThumbs) return;
+
+	      lightboxThumbs.innerHTML = '';
+	      galleryItems.forEach((item, index) => {
+	        const thumbButton = document.createElement('button');
+	        const thumbImage = document.createElement('img');
+
+	        thumbButton.type = 'button';
+	        thumbButton.className = 'xpr-lightbox__thumb';
+	        thumbButton.setAttribute('aria-label', `View photo ${index + 1}`);
+	        if (index === activeGalleryIndex) thumbButton.setAttribute('aria-current', 'true');
+
+	        thumbImage.src = item.thumb;
+	        thumbImage.alt = '';
+	        thumbButton.appendChild(thumbImage);
+	        thumbButton.addEventListener('click', () => {
+	          activeGalleryIndex = index;
+	          updateGallery();
+	        });
+
+	        lightboxThumbs.appendChild(thumbButton);
+	      });
+	    };
+
+	    function updateGallery() {
+	      if (!lightboxImage || !galleryItems.length) return;
+
+	      const item = galleryItems[activeGalleryIndex];
+	      lightboxImage.src = item.src;
+	      lightboxImage.alt = item.alt;
+
+	      if (lightboxCounter) {
+	        lightboxCounter.textContent = `${activeGalleryIndex + 1} / ${galleryItems.length}`;
+	      }
+
+	      const hasMultipleItems = galleryItems.length > 1;
+	      [prevButton, nextButton].forEach((button) => {
+	        if (!button) return;
+
+	        button.hidden = !hasMultipleItems;
+	        button.disabled = !hasMultipleItems;
+	      });
+
+	      renderGalleryThumbs();
+	    }
+
+	    const openGallery = (index) => {
+	      if (!lightbox || !lightboxImage || !galleryItems.length) return;
+
+	      const wasHidden = lightbox.hidden;
+	      activeGalleryIndex = normalizeGalleryIndex(index);
+	      lightbox.hidden = false;
+
+	      if (wasHidden) {
+	        previousDocumentOverflow = document.documentElement.style.overflow;
+	        previousActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+	        document.documentElement.style.overflow = 'hidden';
+	      }
+
+	      updateGallery();
+
+	      if (closeButton) {
+	        closeButton.focus({ preventScroll: true });
+	      }
+	    };
+
+	    const closeGallery = () => {
+	      if (!lightbox || lightbox.hidden) return;
+
+	      lightbox.hidden = true;
+	      document.documentElement.style.overflow = previousDocumentOverflow;
+
+	      if (lightboxImage) {
+	        lightboxImage.removeAttribute('src');
+	        lightboxImage.alt = '';
+	      }
+
+	      if (previousActiveElement) {
+	        previousActiveElement.focus({ preventScroll: true });
+	      }
+	    };
+
+	    const moveGallery = (offset) => {
+	      activeGalleryIndex = normalizeGalleryIndex(activeGalleryIndex + offset);
+	      updateGallery();
+	    };
+
+	    root.addEventListener('click', (event) => {
+	      const moreTrigger = event.target.closest('[data-xpr-gallery-more]');
+	      if (moreTrigger && root.contains(moreTrigger)) {
+	        event.preventDefault();
+	        openGallery(0);
+	        return;
+	      }
+
+	      const imageTrigger = event.target.closest('[data-xpr-gallery-trigger]');
+	      if (!imageTrigger || !root.contains(imageTrigger)) return;
+
+	      event.preventDefault();
+	      const galleryIndex = ensureGalleryItem(imageTrigger);
+	      openGallery(galleryIndex >= 0 ? galleryIndex : 0);
+	    });
+
+	    if (lightbox) {
+	      lightbox.addEventListener('click', (event) => {
+	        if (event.target === lightbox) closeGallery();
+	      });
+	    }
+
+	    if (closeButton) closeButton.addEventListener('click', closeGallery);
+	    if (prevButton) prevButton.addEventListener('click', () => moveGallery(-1));
+	    if (nextButton) nextButton.addEventListener('click', () => moveGallery(1));
+
+	    document.addEventListener('keydown', (event) => {
+	      if (!lightbox || lightbox.hidden) return;
+
+	      if (event.key === 'Escape') {
+	        closeGallery();
+	      } else if (event.key === 'ArrowLeft') {
+	        event.preventDefault();
+	        moveGallery(-1);
+	      } else if (event.key === 'ArrowRight') {
+	        event.preventDefault();
+	        moveGallery(1);
+	      }
+	    });
+	  })();
+	</script>
+
+{% schema %}
+{
+  "name": "产品评论（可编辑评论和图片）",
+  "tag": "section",
+  "class": "shopify-section--xstrape-product-reviews",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽显示",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "评论文案、时间和星级可在「评论列表」里批量配置；图片会优先读取产品系列元字段，没有系列图片时会使用下方「兜底评论图片」区块，最后才使用「评论（文字 + 图片）」区块里的图片。"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "标题",
+      "default": "Reviews"
+    },
+    {
+      "type": "text",
+      "id": "average_rating",
+      "label": "平均评分",
+      "default": "4.8"
+    },
+    {
+      "type": "number",
+      "id": "review_count",
+      "label": "备用评论总数",
+      "info": "产品页会自动使用和标题下方一致的随机评论数；这个数字只在非产品页没有 product 对象时使用。",
+      "default": 127
+    },
+    {
+      "type": "text",
+      "id": "review_count_label",
+      "label": "评论数量后缀",
+      "default": "Reviews"
+    },
+    {
+      "type": "range",
+      "id": "recommendation_percent",
+      "label": "推荐百分比",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 99
+    },
+    {
+      "type": "text",
+      "id": "recommendation_text",
+      "label": "推荐说明",
+      "default": "of reviewers would recommend this product to a friend."
+    },
+    {
+      "type": "header",
+      "content": "媒体区域"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_media_strip",
+      "label": "显示评论图片/视频横条",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "media_heading",
+      "label": "媒体区域标题",
+      "default": "Customer photos & videos"
+    },
+    {
+      "type": "text",
+      "id": "media_count",
+      "label": "媒体数量文字",
+      "default": "Add your own review media"
+    },
+    {
+      "type": "text",
+      "id": "media_more_label",
+      "label": "最后一张覆盖文字",
+      "default": "More"
+    },
+    {
+      "type": "range",
+      "id": "media_limit",
+      "label": "媒体最多展示数量",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "产品系列评论图片"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_series_review_photos",
+      "label": "优先读取产品系列元字段图片",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "默认读取产品系列元字段 custom.series_reviews_photo。若产品属于多个产品系列，可在产品元字段 custom.review_source_collection 指定优先读取哪个产品系列；没有指定时，会自动从产品所属产品系列中寻找第一个有图片的系列。没有找到图片时，会回到本模块编辑器里的图片。"
+    },
+    {
+      "type": "text",
+      "id": "series_review_photo_namespace",
+      "label": "产品系列图片元字段 namespace",
+      "default": "custom"
+    },
+    {
+      "type": "text",
+      "id": "series_review_photo_key",
+      "label": "产品系列图片元字段 key",
+      "default": "series_reviews_photo"
+    },
+    {
+      "type": "text",
+      "id": "review_source_collection_namespace",
+      "label": "产品指定来源系列 namespace",
+      "default": "custom"
+    },
+    {
+      "type": "text",
+      "id": "review_source_collection_key",
+      "label": "产品指定来源系列 key",
+      "default": "review_source_collection"
+    },
+    {
+      "type": "header",
+      "content": "评论摘要"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "显示摘要",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "summary_heading",
+      "label": "摘要标题",
+      "default": "What Customers Are Saying"
+    },
+    {
+      "type": "richtext",
+      "id": "summary_note",
+      "label": "摘要内容",
+      "default": "<p>Customers love the secure fit, soft feel, and everyday durability.</p>"
+    },
+    {
+      "type": "text",
+      "id": "summary_caption",
+      "label": "摘要脚注",
+      "default": "Summary from customer reviews."
+    },
+    {
+      "type": "header",
+      "content": "评论列表"
+    },
+    {
+      "type": "paragraph",
+      "content": "批量评论优先级高于下方「评论（文字 + 图片）」区块。评论文案每行一条；评论时间和星级可用范围自动随机生成。前台会按产品稳定随机展示，空行会自动跳过。"
+    },
+    {
+      "type": "textarea",
+      "id": "review_text_pool",
+      "label": "批量评论文案（一行一条）",
+      "info": "填写后会优先使用这里的文案；每个产品会按稳定随机顺序展示，不重复。"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_random_review_dates",
+      "label": "启用随机评论时间",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "review_date_min_days_ago",
+      "label": "最近评论时间（多少天前）",
+      "info": "例如填 7，表示最近的随机评论时间不会晚于 7 天前。",
+      "default": 7
+    },
+    {
+      "type": "number",
+      "id": "review_date_max_days_ago",
+      "label": "最早评论时间（多少天前）",
+      "info": "例如填 180，表示最早的随机评论时间不会早于 180 天前。",
+      "default": 180
+    },
+    {
+      "type": "text",
+      "id": "review_date_format",
+      "label": "评论时间格式",
+      "default": "%b %d, %Y",
+      "info": "默认显示类似 Jun 10, 2026。"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_random_review_ratings",
+      "label": "启用随机评论星级",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "review_rating_min",
+      "label": "最低随机星级",
+      "min": 1,
+      "max": 5,
+      "step": 0.5,
+      "default": 4.5
+    },
+    {
+      "type": "range",
+      "id": "review_rating_max",
+      "label": "最高随机星级",
+      "min": 1,
+      "max": 5,
+      "step": 0.5,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "list_heading",
+      "label": "列表标题",
+      "default": "Customer Reviews"
+    },
+    {
+      "type": "text",
+      "id": "sort_label",
+      "label": "排序文字",
+      "default": "Most Recent"
+    },
+    {
+      "type": "range",
+      "id": "initial_visible_reviews",
+      "label": "默认展示评论数",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "text",
+      "id": "load_more_text",
+      "label": "展开按钮文字",
+      "default": "Show More"
+    },
+    {
+      "type": "text",
+      "id": "verified_label",
+      "label": "已验证文字",
+      "default": "Verified buyer"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "空状态文字",
+      "default": "No Reviews Yet"
+    },
+    {
+      "type": "header",
+      "content": "颜色"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景颜色",
+      "default": "#f3f3f3"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "标签背景",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文字颜色",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "muted_text_color",
+      "label": "辅助文字颜色",
+      "default": "#626262"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "星星颜色",
+      "default": "#111111"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "评论（文字 + 图片）",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "在这里修改一条评论。标题、内容、日期、星级都会显示在评论列表里；图片 1-4 会显示在这条评论下方。"
+        },
+        {
+          "type": "header",
+          "content": "评论内容"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "客户名称",
+          "default": "Alex M."
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "显示已验证",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "星级",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "评论标题",
+          "default": "Secure and comfortable"
+        },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "评论内容",
+          "default": "<p>The band feels solid without being stiff, and it stays comfortable through a full day of wear.</p>"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "标签",
+          "default": "Daily wear"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "日期",
+          "default": "Jun 2026"
+        },
+        {
+          "type": "header",
+          "content": "评论图片（最多 4 张）"
+        },
+        {
+          "type": "paragraph",
+          "content": "上传后会显示在这条评论下面；顶部右侧图片条会优先读取这些评论图片。"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "评论图片 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "评论图片 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "评论图片 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_4",
+          "label": "评论图片 4"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "视频链接",
+          "accept": ["youtube", "vimeo"]
+        }
+      ]
+    },
+    {
+      "type": "fallback_review_image",
+      "name": "兜底评论图片",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "当产品系列元字段没有评论图片时，会使用这里添加的图片。可以重复添加很多个这个区块。"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "兜底评论图片"
+        }
+      ]
+    },
+    {
+      "type": "media",
+      "name": "顶部图片（仅图片条）",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "这个区块只用于顶部右侧图片条，不会生成一条评论。需要给某条评论加图，请编辑「评论（文字 + 图片）」区块里的评论图片。"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "顶部图片"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "视频链接",
+          "accept": ["youtube", "vimeo"]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "产品评论",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "author": "Alex M.",
+            "title": "Secure and comfortable",
+            "body": "<p>The band feels solid without being stiff, and it stays comfortable through a full day of wear.</p>",
+            "tag": "Daily wear",
+            "date": "Jun 2026"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Jordan K.",
+            "title": "Great for workouts",
+            "body": "<p>Lightweight, easy to clean, and the fit feels stable even when moving quickly.</p>",
+            "tag": "Exercise",
+            "date": "May 2026"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Taylor S.",
+            "title": "Looks sharp",
+            "body": "<p>It has a clean look that works with casual clothes and office days. The material feels premium.</p>",
+            "tag": "Everyday",
+            "date": "May 2026"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

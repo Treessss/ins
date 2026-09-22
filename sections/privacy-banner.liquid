@@ -1,0 +1,52 @@
+<privacy-bar class="privacy-bar" hidden>
+  <div class="privacy-bar__inner">
+    <button type="button" class="privacy-bar__close" data-action="close">
+      <span class="sr-only">{{ 'general.accessibility.close' | t }}</span>
+      {%- render 'icon' with 'delete' -%}
+    </button>
+
+    <div class="v-stack gap-4">
+      <div class="v-stack gap-2">
+        {%- if section.settings.privacy_bar_title != blank -%}
+          <p class="bold">{{ section.settings.privacy_bar_title | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.privacy_bar_content != blank -%}
+          <div class="prose text-xs">
+            {{- section.settings.privacy_bar_content -}}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="h-stack gap-2">
+        <button type="button" class="button button--sm" data-action="accept">{{ 'general.privacy_bar.accept' | t }}</button>
+        <button type="button" class="button button--sm button--subdued" data-action="decline">{{ 'general.privacy_bar.decline' | t }}</button>
+      </div>
+    </div>
+  </div>
+</privacy-bar>
+
+{% schema %}
+{
+  "name": "隐私横幅",
+  "class": "shopify-section--privacy-banner",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "主题自带隐私横幅已弃用。为符合现有及即将出台的本地法规，建议商家禁用主题横幅并迁移到 [Shopify 隐私横幅](https://help.shopify.com/en/manual/privacy-and-security/privacy/customer-privacy-settings/privacy-settings#add-a-cookie-banner)。"
+    },
+    {
+      "type": "text",
+      "id": "privacy_bar_title",
+      "label": "标题",
+      "default": "Cookie policy"
+    },
+    {
+      "type": "richtext",
+      "id": "privacy_bar_content",
+      "label": "内容",
+      "default": "<p>We use cookies and similar technologies to provide the best experience on our website. Refer to our Privacy Policy for more information.</p>"
+    }
+  ]
+}
+{% endschema %}

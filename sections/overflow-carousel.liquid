@@ -1,0 +1,517 @@
+{%- liquid
+  assign sid = section.id
+-%}
+
+{%- style -%}
+  .tc-swiper-{{ sid }} {
+    width: 100%;
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    overflow: hidden;
+    background: {{ section.settings.background }};
+    color: {{ section.settings.text_color }};
+  }
+
+  .tc-swiper-{{ sid }} * {
+    box-sizing: border-box;
+  }
+
+  .tc-swiper-{{ sid }} .tc-title {
+    text-align: center;
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 700;
+    margin: 0 0 36px 0;
+    color: {{ section.settings.title_color }};
+  }
+
+  .tc-swiper-{{ sid }} .tc-wrap {
+    width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .tc-swiper-{{ sid }} .tc-swiper {
+    overflow: visible !important;
+    padding-bottom: 50px;
+  }
+
+  .tc-swiper-{{ sid }} .swiper-wrapper {
+    align-items: stretch;
+  }
+
+  .tc-swiper-{{ sid }} .swiper-slide {
+    width: {{ section.settings.slide_width_desktop }}px !important;
+    height: auto;
+  }
+
+  .tc-swiper-{{ sid }} .tc-card {
+    position: relative;
+    border-radius: {{ section.settings.card_radius }}px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    height: {{ section.settings.card_height_desktop }}px;
+  }
+
+  .tc-swiper-{{ sid }} .tc-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .tc-swiper-{{ sid }} .tc-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.18) 38%,
+      rgba(0, 0, 0, 0.05) 60%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    pointer-events: none;
+  }
+
+  .tc-swiper-{{ sid }} .tc-content {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    right: 24px;
+    z-index: 2;
+    color: inherit;
+  }
+
+  .tc-swiper-{{ sid }} .tc-card.is-dark {
+    color: #fff;
+  }
+
+  .tc-swiper-{{ sid }} .tc-card.is-light {
+    color: #111;
+  }
+
+  .tc-swiper-{{ sid }} .tc-card-title {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 10px 0;
+    white-space: pre-line;
+  }
+
+  .tc-swiper-{{ sid }} .tc-card-desc {
+    font-size: 14px;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .tc-swiper-{{ sid }} .tc-btn {
+    position: absolute;
+    left: 24px;
+    bottom: 22px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.85);
+    color: #111;
+    font-size: 13px;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+  }
+
+  .tc-swiper-{{ sid }} .tc-btn:focus-visible {
+    outline: 2px solid rgba(0, 0, 0, 0.5);
+    outline-offset: 2px;
+  }
+
+  .tc-swiper-{{ sid }} .tc-btn-arrow {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .tc-swiper-{{ sid }} .tc-nav {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+  }
+
+  .tc-swiper-{{ sid }} .tc-prev,
+  .tc-swiper-{{ sid }} .tc-next {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .tc-swiper-{{ sid }} .tc-prev:hover,
+  .tc-swiper-{{ sid }} .tc-next:hover {
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: {{ section.settings.max_width | plus: 60 }}px) {
+    .tc-swiper-{{ sid }} .tc-wrap {
+      width: calc(100% - 80px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tc-swiper-{{ sid }} .tc-title {
+      font-size: {{ section.settings.title_size_mobile }}px;
+    }
+
+    .tc-swiper-{{ sid }} .tc-wrap {
+      width: calc(100% - 32px);
+    }
+
+    .tc-swiper-{{ sid }} .swiper-slide {
+      width: {{ section.settings.slide_width_mobile }}px !important;
+    }
+
+    .tc-swiper-{{ sid }} .tc-card {
+      height: {{ section.settings.card_height_mobile }}px;
+    }
+
+    .tc-swiper-{{ sid }} .tc-card-title {
+      font-size: 24px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="tc-swiper-{{ sid }}" role="region" aria-label="{{ section.settings.title | escape }}">
+  {%- if section.settings.title != blank -%}
+    <h2 class="tc-title">{{ section.settings.title }}</h2>
+  {%- endif -%}
+
+  <div class="tc-wrap">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    >
+
+    <div id="Swiper-{{ sid }}" class="swiper tc-swiper">
+      <div class="swiper-wrapper">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign img = block.settings.image
+            assign heading = block.settings.title
+            assign desc = block.settings.description
+            assign btn_label = block.settings.button_label
+            assign btn_url = block.settings.button_url
+            assign overlay = block.settings.show_overlay
+            assign tone = block.settings.text_tone
+          -%}
+
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="tc-card {% if tone == 'dark' %}is-dark{% else %}is-light{% endif %}">
+              {%- if img != blank -%}
+                {{ img | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(max-width: 768px) 260px, 320px', widths: '260,320,520,640,900,1200' }}
+              {%- else -%}
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,#eee,#ddd);"></div>
+              {%- endif -%}
+
+              {%- if overlay -%}
+                <div class="tc-overlay"></div>
+              {%- endif -%}
+
+              <div class="tc-content">
+                {%- if heading != blank -%}
+                  <div class="tc-card-title">{{ heading }}</div>
+                {%- endif -%}
+                {%- if desc != blank -%}
+                  <p class="tc-card-desc">{{ desc }}</p>
+                {%- endif -%}
+              </div>
+
+              {%- if btn_label != blank and btn_url != blank -%}
+                <a class="tc-btn" href="{{ btn_url }}">
+                  {{ btn_label }}
+                  <span class="tc-btn-arrow" aria-hidden="true">›</span>
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- if section.settings.show_navigation -%}
+      <div class="tc-nav" aria-label="Slider navigation">
+        <button type="button" class="tc-prev" aria-controls="Swiper-{{ sid }}" aria-label="Previous">‹</button>
+        <button type="button" class="tc-next" aria-controls="Swiper-{{ sid }}" aria-label="Next">›</button>
+      </div>
+    {%- endif -%}
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script>
+      (function () {
+        var root = document.getElementById('Swiper-{{ sid }}');
+        if (!root) return;
+
+        function init() {
+          if (!window.Swiper) return;
+          if (root.dataset.inited === '1') return;
+          root.dataset.inited = '1';
+
+          new Swiper(root, {
+            slidesPerView: 'auto',
+            spaceBetween: {{ section.settings.space_between }},
+            loop: false,
+            speed: {{ section.settings.speed }},
+            grabCursor: true,
+            navigation: {
+              nextEl: '.tc-swiper-{{ sid }} .tc-next',
+              prevEl: '.tc-swiper-{{ sid }} .tc-prev'
+            }
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "顶部系列轮播",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Top Collections"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "标题字号（桌面）",
+      "min": 18,
+      "max": 64,
+      "step": 1,
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "标题字号（移动）",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景色",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "标题颜色",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "正文默认颜色",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "内容最大宽度（px）",
+      "min": 960,
+      "max": 1800,
+      "step": 10,
+      "default": 1440
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "上内边距（px）",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "下内边距（px）",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "slide_width_desktop",
+      "label": "卡片宽度（桌面 px）",
+      "min": 220,
+      "max": 520,
+      "step": 10,
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "slide_width_mobile",
+      "label": "卡片宽度（移动 px）",
+      "min": 200,
+      "max": 420,
+      "step": 10,
+      "default": 260
+    },
+    {
+      "type": "range",
+      "id": "card_height_desktop",
+      "label": "卡片高度（桌面 px）",
+      "min": 280,
+      "max": 720,
+      "step": 10,
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "card_height_mobile",
+      "label": "卡片高度（移动 px）",
+      "min": 240,
+      "max": 640,
+      "step": 10,
+      "default": 420
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "卡片圆角（px）",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "space_between",
+      "label": "卡片间距（px）",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "滑动速度（ms）",
+      "min": 100,
+      "max": 2000,
+      "step": 50,
+      "default": 800
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "显示左右按钮",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "卡片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "图片"
+        },
+        {
+          "type": "textarea",
+          "id": "title",
+          "label": "标题",
+          "default": "Mini for\\nFeatured Use"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "描述",
+          "default": "Use Featured Item anytime, anywhere"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "按钮文字",
+          "default": "Read More"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "按钮链接"
+        },
+        {
+          "type": "select",
+          "id": "text_tone",
+          "label": "文字颜色（覆盖图片时）",
+          "default": "dark",
+          "options": [
+            {
+              "value": "dark",
+              "label": "白字（适合深色图片）"
+            },
+            {
+              "value": "light",
+              "label": "黑字（适合浅色图片）"
+            }
+          ]
+        },
+        {
+          "type": "checkbox",
+          "id": "show_overlay",
+          "label": "显示渐变遮罩",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "顶部系列轮播",
+      "blocks": [
+        {
+          "type": "card"
+        },
+        {
+          "type": "card"
+        },
+        {
+          "type": "card"
+        },
+        {
+          "type": "card"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,314 @@
+{%- liquid
+  assign customizer_block_id = block.id | default: 'main'
+  assign customizer_id = 'case-customizer-' | append: section.id | append: '-' | append: customizer_block_id
+  assign eyebrow = block.settings.eyebrow | default: section.settings.eyebrow | default: 'Custom Studio'
+  assign heading = block.settings.heading | default: section.settings.heading | default: 'Customize your case'
+  assign subheading = block.settings.subheading | default: section.settings.subheading | default: 'Upload your artwork, position it live, and add the finished custom case to cart.'
+  assign upload_label = block.settings.upload_label | default: section.settings.upload_label | default: 'Upload artwork'
+  assign helper_text = block.settings.helper_text | default: section.settings.helper_text | default: 'PNG, JPG or WEBP. Transparent PNG works best.'
+  assign required_upload = block.settings.required_upload
+  assign show_text_tool = block.settings.show_text_tool
+  assign hide_dynamic_checkout = block.settings.hide_dynamic_checkout
+  assign recommended_width = block.settings.recommended_width | default: section.settings.recommended_width | default: 1800
+  assign recommended_height = block.settings.recommended_height | default: section.settings.recommended_height | default: 2600
+  assign upload_endpoint = block.settings.upload_endpoint | default: section.settings.upload_endpoint
+  assign badge_text = block.settings.badge_text | default: section.settings.badge_text | default: 'Live preview'
+  assign empty_state_text = block.settings.empty_state_text | default: section.settings.empty_state_text | default: 'Upload artwork to preview your case'
+  assign preview_note = block.settings.preview_note | default: section.settings.preview_note | default: 'Drag the artwork directly on the case to adjust placement.'
+  assign text_placeholder = block.settings.text_placeholder | default: section.settings.text_placeholder | default: 'Add initials or a short phrase'
+  assign ready_text = block.settings.ready_text | default: section.settings.ready_text | default: 'Choose an image to begin.'
+  assign preview_map_id = preview_map_id | default: ''
+  assign default_base_image = default_base_image | default: ''
+  assign default_base_label = default_base_label | default: section.settings.default_base_label | default: 'Default case preview'
+
+  if block == blank
+    assign required_upload = section.settings.required_upload
+    assign show_text_tool = section.settings.show_text_tool
+    assign hide_dynamic_checkout = section.settings.hide_dynamic_checkout
+  endif
+-%}
+
+{{- 'case-customizer.css' | asset_url | stylesheet_tag -}}
+<script src="{{ 'case-customizer.js' | asset_url }}" defer="defer"></script>
+
+{%- if hide_dynamic_checkout -%}
+  <style>
+    #{{ product_form_id | escape }} .shopify-payment-button {
+      display: none !important;
+    }
+  </style>
+{%- endif -%}
+
+<case-customizer
+  id="{{ customizer_id }}"
+  class="case-customizer"
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle | escape }}"
+  data-product-title="{{ product.title | escape }}"
+  data-form-id="{{ product_form_id | escape }}"
+  data-required="{{ required_upload }}"
+  data-recommended-width="{{ recommended_width }}"
+  data-recommended-height="{{ recommended_height }}"
+  data-upload-endpoint="{{ upload_endpoint | escape }}"
+  data-preview-map-id="{{ preview_map_id | escape }}"
+  data-default-base-image="{{ default_base_image | escape }}"
+  data-default-base-label="{{ default_base_label | escape }}"
+>
+  <div class="case-customizer__header">
+    <div class="case-customizer__heading-group">
+      <p class="case-customizer__eyebrow">{{ eyebrow | escape }}</p>
+      <h3 class="case-customizer__title">{{ heading | escape }}</h3>
+      <p class="case-customizer__subtitle">{{ subheading | escape }}</p>
+    </div>
+    <span class="case-customizer__badge">{{ badge_text | escape }}</span>
+  </div>
+
+  <div class="case-customizer__workspace">
+    <div class="case-customizer__preview-panel">
+      <div class="case-customizer__canvas-frame">
+        <canvas
+          class="case-customizer__canvas"
+          width="900"
+          height="1200"
+          aria-label="Custom phone case preview"
+          data-case-canvas
+        ></canvas>
+        <div class="case-customizer__empty-state" data-case-empty>
+          <span class="case-customizer__empty-icon" aria-hidden="true"></span>
+          <span>{{ empty_state_text | escape }}</span>
+        </div>
+      </div>
+      <div class="case-customizer__selection" data-case-selected-options aria-live="polite"></div>
+      <p class="case-customizer__preview-note">{{ preview_note | escape }}</p>
+    </div>
+
+    <div class="case-customizer__controls" data-case-wizard>
+      <div class="case-customizer__wizard-steps" data-case-wizard-steps>
+        <div class="case-customizer__step-card is-active" data-case-step-card="templates" data-case-step-index="0">
+          <button
+            type="button"
+            class="case-customizer__step-heading"
+            id="{{ customizer_id }}-step-templates-trigger"
+            aria-controls="{{ customizer_id }}-step-templates"
+            aria-expanded="true"
+            aria-current="step"
+            data-case-step-trigger
+          >
+            <span>01.</span>
+            <strong>Templates</strong>
+            <span class="case-customizer__step-icon" aria-hidden="true" data-case-step-icon>×</span>
+          </button>
+          <div id="{{ customizer_id }}-step-templates" class="case-customizer__step-content" data-case-step-content>
+            <div class="case-customizer__template-list" aria-label="Templates">
+              <button type="button" class="is-selected">Sticker Studio</button>
+              <button type="button">Collage</button>
+              <button type="button">Cutouts</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="case-customizer__step-card" data-case-step-card="device-type" data-case-step-index="1">
+          <button
+            type="button"
+            class="case-customizer__step-heading"
+            id="{{ customizer_id }}-step-device-type-trigger"
+            aria-controls="{{ customizer_id }}-step-device-type"
+            aria-expanded="false"
+            data-case-step-trigger
+          >
+            <span>02.</span>
+            <strong>Device Type</strong>
+            <span class="case-customizer__step-icon" aria-hidden="true" data-case-step-icon>+</span>
+          </button>
+          <div id="{{ customizer_id }}-step-device-type" class="case-customizer__step-content" data-case-step-content hidden>
+            <div class="case-customizer__device-type-list" aria-label="Device type">
+              <button type="button" class="is-selected">Phone Case</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="case-customizer__step-card" data-case-step-card="device-model" data-case-step-index="2">
+          <button
+            type="button"
+            class="case-customizer__step-heading"
+            id="{{ customizer_id }}-step-device-model-trigger"
+            aria-controls="{{ customizer_id }}-step-device-model"
+            aria-expanded="false"
+            data-case-step-trigger
+          >
+            <span>03.</span>
+            <strong>Device Model</strong>
+            <span class="case-customizer__step-icon" aria-hidden="true" data-case-step-icon>+</span>
+          </button>
+          <div id="{{ customizer_id }}-step-device-model" class="case-customizer__step-content" data-case-step-content hidden>
+            <p class="case-customizer__step-summary" data-case-step-summary="device">Select phone model</p>
+            <p class="case-customizer__step-helper">This uses the phone model selected before entering the studio.</p>
+          </div>
+        </div>
+
+        <div class="case-customizer__step-card" data-case-step-card="case-type" data-case-step-index="3">
+          <button
+            type="button"
+            class="case-customizer__step-heading"
+            id="{{ customizer_id }}-step-case-type-trigger"
+            aria-controls="{{ customizer_id }}-step-case-type"
+            aria-expanded="false"
+            data-case-step-trigger
+          >
+            <span>04.</span>
+            <strong>Case Type</strong>
+            <span class="case-customizer__step-icon" aria-hidden="true" data-case-step-icon>+</span>
+          </button>
+          <div id="{{ customizer_id }}-step-case-type" class="case-customizer__step-content" data-case-step-content hidden>
+            <p class="case-customizer__step-summary" data-case-step-summary="case-type">Select case type</p>
+            <p class="case-customizer__step-helper">Your preview updates from the selected case type.</p>
+          </div>
+        </div>
+
+        <div class="case-customizer__step-card" data-case-step-card="base-color" data-case-step-index="4">
+          <button
+            type="button"
+            class="case-customizer__step-heading"
+            id="{{ customizer_id }}-step-base-color-trigger"
+            aria-controls="{{ customizer_id }}-step-base-color"
+            aria-expanded="false"
+            data-case-step-trigger
+          >
+            <span>05.</span>
+            <strong>Base Color</strong>
+            <span class="case-customizer__step-icon" aria-hidden="true" data-case-step-icon>+</span>
+          </button>
+          <div id="{{ customizer_id }}-step-base-color" class="case-customizer__step-content" data-case-step-content hidden>
+            <p class="case-customizer__step-summary" data-case-step-summary="base-color">Default</p>
+            <p class="case-customizer__step-helper">The base color is matched from the selected product options.</p>
+          </div>
+        </div>
+
+        <div class="case-customizer__step-card" data-case-step-card="upload" data-case-step-index="5">
+          <button
+            type="button"
+            class="case-customizer__step-heading"
+            id="{{ customizer_id }}-step-upload-trigger"
+            aria-controls="{{ customizer_id }}-step-upload"
+            aria-expanded="false"
+            data-case-step-trigger
+          >
+            <span>06.</span>
+            <strong>Upload Image</strong>
+            <span class="case-customizer__step-icon" aria-hidden="true" data-case-step-icon>+</span>
+          </button>
+          <div id="{{ customizer_id }}-step-upload" class="case-customizer__step-content" data-case-step-content hidden>
+            <div class="case-customizer__upload-row">
+              <input
+                id="{{ customizer_id }}-file"
+                class="case-customizer__file-input"
+                type="file"
+                name="properties[Design File]"
+                accept="image/png,image/jpeg,image/webp"
+                form="{{ product_form_id }}"
+                {% if required_upload %}required{% endif %}
+                data-case-file
+              >
+              <label class="case-customizer__upload-button" for="{{ customizer_id }}-file" tabindex="0">
+                <span aria-hidden="true">+</span>
+                {{ upload_label | escape }}
+              </label>
+              <div class="case-customizer__file-copy">
+                <p data-case-file-name>{{ helper_text | escape }}</p>
+                <p data-case-quality>Recommended {{ recommended_width }} x {{ recommended_height }}px or higher.</p>
+              </div>
+            </div>
+
+            <div class="case-customizer__tool-grid">
+              <label class="case-customizer__range">
+                <span>Zoom</span>
+                <input type="range" min="40" max="260" value="100" data-case-zoom>
+              </label>
+
+              <label class="case-customizer__range">
+                <span>Rotate</span>
+                <input type="range" min="-45" max="45" value="0" data-case-rotate>
+              </label>
+            </div>
+
+            <div class="case-customizer__button-row" aria-label="Artwork placement controls">
+              <button type="button" data-case-fit>Fit</button>
+              <button type="button" data-case-fill>Fill</button>
+              <button type="button" data-case-center>Center</button>
+              <button type="button" data-case-reset>Reset</button>
+            </div>
+
+            {%- if show_text_tool -%}
+              <div class="case-customizer__text-tool">
+                <label class="case-customizer__input-label" for="{{ customizer_id }}-text">Optional text</label>
+                <input
+                  id="{{ customizer_id }}-text"
+                  class="case-customizer__text-input"
+                  type="text"
+                  maxlength="28"
+                  placeholder="{{ text_placeholder | escape }}"
+                  data-case-text
+                >
+                <div class="case-customizer__text-options">
+                  <label>
+                    <input type="radio" name="{{ customizer_id }}-text-color" value="#111111" checked data-case-text-color>
+                    <span style="--swatch: #111111">Black</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="{{ customizer_id }}-text-color" value="#ffffff" data-case-text-color>
+                    <span style="--swatch: #ffffff">White</span>
+                  </label>
+                </div>
+              </div>
+            {%- endif -%}
+
+            <div class="case-customizer__status" data-case-status role="status" aria-live="polite">
+              {{ ready_text | escape }}
+            </div>
+          </div>
+        </div>
+
+        <div class="case-customizer__step-card" data-case-step-card="stickers" data-case-step-index="6">
+          <button
+            type="button"
+            class="case-customizer__step-heading"
+            id="{{ customizer_id }}-step-stickers-trigger"
+            aria-controls="{{ customizer_id }}-step-stickers"
+            aria-expanded="false"
+            data-case-step-trigger
+          >
+            <span>07.</span>
+            <strong>Stickers</strong>
+            <span class="case-customizer__step-icon" aria-hidden="true" data-case-step-icon>+</span>
+          </button>
+          <div id="{{ customizer_id }}-step-stickers" class="case-customizer__step-content" data-case-step-content hidden>
+            <div class="case-customizer__sticker-options" aria-label="Stickers">
+              <button type="button" class="is-selected" data-case-sticker="none">None</button>
+              <button type="button" data-case-sticker="star">Star</button>
+              <button type="button" data-case-sticker="heart">Heart</button>
+              <button type="button" data-case-sticker="smile">Smile</button>
+              <button type="button" data-case-sticker="bolt">Bolt</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-customizer__wizard-nav" data-case-step-nav aria-label="Customizer steps">
+        <button type="button" class="case-customizer__wizard-button" data-case-step-prev aria-label="Previous step">‹</button>
+        <span class="case-customizer__wizard-progress" data-case-step-progress>01/07</span>
+        <button type="button" class="case-customizer__wizard-button" data-case-step-next aria-label="Next step">›</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" name="properties[Custom Design]" form="{{ product_form_id }}" data-case-property="status" disabled>
+  <input type="hidden" name="properties[Phone Model]" form="{{ product_form_id }}" data-case-property="device" disabled>
+  <input type="hidden" name="properties[Case Type]" form="{{ product_form_id }}" data-case-property="caseType" disabled>
+  <input type="hidden" name="properties[Selected Options]" form="{{ product_form_id }}" data-case-property="selectedOptions" disabled>
+  <input type="hidden" name="properties[Preview Base]" form="{{ product_form_id }}" data-case-property="base" disabled>
+  <input type="hidden" name="properties[Design Placement]" form="{{ product_form_id }}" data-case-property="placement" disabled>
+  <input type="hidden" name="properties[Design Text]" form="{{ product_form_id }}" data-case-property="text" disabled>
+  <input type="hidden" name="properties[Design Sticker]" form="{{ product_form_id }}" data-case-property="sticker" disabled>
+  <input type="hidden" name="properties[_case_customizer_payload]" form="{{ product_form_id }}" data-case-property="payload" disabled>
+  <input type="hidden" name="properties[_case_customizer_upload]" form="{{ product_form_id }}" data-case-property="upload" disabled>
+</case-customizer>

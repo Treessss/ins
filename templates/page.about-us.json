@@ -1,0 +1,167 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "about_stat_1": {
+          "type": "stat",
+          "settings": {
+            "number": "01",
+            "text": "Designed around natural play, everyday enrichment, and easy routines."
+          }
+        },
+        "about_stat_2": {
+          "type": "stat",
+          "settings": {
+            "number": "02",
+            "text": "Textures and shapes selected for how pets actually paw, chase, kick, and rest."
+          }
+        },
+        "about_stat_3": {
+          "type": "stat",
+          "settings": {
+            "number": "03",
+            "text": "Clear product guidance and responsive support before and after every order."
+          }
+        },
+        "about_value_1": {
+          "type": "value",
+          "settings": {
+            "index": "01",
+            "title": "Play with purpose",
+            "text": "Every product starts with a real pet behavior—from chewing and chasing to hiding and settling in."
+          }
+        },
+        "about_value_2": {
+          "type": "value",
+          "settings": {
+            "index": "02",
+            "title": "Honest by design",
+            "text": "We focus on useful features and clear care guidance without overpromising what a toy can do."
+          }
+        },
+        "about_value_3": {
+          "type": "value",
+          "settings": {
+            "index": "03",
+            "title": "Made for real homes",
+            "text": "Practical shapes, approachable colors, and easy-to-understand choices fit naturally into everyday routines."
+          }
+        },
+        "about_step_1": {
+          "type": "step",
+          "settings": {
+            "number": "01",
+            "title": "Watch how pets play",
+            "text": "We begin with instinctive behaviors such as pawing, pouncing, kicking, sniffing, and resting."
+          }
+        },
+        "about_step_2": {
+          "type": "step",
+          "settings": {
+            "number": "02",
+            "title": "Choose engaging textures",
+            "text": "Material, movement, sound, and scale are considered together to make play feel rewarding."
+          }
+        },
+        "about_step_3": {
+          "type": "step",
+          "settings": {
+            "number": "03",
+            "title": "Keep care simple",
+            "text": "We prioritize clear sizing, straightforward upkeep, and supervision guidance for confident use."
+          }
+        },
+        "about_collection_1": {
+          "type": "collection_card",
+          "settings": {
+            "image": "shopify://shop_images/xstrapetm-cotton-cat-rope-01-main.png",
+            "image_alt": "Colorful cotton cat chew ropes",
+            "title": "Chew & Explore",
+            "text": "Tactile toys for curious mouths, busy paws, and everyday discovery.",
+            "link": "shopify://products/cotton-cat-chew-ropes-3-pack"
+          }
+        },
+        "about_collection_2": {
+          "type": "collection_card",
+          "settings": {
+            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-04-lifestyle.png",
+            "image_alt": "Cat playing with a natural sisal kicker toy",
+            "title": "Kick & Scratch",
+            "text": "Long-form play companions made for grabbing, kicking, and scratching.",
+            "link": "shopify://products/natural-sisal-cat-kicker-toys-2-pack"
+          }
+        },
+        "about_collection_3": {
+          "type": "collection_card",
+          "settings": {
+            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
+            "image_alt": "Cat exploring a kraft paper crinkle hideout",
+            "title": "Hide & Rest",
+            "text": "Cozy spaces that invite hiding, pouncing, curling up, and resetting.",
+            "link": "shopify://products/crinkle-cat-hideout-bag"
+          }
+        }
+      },
+      "block_order": [
+        "about_stat_1",
+        "about_stat_2",
+        "about_stat_3",
+        "about_value_1",
+        "about_value_2",
+        "about_value_3",
+        "about_step_1",
+        "about_step_2",
+        "about_step_3",
+        "about_collection_1",
+        "about_collection_2",
+        "about_collection_3"
+      ],
+      "settings": {
+        "enable_about_layout": true,
+        "about_hero_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
+        "about_hero_mobile_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
+        "about_hero_image_alt": "Cat exploring a playful xstrapetm paper hideout",
+        "about_hero_eyebrow": "ABOUT XSTRAPETM",
+        "about_hero_title": "Better play starts with understanding pets.",
+        "about_hero_text": "We create playful, practical essentials inspired by the ways dogs and cats naturally move, explore, and unwind.",
+        "about_primary_button_text": "Shop all pet favorites",
+        "about_primary_button_link": "shopify://collections/all",
+        "about_secondary_button_text": "Contact us",
+        "about_secondary_button_link": "shopify://pages/contact",
+        "about_intro_kicker": "Our point of view",
+        "about_intro_heading": "Everyday enrichment should feel easy.",
+        "about_intro_body": "<p>Xstrapetm was built around a simple idea: good pet products should make everyday play easier to understand and more rewarding to share.</p><p>We focus on natural behaviors, engaging textures, practical care, and clear guidance. The result is a growing collection designed for real pets, real homes, and better time together.</p>",
+        "about_material_image_1": "shopify://shop_images/xstrapetm-cotton-cat-rope-03-materials.png",
+        "about_material_image_2": "shopify://shop_images/xstrapetm-sisal-cat-kicker-03-materials.png",
+        "about_material_image_3": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-05-construction.png",
+        "about_material_image_1_alt": "Close view of colorful cotton rope texture",
+        "about_material_image_2_alt": "Natural sisal texture on a cat kicker toy",
+        "about_material_image_3_alt": "Double-layer kraft paper hideout construction",
+        "about_process_kicker": "How we choose",
+        "about_process_heading": "Every product starts with a real behavior.",
+        "about_collection_kicker": "Explore by play style",
+        "about_collection_heading": "Find the kind of fun that fits their day.",
+        "about_cta_kicker": "Need help choosing?",
+        "about_cta_heading": "Tell us how your pet likes to play—we’ll help narrow it down.",
+        "about_cta_primary_button_text": "Shop all pet favorites",
+        "about_cta_primary_button_link": "shopify://collections/all",
+        "about_cta_secondary_button_text": "Ask a question",
+        "about_cta_secondary_button_link": "shopify://pages/contact",
+        "content_width": "80ch"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

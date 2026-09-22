@@ -1,0 +1,819 @@
+{%- comment -%}
+------------------------------------------------------------------------------------------------------------------------
+CSS
+------------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+<style>
+  {%- if section.settings.controls_type == 'filled_arrows' -%}
+    {%- assign controls_background = section.blocks.first.settings.button_background -%}
+    {%- assign controls_color = section.blocks.first.settings.button_text_color -%}
+  {%- else -%}
+    {%- assign controls_color = section.blocks.first.settings.text_color -%}
+  {%- endif -%}
+
+  #shopify-section-{{ section.id }} {
+    --slideshow-background: {{ section.blocks.first.settings.background_gradient | default: section.blocks.first.settings.background | default: section.settings.background_gradient | default: section.settings.background }};
+    --slideshow-controls-background: {{ controls_background.rgb }};
+    --slideshow-controls-color: {{ controls_color.rgb }};
+
+    {%- if section.settings.allow_transparent_header -%}
+      margin-block-start: calc(-1 * var(--header-height) * var(--section-is-first));
+    {%- endif -%}
+  }
+
+  {%- for block in section.blocks -%}
+    #block-{{ block.id }} {
+      {%- if section.settings.controls_type == 'filled_arrows' -%}
+        {%- assign controls_background = block.settings.button_background -%}
+        {%- assign controls_color = block.settings.button_text_color -%}
+      {%- else -%}
+        {%- assign controls_color = block.settings.text_color -%}
+      {%- endif -%}
+
+      --slideshow-slide-background: {{ block.settings.background_gradient | default: block.settings.background | default: section.settings.background_gradient | default: section.settings.background }};
+      --slideshow-slide-controls-background: {{ controls_background.rgb }};
+      --slideshow-slide-controls-color: {{ controls_color.rgb }};
+    }
+  {%- endfor -%}
+
+  /* 只作用于当前 slideshow section */
+  #shopify-section-{{ section.id }} .subheading {
+    font-size: 24px;
+  }
+
+  /* 手机端 */
+  @media screen and (max-width: 699px) {
+    #shopify-section-{{ section.id }} .subheading {
+      font-size: 14px;
+    }
+  }
+</style>
+
+{%- comment -%}
+------------------------------------------------------------------------------------------------------------------------
+LIQUID
+------------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- assign slideshow_id = 'slideshow-' | append: section.id -%}
+
+<x-slideshow class="slideshow {% unless section.settings.full_width %}slideshow--boxed{% endunless %} {% if section.blocks.size > 1 %}slideshow--multiple-slides{% endif %}" {% if section.settings.allow_transparent_header %}allow-transparent-header{% endif %}>
+  {%- unless section.settings.full_width -%}
+    <span class="slideshow__slide-background"></span>
+  {%- endunless -%}
+
+  <slideshow-carousel id="{{ slideshow_id }}" class="slideshow__carousel" {% if section.settings.show_initial_transition %}reveal-on-scroll="true"{% endif %} selector=".slideshow__slide" transition="{{ section.settings.transition_type }}" {% if section.settings.autoplay %}autoplay="{{ section.settings.cycle_speed }}"{% endif %} role="region">
+    {%- unless section.blocks.size == 1 or section.settings.controls_type contains 'arrows' -%}
+      <custom-cursor class="slideshow__cursor circle-button circle-button--lg circle-button--fill" aria-hidden="true">
+        {%- render 'icon' with 'chevron-right' -%}
+
+        <svg class="slideshow__cursor-ring" viewBox="-28 -28 56 56" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2">
+          <circle r="27" stroke-dasharray="158.33626974092556" stroke-dashoffset="158.33626974092556px"></circle>
+        </svg>
+      </custom-cursor>
+    {%- endunless -%}
+
+    {%- for block in section.blocks -%}
+      {%- capture slide -%}
+        <div class="content-over-media content-over-media--{{ section.settings.image_size }} {% unless section.settings.full_width %}rounded{% endunless %}" style="--content-over-media-content-max-width: {{ block.settings.content_max_width }}px; --content-over-media-overlay: {{ block.settings.overlay_color.rgb }} / {{ block.settings.overlay_opacity | divided_by: 100.0 }}">
+          {%- comment -%}---------------- MEDIA ----------------{%- endcomment -%}
+          {%- capture sizes -%}{% if section.settings.full_width %}100vw{% else %}min({{ settings.page_width }}px, 100vw){% endif %}{%- endcapture -%}
+
+          {%- if block.type == 'image' -%}
+            {%- if block.settings.image != blank -%}
+              {%- capture loading_strategy -%}{% if forloop.first %}eager{% else %}lazy{% endif %}{%- endcapture -%}
+              {%- capture fetch_priority -%}{% if forloop.first %}high{% else %}low{% endif %}{%- endcapture -%}
+
+              <picture>
+                {%- if block.settings.mobile_image != blank -%}
+                  <source
+                    media="(max-width: 699px)"
+                    srcset="{{ block.settings.mobile_image | image_url: width: 400 }} 400w, {{ block.settings.mobile_image | image_url: width: 600 }} 600w, {{ block.settings.mobile_image | image_url: width: 800 }} 800w, {{ block.settings.mobile_image | image_url: width: 1000 }} 1000w, {{ block.settings.mobile_image | image_url: width: 1200 }} 1200w"
+                    width="{{ block.settings.mobile_image.width }}"
+                    height="{{ block.settings.mobile_image.height }}"
+                  >
+                {%- endif -%}
+
+                {{- block.settings.image | image_url: width: block.settings.image.width | image_tag: loading: loading_strategy, fetchpriority: fetch_priority, sizes: sizes, widths: '200,300,400,500,600,700,800,900,1000,1200,1400,1600,1800,2000,2200,2400,2600,2800,3000,3200' -}}
+              </picture>
+            {%- else -%}
+              {%- capture placeholder_image -%}{% cycle 'placeholder': 'lifestyle-1', 'lifestyle-2' %}{%- endcapture -%}
+              {{- placeholder_image | placeholder_svg_tag: 'placeholder' | replace: '<svg', '<svg preserveAspectRatio="xMinYMin slice"' -}}
+            {%- endif -%}
+          {%- elsif block.type == 'video' -%}
+            {%- if section.settings.autoplay -%}
+              {%- assign video_loop = false -%}
+            {%- else -%}
+              {%- assign video_loop = true -%}
+            {%- endif -%}
+
+            {%- if block.settings.video != blank -%}
+              {%- if block.settings.mobile_video != blank -%}
+                <video-media class="sm:hidden" {% if section.settings.image_size == 'auto' %}style="--aspect-ratio: {{ block.settings.mobile_video.aspect_ratio }}"{% endif %}>
+                  {{- block.settings.mobile_video | video_tag: class: 'object-cover sm:hidden', controls: false, autoplay: false, playsinline: true, muted: true, loop: video_loop, preload: 'metadata', image_size: '400x' -}}
+                </video-media>
+              {%- endif -%}
+
+              <video-media {% if block.settings.mobile_video != blank %}class="hidden sm:block"{% endif %} {% if section.settings.image_size == 'auto' %}style="--aspect-ratio: {{ block.settings.video.aspect_ratio }}"{% endif %}>
+                {{- block.settings.video | video_tag: playsinline: true, preload: 'metadata', muted: true, loop: video_loop, autoplay: false, controls: false, image_size: '800x' -}}
+              </video-media>
+            {%- else -%}
+              {%- capture placeholder_image -%}{% cycle 'placeholder': 'lifestyle-1', 'lifestyle-2' %}{%- endcapture -%}
+              {{- placeholder_image | placeholder_svg_tag: 'placeholder' | replace: '<svg', '<svg preserveAspectRatio="xMinYMin slice"' -}}
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- comment -%}---------------- CONTENT ----------------{%- endcomment -%}
+          {%- capture content_class -%}{{ block.settings.mobile_text_position }} {{ block.settings.desktop_text_position }}{%- endcapture -%}
+
+          <div {% render 'surface', class: content_class, text_color: block.settings.text_color %}>
+            <div class="prose">
+            
+
+              {%- if block.settings.title != blank -%}
+                <p class="{{ block.settings.heading_tag }}" data-sequence="heading">
+                  {%- render 'styled-text', content: block.settings.title, apparition_effect: true -%}
+                </p>
+              {%- endif -%}
+                {%- if block.settings.subheading != blank -%}
+                <p class="subheading" data-sequence="subheading">{{ block.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if block.settings.button_text != blank -%}
+                {%- render 'button', href: block.settings.button_link, content: block.settings.button_text, size: 'xl', background: block.settings.button_background, text_color: block.settings.button_text_color -%}
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      {%- endcapture -%}
+
+      {%- if block.settings.button_link != blank and block.settings.button_text == blank -%}
+        <a id="block-{{ block.id }}" href="{{ block.settings.button_link }}" class="slideshow__slide {% if forloop.first %}is-selected{% endif %}" data-slide-type="{{ block.type }}" role="group" {{ block.shopify_attributes }}>
+          {{- slide -}}
+        </a>
+      {%- else -%}
+        <div id="block-{{ block.id }}" class="slideshow__slide {% if forloop.first %}is-selected{% endif %}" data-slide-type="{{ block.type }}" role="group" {{ block.shopify_attributes }}>
+          {{- slide -}}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if section.blocks.size > 1 and section.settings.controls_type != 'none' -%}
+      <div class="slideshow__controls">
+        {%- case section.settings.controls_type -%}
+          {%- when 'filled_arrows' or 'outline_arrows' -%}
+            <div class="prev-next-buttons">
+              <button is="prev-button" aria-controls="{{ slideshow_id }}" class="circle-button circle-button--lg {% if section.settings.controls_type == 'filled_arrows' %}circle-button--fill{% else %}circle-button--bordered{% endif %} group">
+                <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
+                <span class="animated-arrow animated-arrow--reverse"></span>
+              </button>
+
+              <button is="next-button" aria-controls="{{ slideshow_id }}" class="circle-button circle-button--lg {% if section.settings.controls_type == 'filled_arrows' %}circle-button--fill{% else %}circle-button--bordered{% endif %} group">
+                <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+                <span class="animated-arrow"></span>
+              </button>
+            </div>
+
+          {%- when 'numbers' -%}
+            <page-dots class="numbered-dots" aria-controls="{{ slideshow_id }}">
+              {%- for i in (1..section.blocks.size) -%}
+                <button type="button" class="numbered-dots__item" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
+                  <svg width="100%" height="100%" {% if section.settings.autoplay %}style="--percent: 0"{% endif %}>
+                    <circle cx="50%" cy="50%" r="15"></circle>
+                    <circle cx="50%" cy="50%" r="15"></circle>
+                  </svg>
+
+                  <span>{{- forloop.index -}}</span>
+                </button>
+              {%- endfor -%}
+            </page-dots>
+
+          {%- when 'dots' -%}
+            <page-dots class="stretching-dots" aria-controls="{{ slideshow_id }}">
+              {%- for i in (1..section.blocks.size) -%}
+                <button type="button" class="tap-area" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
+                  <span class="sr-only">{{ 'general.accessibility.go_to_item' | t: index: forloop.index }}</span>
+                </button>
+              {%- endfor -%}
+            </page-dots>
+        {%- endcase -%}
+      </div>
+    {%- endif -%}
+  </slideshow-carousel>
+</x-slideshow>
+
+{% schema %}
+{
+  "name": "幻灯片",
+  "class": "shopify-section--slideshow",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "全宽",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_transparent_header",
+      "label": "允许透明页眉",
+      "info": "此设置仅在该分区位于第一位时生效。",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_initial_transition",
+      "label": "显示初始过渡",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "image_size",
+      "label": "媒体尺寸",
+      "options": [
+        {
+          "value": "auto",
+          "label": "原始媒体比例"
+        },
+        {
+          "value": "sm",
+          "label": "小"
+        },
+        {
+          "value": "md",
+          "label": "中"
+        },
+        {
+          "value": "lg",
+          "label": "大"
+        },
+        {
+          "value": "fill",
+          "label": "填满屏幕高度"
+        }
+      ],
+      "info": "选择“原始媒体比例”可避免裁切媒体。[了解更多](https://help.shopify.com/en/manual/online-store/images/theme-images#best-practices-for-slideshows-and-full-width-images)",
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "controls_type",
+      "label": "控制按钮",
+      "options": [
+        {
+          "value": "none",
+          "label": "无"
+        },
+        {
+          "value": "filled_arrows",
+          "label": "填充箭头"
+        },
+        {
+          "value": "outline_arrows",
+          "label": "描边箭头"
+        },
+        {
+          "value": "numbers",
+          "label": "数字"
+        },
+        {
+          "value": "dots",
+          "label": "圆点"
+        }
+      ],
+      "default": "dots"
+    },
+    {
+      "type": "select",
+      "id": "transition_type",
+      "label": "过渡类型",
+      "options": [
+        {
+          "value": "fade",
+          "label": "淡入淡出"
+        },
+        {
+          "value": "fade_with_text",
+          "label": "淡入淡出并切换文字"
+        }
+      ],
+      "default": "fade_with_text"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "自动轮播幻灯片",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "cycle_speed",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "unit": "sec",
+      "label": "幻灯片切换间隔",
+      "info": "使用视频时，将改用视频时长。",
+      "default": 6,
+      "visible_if": "{{ section.settings.autoplay }}"
+    },
+    {
+      "type": "header",
+      "content": "背景",
+      "info": "启用“全宽”时，图片加载期间会显示背景。你可以为每张幻灯片覆盖背景。"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "背景",
+      "default": "#F2F2F2"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "背景渐变"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "图片",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "info": "建议使用 2800 x 1000px .jpg",
+          "label": "图片"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "移动端图片",
+          "info": "建议使用 1200 x 1600px .jpg"
+        },
+        {
+          "type": "header",
+          "content": "内容"
+        },
+        {
+          "type": "range",
+          "id": "content_max_width",
+          "label": "内容最大宽度",
+          "min": 400,
+          "max": 1200,
+          "step": 20,
+          "unit": "px",
+          "default": 780
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_position",
+          "label": "移动端内容位置",
+          "options": [
+            {
+              "value": "place-self-start text-start",
+              "label": "左上"
+            },
+            {
+              "value": "place-self-start-center text-center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "place-self-start-end text-end",
+              "label": "右上"
+            },
+            {
+              "value": "place-self-center-start text-start",
+              "label": "中部左侧"
+            },
+            {
+              "value": "place-self-center text-center",
+              "label": "中部居中"
+            },
+            {
+              "value": "place-self-center-end text-end",
+              "label": "中部右侧"
+            },
+            {
+              "value": "place-self-end-start text-start",
+              "label": "左下"
+            },
+            {
+              "value": "place-self-end-center text-center",
+              "label": "底部居中"
+            }
+          ],
+          "default": "place-self-center text-center"
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_position",
+          "label": "桌面端内容位置",
+          "options": [
+            {
+              "value": "sm:place-self-start sm:text-start",
+              "label": "左上"
+            },
+            {
+              "value": "sm:place-self-start-center sm:text-center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "sm:place-self-start-end sm:text-end",
+              "label": "右上"
+            },
+            {
+              "value": "sm:place-self-center-start sm:text-start",
+              "label": "中部左侧"
+            },
+            {
+              "value": "sm:place-self-center sm:text-center",
+              "label": "中部居中"
+            },
+            {
+              "value": "sm:place-self-center-end sm:text-end",
+              "label": "中部右侧"
+            },
+            {
+              "value": "sm:place-self-end-start sm:text-start",
+              "label": "左下"
+            },
+            {
+              "value": "sm:place-self-end-center sm:text-center",
+              "label": "底部居中"
+            }
+          ],
+          "default": "sm:place-self-center sm:text-center"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "副标题",
+          "default": "Tell your story"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Slide title"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "标题大小",
+          "options": [
+            {
+              "value": "h0",
+              "label": "超大"
+            },
+            {
+              "value": "h1",
+              "label": "特大"
+            },
+            {
+              "value": "h2",
+              "label": "大"
+            },
+            {
+              "value": "h3",
+              "label": "中"
+            },
+            {
+              "value": "h4",
+              "label": "小"
+            },
+            {
+              "value": "h5",
+              "label": "特小"
+            },
+            {
+              "value": "h6",
+              "label": "超小"
+            }
+          ],
+          "default": "h0"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "按钮文本"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "按钮链接",
+          "info": "留空按钮文本可让整张幻灯片可点击。"
+        },
+        {
+          "type": "header",
+          "content": "幻灯片颜色"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "button_background",
+          "label": "按钮背景",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "按钮文本",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "叠加层",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "叠加层不透明度",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 30
+        },
+        {
+          "type": "header",
+          "content": "背景",
+          "info": "关闭幻灯片层级的“全宽”设置以显示背景。"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "背景"
+        },
+        {
+          "type": "color_background",
+          "id": "background_gradient",
+          "label": "背景渐变"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "视频",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "视频会静音以允许自动播放。为获得最佳效果，启用自动播放时请不要在视频上方添加任何内容。"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "视频"
+        },
+        {
+          "type": "video",
+          "id": "mobile_video",
+          "label": "移动端视频",
+          "info": "如果未设置，默认使用主视频。"
+        },
+        {
+          "type": "header",
+          "content": "内容"
+        },
+        {
+          "type": "range",
+          "id": "content_max_width",
+          "label": "内容最大宽度",
+          "min": 400,
+          "max": 1200,
+          "step": 20,
+          "unit": "px",
+          "default": 780
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_position",
+          "label": "移动端内容位置",
+          "options": [
+            {
+              "value": "place-self-start text-start",
+              "label": "左上"
+            },
+            {
+              "value": "place-self-start-center text-center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "place-self-start-end text-end",
+              "label": "右上"
+            },
+            {
+              "value": "place-self-center-start text-start",
+              "label": "中部左侧"
+            },
+            {
+              "value": "place-self-center text-center",
+              "label": "中部居中"
+            },
+            {
+              "value": "place-self-center-end text-end",
+              "label": "中部右侧"
+            },
+            {
+              "value": "place-self-end-start text-start",
+              "label": "左下"
+            },
+            {
+              "value": "place-self-end-center text-center",
+              "label": "底部居中"
+            }
+          ],
+          "default": "place-self-center text-center"
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_position",
+          "label": "桌面端内容位置",
+          "options": [
+            {
+              "value": "sm:place-self-start sm:text-start",
+              "label": "左上"
+            },
+            {
+              "value": "sm:place-self-start-center sm:text-center",
+              "label": "顶部居中"
+            },
+            {
+              "value": "sm:place-self-start-end sm:text-end",
+              "label": "右上"
+            },
+            {
+              "value": "sm:place-self-center-start sm:text-start",
+              "label": "中部左侧"
+            },
+            {
+              "value": "sm:place-self-center sm:text-center",
+              "label": "中部居中"
+            },
+            {
+              "value": "sm:place-self-center-end sm:text-end",
+              "label": "中部右侧"
+            },
+            {
+              "value": "sm:place-self-end-start sm:text-start",
+              "label": "左下"
+            },
+            {
+              "value": "sm:place-self-end-center sm:text-center",
+              "label": "底部居中"
+            }
+          ],
+          "default": "sm:place-self-center sm:text-center"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "副标题",
+          "default": "Tell your story"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "标题",
+          "default": "Slide title"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "标题大小",
+          "options": [
+            {
+              "value": "h0",
+              "label": "超大"
+            },
+            {
+              "value": "h1",
+              "label": "特大"
+            },
+            {
+              "value": "h2",
+              "label": "大"
+            },
+            {
+              "value": "h3",
+              "label": "中"
+            },
+            {
+              "value": "h4",
+              "label": "小"
+            },
+            {
+              "value": "h5",
+              "label": "特小"
+            },
+            {
+              "value": "h6",
+              "label": "超小"
+            }
+          ],
+          "default": "h0"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "按钮文本"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "按钮链接",
+          "info": "留空按钮文本可让整张幻灯片可点击。"
+        },
+        {
+          "type": "header",
+          "content": "幻灯片颜色"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "文本",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "button_background",
+          "label": "按钮背景",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "按钮文本",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "叠加层",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "叠加层不透明度",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 30
+        },
+        {
+          "type": "header",
+          "content": "背景",
+          "info": "关闭幻灯片层级的“全宽”设置以显示背景。"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "背景"
+        },
+        {
+          "type": "color_background",
+          "id": "background_gradient",
+          "label": "背景渐变"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "幻灯片",
+      "category": "Banners",
+      "blocks": [
+        {
+          "type": "image",
+          "settings": {
+            "title": "Slide 1"
+          }
+        },
+        {
+          "type": "image",
+          "settings": {
+            "title": "Slide 2"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

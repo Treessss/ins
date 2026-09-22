@@ -1,0 +1,470 @@
+{%- liquid
+  assign exit_offer_enabled = section.settings.enable
+  assign exit_offer_code = section.settings.discount_code | strip
+  assign exit_offer_code_downcase = exit_offer_code | downcase
+  assign applied_discount_titles = cart.discount_applications | map: 'title' | join: ',' | downcase
+  assign exit_offer_already_applied = false
+
+  if exit_offer_code != blank and applied_discount_titles contains exit_offer_code_downcase
+    assign exit_offer_already_applied = true
+  endif
+-%}
+
+{%- if exit_offer_enabled and exit_offer_code != blank and exit_offer_already_applied == false -%}
+  {%- assign exit_offer_redirect_target = '/checkout' -%}
+  {%- if section.settings.redirect_target == 'cart' -%}
+    {%- assign exit_offer_redirect_target = routes.cart_url -%}
+  {%- endif -%}
+  {%- assign exit_offer_url = routes.root_url | append: 'discount/' | append: exit_offer_code | append: '?redirect=' | append: exit_offer_redirect_target -%}
+
+  <style>
+    #shopify-section-{{ section.id }} .cart-exit-offer {
+      position: fixed;
+      inset: 0;
+      z-index: 2147482500;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer.is-visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__overlay {
+      position: absolute;
+      inset: 0;
+      background: rgb(0 0 0 / .48);
+      backdrop-filter: blur(6px);
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__panel {
+      position: relative;
+      width: min(430px, calc(100vw - 32px));
+      overflow: hidden;
+      border-radius: 22px;
+      background: rgb(var(--dialog-background));
+      color: rgb(var(--text-color));
+      box-shadow: 0 24px 80px rgb(0 0 0 / .28);
+      transform: translateY(10px) scale(.98);
+      transition: transform .22s ease;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer.is-visible .cart-exit-offer__panel {
+      transform: translateY(0) scale(1);
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border-radius: 999px;
+      background: rgb(255 255 255 / .78);
+      color: #111;
+      box-shadow: 0 6px 18px rgb(0 0 0 / .12);
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__body {
+      display: grid;
+      gap: 18px;
+      padding: 34px 28px 28px;
+      text-align: center;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__badge {
+      justify-self: center;
+      display: inline-flex;
+      min-height: 34px;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__title {
+      margin: 0;
+      font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+      font-size: clamp(30px, 7.2vw, 44px);
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: .98;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__text {
+      margin: 0;
+      color: rgb(var(--text-color) / .72);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__code {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 16px;
+      border: 1px dashed rgb(var(--text-color) / .32);
+      border-radius: 12px;
+      background: rgb(var(--text-color) / .04);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      line-height: 1;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__primary {
+      display: inline-flex;
+      min-height: 52px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      font-family: "Gotham-Bold", var(--heading-font-family), sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1;
+      text-decoration: none;
+      transition: transform .14s ease, background-color .14s ease;
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__primary:active {
+      transform: translateY(1px) scale(.985);
+    }
+
+    #shopify-section-{{ section.id }} .cart-exit-offer__secondary {
+      min-height: 38px;
+      color: rgb(var(--text-color) / .64);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    body.cart-exit-offer-open {
+      overflow: hidden;
+    }
+
+    @media screen and (max-width: 699px) {
+      #shopify-section-{{ section.id }} .cart-exit-offer {
+        align-items: end;
+        padding: 12px;
+      }
+
+      #shopify-section-{{ section.id }} .cart-exit-offer__panel {
+        width: 100%;
+        border-radius: 20px;
+      }
+
+      #shopify-section-{{ section.id }} .cart-exit-offer__body {
+        padding: 32px 20px 22px;
+      }
+    }
+  </style>
+
+  <div
+    class="cart-exit-offer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cart-exit-offer-title-{{ section.id }}"
+    data-cart-exit-offer
+    data-initial-cart-count="{{ cart.item_count }}"
+    data-discount-code="{{ exit_offer_code | escape }}"
+    data-discount-url="{{ exit_offer_url | escape }}"
+    data-repeat-hours="{{ section.settings.repeat_hours }}"
+    data-mobile-delay="{{ section.settings.mobile_delay }}"
+  >
+    <button type="button" class="cart-exit-offer__overlay" data-cart-exit-offer-close aria-label="{{ section.settings.close_label | escape }}"></button>
+
+    <div class="cart-exit-offer__panel">
+      <button type="button" class="cart-exit-offer__close" data-cart-exit-offer-close aria-label="{{ section.settings.close_label | escape }}">
+        {%- render 'icon' with 'close', width: 16, height: 16 -%}
+      </button>
+
+      <div class="cart-exit-offer__body">
+        {%- if section.settings.badge != blank -%}
+          <span class="cart-exit-offer__badge">{{ section.settings.badge | escape }}</span>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="cart-exit-offer__title" id="cart-exit-offer-title-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <p class="cart-exit-offer__text">{{ section.settings.text | escape }}</p>
+        {%- endif -%}
+
+        <span class="cart-exit-offer__code">{{ exit_offer_code | escape }}</span>
+
+        <div class="cart-exit-offer__actions">
+          <a class="cart-exit-offer__primary" href="{{ exit_offer_url }}" data-cart-exit-offer-accept>
+            {{ section.settings.button_text | escape }}
+          </a>
+
+          <button type="button" class="cart-exit-offer__secondary" data-cart-exit-offer-close>
+            {{ section.settings.decline_text | escape }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const offer = document.querySelector('#shopify-section-{{ section.id }} [data-cart-exit-offer]');
+      if (!offer) return;
+
+      const discountCode = offer.dataset.discountCode || 'cart-exit-offer';
+      const repeatHours = Number(offer.dataset.repeatHours || 0);
+      const mobileDelay = Number(offer.dataset.mobileDelay || 0);
+      const initialCartCount = Number(offer.dataset.initialCartCount || 0);
+      const storageKey = `caseease:cart-exit-offer:${discountCode}`;
+      const sessionKey = `${storageKey}:session`;
+      const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      let cartHasItems = initialCartCount > 0;
+      let cartCheckPromise = null;
+      let hasShown = false;
+      let mobileTimer = null;
+      let previousFocus = null;
+
+      const safeStorage = {
+        get(storage, key) {
+          try {
+            return storage.getItem(key);
+          } catch (error) {
+            return null;
+          }
+        },
+        set(storage, key, value) {
+          try {
+            storage.setItem(key, value);
+          } catch (error) {
+            // Storage can be blocked in some privacy modes; the offer can still work without persistence.
+          }
+        }
+      };
+
+      const shouldSkip = () => {
+        if (safeStorage.get(window.sessionStorage, sessionKey) === '1') return true;
+        if (repeatHours <= 0) return false;
+
+        const lastShownAt = Number(safeStorage.get(window.localStorage, storageKey) || 0);
+        return lastShownAt > 0 && Date.now() - lastShownAt < repeatHours * 60 * 60 * 1000;
+      };
+
+      const markSeen = () => {
+        safeStorage.set(window.sessionStorage, sessionKey, '1');
+        if (repeatHours > 0) {
+          safeStorage.set(window.localStorage, storageKey, String(Date.now()));
+        }
+      };
+
+      const cartJsonUrl = () => `${window.Shopify?.routes?.root || '/'}cart.js`;
+
+      const setCartState = (cart) => {
+        cartHasItems = Number(cart?.item_count || 0) > 0;
+        return cartHasItems;
+      };
+
+      const refreshCartState = async (force = false) => {
+        if (cartHasItems && !force) return true;
+        if (cartCheckPromise) return cartCheckPromise;
+
+        cartCheckPromise = fetch(cartJsonUrl(), { credentials: 'same-origin' })
+          .then((response) => response.ok ? response.json() : null)
+          .then(setCartState)
+          .catch(() => false)
+          .finally(() => {
+            cartCheckPromise = null;
+          });
+
+        return cartCheckPromise;
+      };
+
+      const closeOffer = () => {
+        offer.classList.remove('is-visible');
+        document.body.classList.remove('cart-exit-offer-open');
+        markSeen();
+        previousFocus?.focus?.();
+      };
+
+      const showOffer = async () => {
+        if (hasShown || shouldSkip()) return;
+        if (!await refreshCartState(true)) return;
+
+        hasShown = true;
+        previousFocus = document.activeElement;
+        offer.classList.add('is-visible');
+        document.body.classList.add('cart-exit-offer-open');
+        offer.querySelector('[data-cart-exit-offer-accept]')?.focus({ preventScroll: true });
+      };
+
+      const scheduleMobileOffer = () => {
+        if (canHover || mobileDelay <= 0 || mobileTimer || hasShown || shouldSkip()) return;
+
+        mobileTimer = window.setTimeout(() => {
+          if (document.visibilityState === 'visible') {
+            void showOffer();
+          }
+        }, mobileDelay * 1000);
+      };
+
+      const onCartMaybeChanged = (event) => {
+        if (event.detail?.cart) {
+          setCartState(event.detail.cart);
+          if (cartHasItems) scheduleMobileOffer();
+          return;
+        }
+
+        void refreshCartState(true).then((hasItems) => {
+          if (hasItems) scheduleMobileOffer();
+        });
+      };
+
+      offer.querySelectorAll('[data-cart-exit-offer-close]').forEach((button) => {
+        button.addEventListener('click', closeOffer);
+      });
+
+      offer.querySelector('[data-cart-exit-offer-accept]')?.addEventListener('click', markSeen);
+
+      document.addEventListener('keydown', (event) => {
+        if (!offer.classList.contains('is-visible')) return;
+        if (event.key === 'Escape') closeOffer();
+      });
+
+      document.addEventListener('cart:change', onCartMaybeChanged);
+      document.addEventListener('cart:refresh', onCartMaybeChanged);
+      document.addEventListener('variant:add', onCartMaybeChanged);
+
+      if (canHover) {
+        document.addEventListener('mouseout', (event) => {
+          if (event.relatedTarget || event.clientY > 8) return;
+          void showOffer();
+        });
+      } else if (cartHasItems) {
+        scheduleMobileOffer();
+      } else {
+        void refreshCartState().then((hasItems) => {
+          if (hasItems) scheduleMobileOffer();
+        });
+      }
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "全站离开优惠弹窗",
+  "class": "shopify-section--cart-exit-offer",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable",
+      "label": "启用全站离开优惠弹窗",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "折扣码",
+      "info": "请先在 Shopify 后台创建同名折扣码。按钮会通过 /discount/折扣码 自动带入 checkout。",
+      "default": "SAVE5"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "顶部标签",
+      "default": "Wait! Before you go"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "标题",
+      "default": "Take 5% off your order"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "文案",
+      "default": "Your cart is saved. Apply this limited offer and finish checkout now."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "按钮文字",
+      "default": "Apply 5% off"
+    },
+    {
+      "type": "text",
+      "id": "decline_text",
+      "label": "关闭文字",
+      "default": "No thanks"
+    },
+    {
+      "type": "text",
+      "id": "close_label",
+      "label": "关闭按钮辅助文字",
+      "default": "Close offer"
+    },
+    {
+      "type": "select",
+      "id": "redirect_target",
+      "label": "应用折扣后跳转",
+      "options": [
+        {
+          "value": "checkout",
+          "label": "结账页"
+        },
+        {
+          "value": "cart",
+          "label": "购物车页"
+        }
+      ],
+      "default": "checkout"
+    },
+    {
+      "type": "range",
+      "id": "mobile_delay",
+      "label": "移动端延迟显示",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "秒",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "repeat_hours",
+      "label": "关闭后多久再次显示",
+      "min": 0,
+      "max": 72,
+      "step": 1,
+      "unit": "小时",
+      "default": 24
+    }
+  ]
+}
+{% endschema %}
