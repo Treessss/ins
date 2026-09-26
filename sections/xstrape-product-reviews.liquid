@@ -21,8 +21,30 @@
     assign fallback_review_media_offset = product.id | modulo: fallback_review_media_count
   endif
   assign review_text_pool = section.settings.review_text_pool | strip
+  assign review_text_lines = blank
   assign review_text_count = 0
-  if review_text_pool != blank
+  if product != blank
+    assign product_reviews_metafield = product.metafields.custom.reviews
+    if product_reviews_metafield != blank and product_reviews_metafield.value != blank
+      if product_reviews_metafield.type contains 'list.'
+        assign review_text_lines = product_reviews_metafield.value
+      else
+        assign product_reviews_text = product_reviews_metafield.value | strip
+        if product_reviews_text != blank
+          assign review_text_lines = product_reviews_text | newline_to_br | split: '<br />'
+        endif
+      endif
+    endif
+  endif
+  if review_text_lines != blank
+    for review_text_line in review_text_lines
+      assign review_text_line_content = review_text_line | strip
+      if review_text_line_content != blank
+        assign review_text_count = review_text_count | plus: 1
+      endif
+    endfor
+  endif
+  if review_text_count == 0 and review_text_pool != blank
     assign review_text_lines = review_text_pool | newline_to_br | split: '<br />'
     for review_text_line in review_text_lines
       assign review_text_line_content = review_text_line | strip
@@ -1824,13 +1846,13 @@
     },
     {
       "type": "paragraph",
-      "content": "批量评论优先级高于下方「评论（文字 + 图片）」区块。评论文案每行一条；评论时间和星级可用范围自动随机生成。前台会按产品稳定随机展示，空行会自动跳过。"
+      "content": "优先读取产品元字段 custom.reviews；为空时使用下方批量评论文案，再为空时使用「评论（文字 + 图片）」区块。评论文案每行一条；评论时间和星级可用范围自动随机生成。前台会按产品稳定随机展示，空行会自动跳过。"
     },
     {
       "type": "textarea",
       "id": "review_text_pool",
       "label": "批量评论文案（一行一条）",
-      "info": "填写后会优先使用这里的文案；每个产品会按稳定随机顺序展示，不重复。"
+      "info": "产品元字段 custom.reviews 为空时使用这里的文案；每个产品会按稳定随机顺序展示，不重复。"
     },
     {
       "type": "checkbox",
@@ -2057,7 +2079,7 @@
       "settings": [
         {
           "type": "paragraph",
-          "content": "当产品系列元字段没有评论图片时，会使用这里添加的图片。可以重复添加很多个这个区块。"
+          "content": "当产品和产品系列元字段都没有评论图片时，会使用这里添加的图片。可以重复添加很多个这个区块。"
         },
         {
           "type": "image_picker",
