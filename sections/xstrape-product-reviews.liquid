@@ -107,7 +107,17 @@
   assign review_source_collection_namespace = section.settings.review_source_collection_namespace | default: 'custom' | strip
   assign review_source_collection_key = section.settings.review_source_collection_key | default: 'review_source_collection' | strip
 
-  if enable_series_review_photos and product != blank and series_review_photo_namespace != blank and series_review_photo_key != blank
+  if product != blank
+    assign product_review_media_metafield = product.metafields.custom.reviews_photo
+    if product_review_media_metafield != blank and product_review_media_metafield.value != blank
+      assign series_review_media_source = product_review_media_metafield.value
+      if product_review_media_metafield.type contains 'list.'
+        assign series_review_media_is_list = true
+      endif
+    endif
+  endif
+
+  if series_review_media_source == blank and enable_series_review_photos and product != blank and series_review_photo_namespace != blank and series_review_photo_key != blank
     assign preferred_review_collection = product.metafields[review_source_collection_namespace][review_source_collection_key].value
 
     if preferred_review_collection != blank
@@ -1749,12 +1759,12 @@
     {
       "type": "checkbox",
       "id": "enable_series_review_photos",
-      "label": "优先读取产品系列元字段图片",
+      "label": "读取产品系列元字段图片",
       "default": true
     },
     {
       "type": "paragraph",
-      "content": "默认读取产品系列元字段 custom.series_reviews_photo。若产品属于多个产品系列，可在产品元字段 custom.review_source_collection 指定优先读取哪个产品系列；没有指定时，会自动从产品所属产品系列中寻找第一个有图片的系列。没有找到图片时，会回到本模块编辑器里的图片。"
+      "content": "优先读取产品元字段 custom.reviews_photo；为空且开启上方选项时，读取产品系列元字段 custom.series_reviews_photo。若产品属于多个产品系列，可在产品元字段 custom.review_source_collection 指定优先读取哪个产品系列；没有指定时，会自动从产品所属产品系列中寻找第一个有图片的系列。没有找到图片时，会回到本模块编辑器里的图片。"
     },
     {
       "type": "text",
