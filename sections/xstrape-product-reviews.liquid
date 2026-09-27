@@ -872,6 +872,7 @@
   }
 </style>
 
+{%- if review_count > 0 -%}
 <div
   id="xstrape-product-reviews-{{ section.id }}"
   {% render 'section-properties', class: 'xstrape-product-reviews' %}
@@ -1680,6 +1681,7 @@
 	    });
 	  })();
 	</script>
+{%- endif -%}
 
 {% schema %}
 {
@@ -2016,20 +2018,17 @@
         {
           "type": "text",
           "id": "title",
-          "label": "评论标题",
-          "default": "Secure and comfortable"
+          "label": "评论标题"
         },
         {
           "type": "richtext",
           "id": "body",
-          "label": "评论内容",
-          "default": "<p>The band feels solid without being stiff, and it stays comfortable through a full day of wear.</p>"
+          "label": "评论内容"
         },
         {
           "type": "text",
           "id": "tag",
-          "label": "标签",
-          "default": "Daily wear"
+          "label": "标签"
         },
         {
           "type": "text",
@@ -2112,39 +2111,7 @@
   ],
   "presets": [
     {
-      "name": "产品评论",
-      "blocks": [
-        {
-          "type": "review",
-          "settings": {
-            "author": "Alex M.",
-            "title": "Secure and comfortable",
-            "body": "<p>The band feels solid without being stiff, and it stays comfortable through a full day of wear.</p>",
-            "tag": "Daily wear",
-            "date": "Jun 2026"
-          }
-        },
-        {
-          "type": "review",
-          "settings": {
-            "author": "Jordan K.",
-            "title": "Great for workouts",
-            "body": "<p>Lightweight, easy to clean, and the fit feels stable even when moving quickly.</p>",
-            "tag": "Exercise",
-            "date": "May 2026"
-          }
-        },
-        {
-          "type": "review",
-          "settings": {
-            "author": "Taylor S.",
-            "title": "Looks sharp",
-            "body": "<p>It has a clean look that works with casual clothes and office days. The material feels premium.</p>",
-            "tag": "Everyday",
-            "date": "May 2026"
-          }
-        }
-      ]
+      "name": "产品评论"
     }
   ]
 }

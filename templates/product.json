@@ -97,11 +97,11 @@
         "description_detail_item_hkaGHQ": {
           "type": "description_detail_item",
           "settings": {
-            "title": "Important Note Before Buying a Watch Band",
-            "content": "<p><strong>Thank you</strong> for choosing our products! Please read the notes below carefully before purchasing:</p><p><strong>1. Compatibility & Size</strong><br/>All watch bands are designed for Apple Watch. Please double-check your watch model and case size before checkout. Wrong size due to personal negligence is not eligible for free return.</p><p><strong>2. Color & Craft</strong><br/>All products are photographed in kind. Slight color difference is inevitable because of lighting and device display, which is not a quality problem.</p><p><strong>3. Daily Use Tips</strong></p><ul><li>Keep metal bands away from corrosive liquid to prevent oxidation.</li><li>Do not pull the braided and silicone straps with excessive force.</li><li>Magnetic bands should stay away from strong magnetic objects.</li></ul><p><strong>4. After-sales Service</strong><br/>If the item arrives broken, defective or incorrect, please provide clear pictures/videos to our customer service within 48 hours. We will arrange solutions for you as soon as possible.</p><p><strong>5. Shipping Policy</strong><br/>Free worldwide shipping is available for all orders. Tracking number will be provided once your parcel is dispatched.</p>",
-            "product_metafield_key": "detail_watch_note",
+            "title": "Product Care & Safety",
+            "content": "<p>Choose products that suit your pet’s size and play style. Supervise play, inspect items regularly, and remove anything damaged or worn. Follow the care instructions supplied with each product.</p>",
+            "product_metafield_key": "detail_care_note",
             "open_by_default": false,
-            "icon": "picto-smart-watch"
+            "icon": "picto-shield"
           }
         },
         "description_detail_item_c4QfUm": {
@@ -118,7 +118,7 @@
           "type": "description_detail_item",
           "settings": {
             "title": "Return Policy",
-            "content": "<h5><strong>Return Policy</strong></h5><ul><li>Returns are accepted <strong>only if you received the wrong model or design</strong>.</li><li>Items must be unused, unworn, with tags, and in original packaging.</li><li>Proof of purchase is required.</li><li>Returns for other reasons (e.g., change of mind) are not accepted.</li></ul><h5>How to Return</h5><ul><li>Contact us at <a href=\"mailto:support_agent@caseease.com\">support_agent@xstrapetm.com</a> with your order details and reason.</li><li>Once approved, we will send you a return label and instructions.</li><li>Please return the item within <strong>7 days</strong> of approval.</li><li>Unauthorized returns will not be accepted.</li></ul><h5>Refunds</h5><ul><li>Refunds are processed after we receive and inspect the returned item.</li><li>Approved refunds will be issued within <strong>10 business days</strong> to your original payment method.</li><li>If you haven’t received your refund within <strong>15 business days</strong>, please contact us.</li></ul><h5>Return Shipping Costs</h5><ul><li>We cover return shipping for wrong or defective items.</li><li>For other returns, customers pay the return shipping cost.</li></ul><h5>Refund Processing Fees</h5><ul><li>Refunds are subject to a non-refundable processing fee based on order status:</li><li>Within 2 hours of order: <strong>Free</strong></li><li>Order not yet in production: <strong>$2</strong></li><li>Order in production but not shipped: <strong>$3</strong></li></ul><h5>Note</h5><ul><li>Orders cannot be cancelled or refunded after shipping, except for defective or incorrect items.</li></ul><p>For full details, please refer to our complete <a href=\"https://www.caseease.com/policies/refund-policy\" target=\"_blank\" title=\"Refund Policy\">Return & Refund Policy</a> page.</p>",
+            "content": "<h5><strong>Return Policy</strong></h5><ul><li>Returns are accepted <strong>only if you received the wrong model or design</strong>.</li><li>Items must be unused, unworn, with tags, and in original packaging.</li><li>Proof of purchase is required.</li><li>Returns for other reasons (e.g., change of mind) are not accepted.</li></ul><h5>How to Return</h5><ul><li>Contact us at <a href=\"mailto:support_agent@xstrapetm.com\">support_agent@xstrapetm.com</a> with your order details and reason.</li><li>Once approved, we will send you a return label and instructions.</li><li>Please return the item within <strong>7 days</strong> of approval.</li><li>Unauthorized returns will not be accepted.</li></ul><h5>Refunds</h5><ul><li>Refunds are processed after we receive and inspect the returned item.</li><li>Approved refunds will be issued within <strong>10 business days</strong> to your original payment method.</li><li>If you haven’t received your refund within <strong>15 business days</strong>, please contact us.</li></ul><h5>Return Shipping Costs</h5><ul><li>We cover return shipping for wrong or defective items.</li><li>For other returns, customers pay the return shipping cost.</li></ul><h5>Refund Processing Fees</h5><ul><li>Refunds are subject to a non-refundable processing fee based on order status:</li><li>Within 2 hours of order: <strong>Free</strong></li><li>Order not yet in production: <strong>$2</strong></li><li>Order in production but not shipped: <strong>$3</strong></li></ul><h5>Note</h5><ul><li>Orders cannot be cancelled or refunded after shipping, except for defective or incorrect items.</li></ul><p>For full details, please refer to our complete <a href=\"/policies/refund-policy\" target=\"_blank\" title=\"Refund Policy\">Return & Refund Policy</a> page.</p>",
             "product_metafield_key": "detail_returns",
             "open_by_default": false,
             "icon": "picto-return"
@@ -200,7 +200,7 @@
         "card_kdPKE9": {
           "type": "card",
           "settings": {
-            "card_type": "video",
+            "card_type": "image_only",
             "heading": "",
             "body": "",
             "direct_image_url": "",
@@ -208,9 +208,9 @@
             "default_asset": "banner_1",
             "mobile_default_asset": "banner_1_mobile",
             "image_alt": "",
-            "video": "shopify://files/videos/d535c22b93154acfaadd6d814760e3a1.HD-720p-3.0Mbps-15819114.mp4",
-            "mobile_video": "shopify://files/videos/d535c22b93154acfaadd6d814760e3a1.HD-720p-3.0Mbps-15819114.mp4",
-            "direct_video_url": "https://checkout.nomadgoods.com/cdn/shop/videos/c/vp/d535c22b93154acfaadd6d814760e3a1/d535c22b93154acfaadd6d814760e3a1.HD-720p-3.0Mbps-15819114.mp4",
+            "video": "",
+            "mobile_video": "",
+            "direct_video_url": "",
             "external_video_url": "",
             "autoplay": true,
             "loop_video": true,
@@ -227,25 +227,27 @@
             "meta_body_key": "",
             "meta_image_key": "",
             "meta_mobile_image_key": "",
-            "meta_video_key": "pm_desc_video_overview",
+            "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": "pm_desc_video_overview"
+            "meta_video_url_key": "",
+            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
+            "mobile_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png"
           }
         },
         "card_mJUjmi": {
           "type": "card",
           "settings": {
             "card_type": "image_text",
-            "heading": "Wear the Glow",
-            "body": "<p>Elegant metal links bring a polished, jewelry-inspired finish to your Apple Watch.</p><p>Designed with a sleek gold-tone finish and refined details, this band effortlessly elevates your everyday look — from casual days to nights out.</p>",
-            "image": "shopify://shop_images/product_main_01_1729649001776517237_242de3c4-21f2-4cb1-b42c-0cc96208f111.webp",
-            "mobile_image": "shopify://shop_images/product_main_01_1729649001776517237_242de3c4-21f2-4cb1-b42c-0cc96208f111.webp",
+            "heading": "Made for curious pets",
+            "body": "<p>Thoughtful textures and shapes invite pets to explore, play, and engage with their surroundings.</p>",
+            "image": "shopify://shop_images/xstrapetm-cotton-cat-rope-01-main.png",
+            "mobile_image": "shopify://shop_images/xstrapetm-cotton-cat-rope-01-main.png",
             "direct_image_url": "",
             "direct_mobile_image_url": "",
             "default_asset": "feature_1",
             "mobile_default_asset": "feature_1",
             "image_alt": "",
-            "direct_video_url": "https://checkout.nomadgoods.com/cdn/shop/videos/c/vp/d535c22b93154acfaadd6d814760e3a1/d535c22b93154acfaadd6d814760e3a1.HD-720p-3.0Mbps-15819114.mp4",
+            "direct_video_url": "",
             "external_video_url": "",
             "autoplay": true,
             "loop_video": true,
@@ -264,7 +266,9 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": ""
+            "meta_video_url_key": "",
+            "video": "",
+            "mobile_video": ""
           }
         },
         "card_8EBY7V": {
@@ -273,14 +277,14 @@
             "card_type": "image_only",
             "heading": "",
             "body": "",
-            "image": "shopify://shop_images/exec-3d203502-f2c7-4824-943e-ce2200d6b1d5.png",
-            "mobile_image": "shopify://shop_images/exec-8bc0a231-ec97-48ae-9c48-acf810ba0daf.png",
+            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-04-lifestyle.png",
+            "mobile_image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-04-lifestyle.png",
             "direct_image_url": "",
             "direct_mobile_image_url": "",
             "default_asset": "banner_1",
             "mobile_default_asset": "banner_1_mobile",
             "image_alt": "",
-            "direct_video_url": "https://checkout.nomadgoods.com/cdn/shop/videos/c/vp/d535c22b93154acfaadd6d814760e3a1/d535c22b93154acfaadd6d814760e3a1.HD-720p-3.0Mbps-15819114.mp4",
+            "direct_video_url": "",
             "external_video_url": "",
             "autoplay": true,
             "loop_video": true,
@@ -299,22 +303,24 @@
             "meta_mobile_image_key": "pm_mobile_desc_banner",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": ""
+            "meta_video_url_key": "",
+            "video": "",
+            "mobile_video": ""
           }
         },
         "card_FTbgPb": {
           "type": "card",
           "settings": {
             "card_type": "image_text",
-            "heading": "Shine your way",
-            "body": "<p>A scrunchie and Apple Watch band in one—cute, comfortable, and effortlessly stylish! ✨</p>",
-            "image": "shopify://shop_images/sku_P10500535_LOVE_LUCK_Slim_-_Gold_38_40_41_42mm.webp",
+            "heading": "Play, rest, repeat",
+            "body": "<p>Everyday essentials create more opportunities for active moments and comfortable downtime.</p>",
+            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
             "direct_image_url": "",
             "direct_mobile_image_url": "",
             "default_asset": "feature_2",
             "mobile_default_asset": "feature_2",
             "image_alt": "",
-            "direct_video_url": "https://checkout.nomadgoods.com/cdn/shop/videos/c/vp/d535c22b93154acfaadd6d814760e3a1/d535c22b93154acfaadd6d814760e3a1.HD-720p-3.0Mbps-15819114.mp4",
+            "direct_video_url": "",
             "external_video_url": "",
             "autoplay": true,
             "loop_video": true,
@@ -333,7 +339,10 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": ""
+            "meta_video_url_key": "",
+            "mobile_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
+            "video": "",
+            "mobile_video": ""
           }
         },
         "card_nKAUf8": {
@@ -342,14 +351,14 @@
             "card_type": "image_only",
             "heading": "",
             "body": "",
-            "image": "shopify://shop_images/exec-1e4a7222-278a-4c5b-99a0-aa04eeb8d784.png",
-            "mobile_image": "shopify://shop_images/exec-247f213b-4477-464a-b3d5-939d6282d513.png",
+            "image": "shopify://shop_images/xstrapetm-cotton-cat-rope-03-materials.png",
+            "mobile_image": "shopify://shop_images/xstrapetm-cotton-cat-rope-03-materials.png",
             "direct_image_url": "",
             "direct_mobile_image_url": "",
             "default_asset": "banner_2",
             "mobile_default_asset": "banner_2_mobile",
             "image_alt": "",
-            "direct_video_url": "https://checkout.nomadgoods.com/cdn/shop/videos/c/vp/d535c22b93154acfaadd6d814760e3a1/d535c22b93154acfaadd6d814760e3a1.HD-720p-3.0Mbps-15819114.mp4",
+            "direct_video_url": "",
             "external_video_url": "",
             "autoplay": true,
             "loop_video": true,
@@ -368,7 +377,9 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": ""
+            "meta_video_url_key": "",
+            "video": "",
+            "mobile_video": ""
           }
         },
         "card_jCM6dJ": {
@@ -377,14 +388,14 @@
             "card_type": "image_only",
             "heading": "",
             "body": "",
-            "image": "shopify://shop_images/exec-3b38424f-b2f4-4d18-8dfd-28579a0ced5d.png",
-            "mobile_image": "shopify://shop_images/exec-d5bf8f63-221d-4493-8cd8-a699acf06bf1.png",
+            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-01-main.png",
+            "mobile_image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-01-main.png",
             "direct_image_url": "",
             "direct_mobile_image_url": "",
             "default_asset": "banner_3",
             "mobile_default_asset": "banner_3_mobile",
             "image_alt": "",
-            "direct_video_url": "https://checkout.nomadgoods.com/cdn/shop/videos/c/vp/d535c22b93154acfaadd6d814760e3a1/d535c22b93154acfaadd6d814760e3a1.HD-720p-3.0Mbps-15819114.mp4",
+            "direct_video_url": "",
             "external_video_url": "",
             "autoplay": true,
             "loop_video": true,
@@ -403,7 +414,9 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": ""
+            "meta_video_url_key": "",
+            "video": "",
+            "mobile_video": ""
           }
         }
       },
@@ -429,100 +442,8 @@
     },
     "xstrape_product_reviews_tXn44W": {
       "type": "xstrape-product-reviews",
-      "blocks": {
-        "review_Kq4K3U": {
-          "type": "review",
-          "settings": {
-            "author": "Alex M.",
-            "verified": true,
-            "rating": 5,
-            "title": "Secure and comfortable",
-            "body": "<p>The band feels solid without being stiff, and it stays comfortable through a full day of wear.</p>",
-            "tag": "Daily wear",
-            "date": "Jun 2026",
-            "image_1": "shopify://shop_images/8db103e00b3545ab925ed10fc0b9bd49_tplv-fhlh96nyum-crop-webp_300_300.webp",
-            "video_url": ""
-          }
-        },
-        "review_xEBVjf": {
-          "type": "review",
-          "settings": {
-            "author": "Jordan K.",
-            "verified": true,
-            "rating": 5,
-            "title": "Great for workouts",
-            "body": "<p>Lightweight, easy to clean, and the fit feels stable even when moving quickly.</p>",
-            "tag": "Exercise",
-            "date": "May 2026",
-            "image_1": "shopify://shop_images/152a7c228e3647c5bac12829d1a88ca7_tplv-fhlh96nyum-crop-webp_300_300.webp",
-            "video_url": ""
-          }
-        },
-        "review_jUkdfh": {
-          "type": "review",
-          "settings": {
-            "author": "Taylor S.",
-            "verified": true,
-            "rating": 5,
-            "title": "Looks sharp",
-            "body": "<p>It has a clean look that works with casual clothes and office days. The material feels premium.</p>",
-            "tag": "Everyday",
-            "date": "May 2026",
-            "image_1": "shopify://shop_images/578f1e023a2042c58890775e264ca8b1_tplv-fhlh96nyum-crop-webp_300_300.webp",
-            "video_url": ""
-          }
-        },
-        "review_WxG8N3": {
-          "type": "review",
-          "settings": {
-            "author": "Morgan R.",
-            "verified": true,
-            "rating": 5,
-            "title": "Easy to clean",
-            "body": "<p>A quick rinse brings it back to looking new. The clasp feels secure and the texture is smooth.</p>",
-            "tag": "Outdoor",
-            "date": "Apr 2026",
-            "image_1": "shopify://shop_images/233cec2b4501431ebf86936ae3c5588d_tplv-fhlh96nyum-crop-webp_300_300.webp",
-            "video_url": ""
-          }
-        },
-        "review_UbdeJC": {
-          "type": "review",
-          "settings": {
-            "author": "Chris L.",
-            "verified": true,
-            "rating": 4,
-            "title": "Reliable fit",
-            "body": "<p>The fit is snug in a good way. It does not shift around, even during longer walks.</p>",
-            "tag": "Travel",
-            "date": "Apr 2026",
-            "image_1": "shopify://shop_images/c570c740486948b28313187c7486367e_tplv-fhlh96nyum-crop-webp_300_300.webp",
-            "video_url": ""
-          }
-        },
-        "review_z33xyx": {
-          "type": "review",
-          "settings": {
-            "author": "Sam P.",
-            "verified": true,
-            "rating": 5,
-            "title": "Exactly what I wanted",
-            "body": "<p>Simple, durable, and low profile. It feels like the kind of accessory you forget about because it just works.</p>",
-            "tag": "Verified",
-            "date": "Mar 2026",
-            "image_1": "shopify://shop_images/31bcdf715ab542ff9a4ec1b8d376fe90_tplv-fhlh96nyum-crop-webp_300_300.webp",
-            "video_url": ""
-          }
-        }
-      },
-      "block_order": [
-        "review_Kq4K3U",
-        "review_xEBVjf",
-        "review_jUkdfh",
-        "review_WxG8N3",
-        "review_UbdeJC",
-        "review_z33xyx"
-      ],
+      "blocks": {},
+      "block_order": [],
       "settings": {
         "full_width": true,
         "heading": "Reviews",
