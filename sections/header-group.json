@@ -363,7 +363,7 @@
         "nav_gap": 34,
         "nav_font_size": 16,
         "show_announcement": true,
-        "announcement_text": "Play more. Bond more. Free shipping on every order.",
+        "announcement_text": "Play more. Bond more. Free shipping on orders over $50.",
         "announcement_link_text": "Shop pet favorites",
         "announcement_link": "/collections/all",
         "show_announcement_info_icon": true,
