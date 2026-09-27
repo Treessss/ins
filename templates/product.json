@@ -50,7 +50,7 @@
             "stack_blocks": true,
             "selector_style": "block",
             "swatch_selector_style": "swatch",
-            "variant_image_options": "",
+            "variant_image_options": "Pack Size,Style",
             "size_chart_page": ""
           }
         },
@@ -61,8 +61,8 @@
             "show_payment_icons": true,
             "show_gift_card_recipient": true,
             "trust_text": "10% Off 2 Items, 20% Off 3+ Items！",
-            "atc_button_background": "#DFFF32",
-            "atc_button_text_color": "#17132F",
+            "atc_button_background": "#dfff32",
+            "atc_button_text_color": "#17132f",
             "payment_button_background": "rgba(0,0,0,0)",
             "payment_button_text_color": ""
           }
@@ -156,10 +156,7 @@
       "settings": {
         "full_width": true,
         "show_fixed_add_to_cart": true,
-        "also_bought_fallback_products": [
-          "braided-solo-loop-apple-watch-band-black-gray-white",
-          "gold-chain-black-leather-apple-watch-band-charms"
-        ],
+        "also_bought_fallback_products": [],
         "desktop_media_width": 55,
         "desktop_media_layout": "carousel_thumbnails_left",
         "mobile_media_size": "contained",
@@ -421,9 +418,9 @@
       "settings": {
         "enable_metafields": true,
         "metafield_namespace": "custom",
-        "background": "#F2F9ED",
+        "background": "#f2f9ed",
         "card_background": "#ffffff",
-        "text_color": "#17132F",
+        "text_color": "#17132f",
         "card_radius": 25,
         "desktop_card_height": 700,
         "mobile_card_height": 500,
@@ -562,11 +559,11 @@
         "load_more_text": "Show More",
         "verified_label": "Verified buyer",
         "empty_text": "No Reviews Yet",
-        "background": "#F2F9ED",
+        "background": "#f2f9ed",
         "card_background": "#ffffff",
-        "text_color": "#17132F",
-        "muted_text_color": "#17132F",
-        "star_color": "#17132F"
+        "text_color": "#17132f",
+        "muted_text_color": "#17132f",
+        "star_color": "#17132f"
       }
     }
   },
