@@ -37,7 +37,7 @@
     "heading_letter_spacing": -2,
     "text_font": "barlow_n4",
     "show_page_transition": true,
-    "page_transition_logo": "shopify://shop_images/Codex_2026_9_28_16_16_11.png",
+    "page_transition_logo": "",
     "heading_apparition": "split_fade",
     "show_quick_buy": true,
     "show_product_rating": false,
