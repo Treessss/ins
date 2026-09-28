@@ -12522,6 +12522,11 @@ iframe {
   object-fit: contain;
 }
 
+.page-transition__logo--icon {
+  max-width: min(120px, 40vw);
+  max-height: 120px;
+}
+
 .page-transition__logo-text {
   color: currentColor;
   font-family: var(--heading-font-family);

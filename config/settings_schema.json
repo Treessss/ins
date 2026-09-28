@@ -523,7 +523,7 @@
         "type": "image_picker",
         "id": "page_transition_logo",
         "label": "页面过渡标志图片",
-        "info": "仅用于页面切换画面。留空时使用顶部导航的标志图片。",
+        "info": "仅用于页面切换画面。留空时使用主题自带的荧光描边标志。",
         "visible_if": "{{ settings.show_page_transition }}"
       },
       {
