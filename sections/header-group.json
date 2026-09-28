@@ -184,11 +184,11 @@
         "mobile_card_VFL6Ye": {
           "type": "mobile_card",
           "settings": {
-            "title": "Cat Favorites",
-            "subtitle": "Kick, scratch, hide and explore",
-            "link": "/collections/all",
+            "title": "Cat Toys & Enrichment",
+            "subtitle": "Kick, scratch, hide, and explore—small adventures for curious cats.",
+            "link": "shopify://collections/cat-toys-enrichment",
             "auto_submenu_menu": "",
-            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-01-main.png",
+            "image": "shopify://shop_images/xstrapetm-collection-cat-toys-enrichment.webp",
             "image_asset": "",
             "badge": "",
             "badge_style": "new"
