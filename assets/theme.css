@@ -6511,6 +6511,14 @@ product-rerender {
   display: grid;
 }
 
+.cart-drawer .free-shipping-bar .text-accent {
+  color: rgb(var(--text-color));
+}
+
+.cart-drawer .free-shipping-bar .progress-bar:before {
+  background: rgb(var(--text-color));
+}
+
 @media screen and (min-width: 700px) {
   .free-shipping-bar {
     gap: var(--spacing-4);
