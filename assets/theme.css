@@ -6635,7 +6635,19 @@ product-rerender {
 }
 
 .cart-drawer__recommendations {
-  --horizontal-product-width: 390px;
+  --horizontal-product-width: 100%;
+  border-block-start: 1px solid rgb(var(--text-color) / .12);
+  padding-block-start: var(--spacing-4);
+}
+
+.cart-drawer__recommendations .horizontal-product-list-carousel > .horizontal-product-list {
+  grid: auto / auto-flow 100%;
+  border: 0;
+}
+
+.cart-drawer__recommendations .horizontal-product {
+  padding: 0;
+  background: transparent;
 }
 
 @media screen and (min-width: 700px) {
