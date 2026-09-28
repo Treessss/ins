@@ -46,6 +46,8 @@
     "product_image_aspect_ratio": "natural",
     "product_info_alignment": "start",
     "cart_icon": "shopping_basket",
+    "cart_show_free_shipping_threshold": true,
+    "cart_free_shipping_threshold": "50",
     "social_facebook": "",
     "social_twitter": "",
     "social_youtube": "",
