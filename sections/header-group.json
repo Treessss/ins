@@ -92,9 +92,9 @@
           "settings": {
             "parent_title": "Shop",
             "title": "Dog Toys & Enrichment",
-            "text": "Chase, chew, cuddle, repeat—make every day a little more tail-wagging.",
+            "text": "Make every day a little more tail-wagging.",
             "link": "shopify://collections/dog-toys-enrichment",
-            "image": "shopify://shop_images/xstrapetm-cotton-cat-rope-01-main.png",
+            "image": "shopify://shop_images/xstrapetm-collection-dog-toys-enrichment.webp",
             "image_asset": "",
             "badge": ""
           }
@@ -104,9 +104,9 @@
           "settings": {
             "parent_title": "Shop",
             "title": "Cat Toys & Enrichment",
-            "text": "Kick, scratch, hide, and explore—small adventures for curious cats.",
+            "text": "Small adventures for curious cats.",
             "link": "shopify://collections/cat-toys-enrichment",
-            "image": "shopify://shop_images/xstrapetm-sisal-cat-kicker-01-main.png",
+            "image": "shopify://shop_images/xstrapetm-collection-cat-toys-enrichment.webp",
             "image_asset": "",
             "badge": "HOT"
           }
