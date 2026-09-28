@@ -111,18 +111,6 @@
             "badge": "HOT"
           }
         },
-        "desktop_menu_card_PerLGg": {
-          "type": "desktop_menu_card",
-          "settings": {
-            "parent_title": "Shop",
-            "title": "Hide & Rest",
-            "text": "Crinkle, pounce and lounge",
-            "link": "shopify://products/crinkle-cat-hideout-bag",
-            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
-            "image_asset": "",
-            "badge": ""
-          }
-        },
         "desktop_item_8NPqkL": {
           "type": "desktop_item",
           "settings": {
@@ -332,7 +320,6 @@
         "desktop_item_CtUt9a",
         "desktop_menu_card_jRT8ct",
         "desktop_menu_card_3Q3p4t",
-        "desktop_menu_card_PerLGg",
         "desktop_item_8NPqkL",
         "desktop_item_dGzi7J",
         "mobile_card_E9LaVB",
