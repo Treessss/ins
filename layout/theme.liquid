@@ -230,8 +230,13 @@ NOTE TO DEVELOPERS: welcome to Impact theme! We hope that you will enjoy editing
     {%- if settings.show_page_transition -%}
       <div class="page-transition-overlay" data-page-transition aria-hidden="true">
         <div class="page-transition__inner">
-          <div class="page-transition__logo-wrap" data-page-transition-logo>
-            <span class="page-transition__logo-text">{{ shop.name | escape }}</span>
+          <div class="page-transition__logo-wrap" data-page-transition-logo{% if settings.page_transition_logo != blank %} data-logo-synced="true"{% endif %}>
+            {%- if settings.page_transition_logo != blank -%}
+              {%- assign transition_logo_alt = settings.page_transition_logo.alt | default: shop.name -%}
+              {{- settings.page_transition_logo | image_url: width: 360 | image_tag: class: 'page-transition__logo', alt: transition_logo_alt, loading: 'eager' -}}
+            {%- else -%}
+              <span class="page-transition__logo-text">{{ shop.name | escape }}</span>
+            {%- endif -%}
           </div>
           <span class="page-transition__bar" aria-hidden="true"></span>
         </div>

@@ -520,6 +520,13 @@
         "default": false
       },
       {
+        "type": "image_picker",
+        "id": "page_transition_logo",
+        "label": "页面过渡标志图片",
+        "info": "仅用于页面切换画面。留空时使用顶部导航的标志图片。",
+        "visible_if": "{{ settings.show_page_transition }}"
+      },
+      {
         "type": "checkbox",
         "id": "zoom_image_on_hover",
         "label": "悬停时放大图片",
