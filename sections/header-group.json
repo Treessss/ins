@@ -171,8 +171,8 @@
         "mobile_card_THYgVz": {
           "type": "mobile_card",
           "settings": {
-            "title": "Dog Toys & Enrichment",
-            "subtitle": "Chase, chew, cuddle, repeat—make every day a little more tail-wagging.",
+            "title": "Dog Toys",
+            "subtitle": "Make every day a little more tail-wagging.",
             "link": "shopify://collections/dog-toys-enrichment",
             "auto_submenu_menu": "",
             "image": "shopify://shop_images/xstrapetm-collection-dog-toys-enrichment.webp",
@@ -184,8 +184,8 @@
         "mobile_card_VFL6Ye": {
           "type": "mobile_card",
           "settings": {
-            "title": "Cat Toys & Enrichment",
-            "subtitle": "Kick, scratch, hide, and explore—small adventures for curious cats.",
+            "title": "Cat Toys",
+            "subtitle": "Small adventures for curious cats.",
             "link": "shopify://collections/cat-toys-enrichment",
             "auto_submenu_menu": "",
             "image": "shopify://shop_images/xstrapetm-collection-cat-toys-enrichment.webp",
@@ -201,7 +201,7 @@
             "subtitle": "Orders, shipping and product help",
             "link": "/pages/contact",
             "auto_submenu_menu": "",
-            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
+            "image": "shopify://shop_images/xstrapetm-collection-interactive-exercise.webp",
             "image_asset": "",
             "badge": "",
             "badge_style": "new"
