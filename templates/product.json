@@ -203,13 +203,13 @@
             "card_type": "image_only",
             "heading": "",
             "body": "",
+            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
+            "mobile_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
             "direct_image_url": "",
             "direct_mobile_image_url": "",
             "default_asset": "banner_1",
             "mobile_default_asset": "banner_1_mobile",
             "image_alt": "",
-            "video": "",
-            "mobile_video": "",
             "direct_video_url": "",
             "external_video_url": "",
             "autoplay": true,
@@ -229,9 +229,7 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": "",
-            "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png",
-            "mobile_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-09-lifestyle.png"
+            "meta_video_url_key": ""
           }
         },
         "card_mJUjmi": {
@@ -266,9 +264,7 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": "",
-            "video": "",
-            "mobile_video": ""
+            "meta_video_url_key": ""
           }
         },
         "card_8EBY7V": {
@@ -303,9 +299,7 @@
             "meta_mobile_image_key": "pm_mobile_desc_banner",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": "",
-            "video": "",
-            "mobile_video": ""
+            "meta_video_url_key": ""
           }
         },
         "card_FTbgPb": {
@@ -315,6 +309,7 @@
             "heading": "Play, rest, repeat",
             "body": "<p>Everyday essentials create more opportunities for active moments and comfortable downtime.</p>",
             "image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
+            "mobile_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
             "direct_image_url": "",
             "direct_mobile_image_url": "",
             "default_asset": "feature_2",
@@ -339,10 +334,7 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": "",
-            "mobile_image": "shopify://shop_images/xstrapetm-crinkle-cat-hideout-01-main.png",
-            "video": "",
-            "mobile_video": ""
+            "meta_video_url_key": ""
           }
         },
         "card_nKAUf8": {
@@ -377,9 +369,7 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": "",
-            "video": "",
-            "mobile_video": ""
+            "meta_video_url_key": ""
           }
         },
         "card_jCM6dJ": {
@@ -414,9 +404,7 @@
             "meta_mobile_image_key": "",
             "meta_video_key": "",
             "meta_mobile_video_key": "",
-            "meta_video_url_key": "",
-            "video": "",
-            "mobile_video": ""
+            "meta_video_url_key": ""
           }
         }
       },
@@ -442,8 +430,6 @@
     },
     "xstrape_product_reviews_tXn44W": {
       "type": "xstrape-product-reviews",
-      "blocks": {},
-      "block_order": [],
       "settings": {
         "full_width": true,
         "heading": "Reviews",
