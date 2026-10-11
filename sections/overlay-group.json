@@ -61,9 +61,9 @@
       "type": "cart-exit-offer",
       "settings": {
         "enable": true,
-        "discount_code": "FREE SHIPPING",
+        "discount_code": "Limited 5",
         "badge": "Wait! Before you go",
-        "title": "FREE SHIPPING — LIMITED TIME ONLY! 🔥",
+        "title": "Limited 5 — LIMITED TIME ONLY! 🔥",
         "text": "Your cart is saved. Apply this limited offer and finish checkout now.",
         "button_text": "APPLY FREE SHIPPING",
         "decline_text": "No thanks",
